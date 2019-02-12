@@ -4,17 +4,25 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import app.projetCdb.models.Company;
 
 public class CompanyDao {
-	private DbAccess dbAccess=DbAccess.getInstance();
+	//access to database
+	private IDbAccess dbAccess;
 	/*Name of table*/
 	private final static String TABLE="company";
 	/*fields of table*/
 	private final static String FIELD_1="id";
 	private final static String FIELD_2="name";
+	
+	
+	public CompanyDao(IDbAccess dbAccess) {
+		this.dbAccess=dbAccess;
+	}
 	
 	/**
 	 * 
@@ -25,7 +33,7 @@ public class CompanyDao {
 		String query=" INSERT INTO "+TABLE+"("+FIELD_2+") VALUES('"+company.getName()+"')";
 		Connection connection=dbAccess.getConnection();
 		Statement statement=connection.createStatement();
-		int resultSet=statement.executeUpdate(query);
+		statement.executeUpdate(query);
 		connection.close();
 	}
 	
@@ -38,7 +46,7 @@ public class CompanyDao {
 		String query="UPDATE "+TABLE+" SET "+FIELD_2+"='"+company.getName()+"' WHERE "+FIELD_1+"="+company.getId();
 		Connection connection=dbAccess.getConnection();
 		Statement statement=connection.createStatement();
-		int resultSet=statement.executeUpdate(query);
+		statement.executeUpdate(query);
 		connection.close();
 	}
 	
@@ -51,7 +59,7 @@ public class CompanyDao {
 		String query="DELETE FROM "+TABLE+" WHERE "+FIELD_1+" ="+id;
 		Connection connection=dbAccess.getConnection();
 		Statement statement=connection.createStatement();
-		int resultSet=statement.executeUpdate(query);
+		statement.executeUpdate(query);
 		connection.close();
 	}
 	
@@ -60,13 +68,17 @@ public class CompanyDao {
 	 * @return
 	 * @throws SQLException
 	 */
-	public Set<Company> findAll() throws SQLException{
+	public List<Company> findAll() throws SQLException{
 		String query="SELECT * FROM "+TABLE;
 		Connection connection=dbAccess.getConnection();
 		Statement statement=connection.createStatement();
-		ResultSet result=statement.executeQuery(query);
-		return null;
-	}
+		ResultSet resultSet=statement.executeQuery(query);
+		ArrayList<Company> listOfCompanies=new ArrayList<Company>();
+		while(resultSet.next()) {
+			listOfCompanies.add(new Company(resultSet.getLong(FIELD_1),resultSet.getString(FIELD_2)));
+		}
+		return listOfCompanies;
+	}   
 	
 	
 }

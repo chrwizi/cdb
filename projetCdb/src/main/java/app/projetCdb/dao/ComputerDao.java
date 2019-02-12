@@ -7,7 +7,7 @@ import java.sql.Statement;
 import app.projetCdb.models.Computer;
 
 public class ComputerDao {
-	private DbAccess access=DbAccess.getInstance();
+	private IDbAccess access=DbAccess.getInstance();
 	/*Name table*/
 	private final static String TABLE="computer";
 	/*fields table*/
@@ -17,6 +17,13 @@ public class ComputerDao {
 	private final static String FIELD_4="discontinued";
 	private final static String FIELD_5="company_id";
 	
+	
+	
+	public ComputerDao(IDbAccess access) {
+		super();
+		this.access = access;
+	}
+
 	/**
 	 * 
 	 * @param computer: computer to add in computers table
@@ -38,6 +45,11 @@ public class ComputerDao {
 	public void update(Computer computer) {
 		//TODO
 	}
+	
+	public void delete(Long id) {
+		//TODO
+	}
+	
 	
 	
 }

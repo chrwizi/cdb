@@ -5,7 +5,7 @@ public class Computer {
 	private String name	;
 	private String introduced;
 	private String discontinued	;
-	private  Long company_id;
+	private Long company_id;
 	
 	public Long getId() {
 		return id;

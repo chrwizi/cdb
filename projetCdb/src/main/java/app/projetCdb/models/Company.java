@@ -9,6 +9,26 @@ public class Company {
 		super();
 		this.name=name;
 	}
+	
+	
+
+	public Company(Long id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+
+	
+
+
+	@Override
+	public String toString() {
+		StringBuffer buffer=new StringBuffer("[").append(getName());
+		buffer.append("]");
+		return buffer.toString();
+	}
+
+
 
 	public Long getId() {
 		return id;
