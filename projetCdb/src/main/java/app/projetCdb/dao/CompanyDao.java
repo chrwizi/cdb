@@ -64,7 +64,7 @@ public class CompanyDao {
 	}
 	
 	/**
-	 * 
+	 *  
 	 * @return
 	 * @throws SQLException
 	 */

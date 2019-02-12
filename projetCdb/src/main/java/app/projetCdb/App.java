@@ -6,8 +6,10 @@ import java.util.ListIterator;
 import java.util.Scanner;
 
 import app.projetCdb.dao.CompanyDao;
+import app.projetCdb.dao.ComputerDao;
 import app.projetCdb.dao.DbAccess;
 import app.projetCdb.models.Company;
+import app.projetCdb.models.Computer;
 
 
 
@@ -27,22 +29,20 @@ public class App
 	private final static int EXIT=7;
 
 	public static void main( String[] args ){
-		try {
-			DbAccess.loadDriver();
-			Company company=new Company("Keolys");
-			CompanyDao companyDao=new CompanyDao(DbAccess.getInstance());
-			companyDao.delete((long) 1001);
-			showCdbUi(companyDao);
-
-		} catch (SQLException | ClassNotFoundException  e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//DbAccess.loadDriver();
+		Company company=new Company("Keolys");
+		CompanyDao companyDao=new CompanyDao(DbAccess.getInstance());
+		ComputerDao computerDao=new ComputerDao(DbAccess.getInstance());
+		showCdbUi(companyDao,computerDao);
 
 	}
 
-
-	public static void showCdbUi(CompanyDao companyDao) {
+	/**
+	 * 
+	 * @param companyDao
+	 * @param computerDao
+	 */
+	public static void showCdbUi(CompanyDao companyDao,ComputerDao computerDao) {
 		boolean fin=false; 
 		int userChoice=0;
 		Scanner scanner=new Scanner(System.in);
@@ -67,12 +67,11 @@ public class App
 			System.out.println(" votre choix est : "+userChoice);
 			switch(userChoice) {
 			case LIST_COMPUTERS:
-
+				listComputersHandler(computerDao,5);
 				break;
 			case LIST_COMPANIES:
-				listCompaniesHandler(companyDao);
+				listCompaniesHandler(companyDao,10);
 				break;
-
 			case CREATE_COMPUTER:
 
 				break;
@@ -97,20 +96,45 @@ public class App
 		}
 	}
 
-	public static void listCompaniesHandler(CompanyDao dao) {
+	/**
+	 * print list of all companies  in database
+	 * @param dao: object given access to companies table in database  
+	 */
+	public static void listCompaniesHandler(CompanyDao dao,int nbCompniesToPrintByLine) {
 		try {
 			List<Company> companies=dao.findAll();
 			ListIterator<Company> iterator=companies.listIterator();
-			int nbCompniesToPrintByLine=5,i=0;
+			int i=0;
 			if(companies.isEmpty())System.out.println("Aucune company disponible");
 			else {
 				while(iterator.hasNext()) {
 					if((i++)%nbCompniesToPrintByLine<nbCompniesToPrintByLine-1) {
-						System.out.print(iterator.next()+"\t");
+						System.out.print(iterator.next()+"\t\t\t");
 					}
-					else {
-						System.out.println(iterator.next());
-					}
+					else System.out.println(iterator.next());
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * print list of all computers in database 
+	 * @param dao : object given access to computers table in database
+	 * @param nbComputerToPrintByLine: number of computer to print in line .
+	 */
+	public static void listComputersHandler(ComputerDao dao,int nbComputerToPrintByLine) {
+		try {
+			List<Computer> computers=dao.findAll();
+			ListIterator<Computer> listIterator=computers.listIterator();
+			if(computers.isEmpty())System.out.println(" Aucun ordinateur disponible");
+			else {
+				int i=0;
+				while(listIterator.hasNext()) {
+					if((i++)%nbComputerToPrintByLine<nbComputerToPrintByLine-1) {
+						System.out.printf("%-10s ",listIterator.next());
+					}else System.out.printf("%-10s\n",listIterator.next());
 				}
 			}
 		} catch (SQLException e) {

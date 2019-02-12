@@ -1,9 +1,13 @@
 package app.projetCdb.dao;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
+import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
 
 public class ComputerDao {
@@ -40,7 +44,7 @@ public class ComputerDao {
 		Statement statement=connection.createStatement();
 		int resultSet=statement.executeUpdate(query);
 		connection.close();
-	}
+	} 
 	
 	public void update(Computer computer) {
 		//TODO
@@ -48,6 +52,24 @@ public class ComputerDao {
 	
 	public void delete(Long id) {
 		//TODO
+	}
+	
+	public List<Computer> findAll() throws SQLException{
+		String query="SELECT * FROM "+TABLE;
+		ArrayList<Computer> computers=new ArrayList<Computer>();
+		Connection connection=access.getConnection();
+		Statement statement=connection.createStatement();
+		ResultSet resultSet=statement.executeQuery(query);
+		while(resultSet.next()) {
+			computers.add(
+							new Computer(
+										resultSet.getLong(FIELD_1),
+										resultSet.getString(FIELD_2),
+										resultSet.getString(FIELD_3),
+										resultSet.getString(FIELD_4),
+										resultSet.getLong(FIELD_5)));
+		}
+		return computers;
 	}
 	
 	

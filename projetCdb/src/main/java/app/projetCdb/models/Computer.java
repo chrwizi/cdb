@@ -7,6 +7,18 @@ public class Computer {
 	private String discontinued	;
 	private Long company_id;
 	
+	
+	
+	public Computer(Long id, String name, String introduced, String discontinued, Long company_id) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.introduced = introduced;
+		this.discontinued = discontinued;
+		this.company_id = company_id;
+	}
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -37,6 +49,17 @@ public class Computer {
 	public void setCompany_id(Long company_id) {
 		this.company_id = company_id;
 	}
+
+
+	@Override
+	public String toString() {
+		StringBuffer buffer=new StringBuffer("[");
+		buffer.append(getName()+"]");
+		//buffer.append(")
+		return buffer.toString();
+	}
+	
+	
 
 
 }
