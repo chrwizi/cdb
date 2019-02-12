@@ -4,6 +4,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 import app.projetCdb.dao.CompanyDao;
 import app.projetCdb.dao.ComputerDao;
@@ -36,7 +39,7 @@ public class App
 		showCdbUi(companyDao,computerDao);
 
 	}
-
+ 
 	/**
 	 * 
 	 * @param companyDao
@@ -73,7 +76,7 @@ public class App
 				listCompaniesHandler(companyDao,10);
 				break;
 			case CREATE_COMPUTER:
-
+				getComputerParametters();
 				break;
 
 			case UPDATE_COMPUTER:
@@ -140,5 +143,22 @@ public class App
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static Computer getComputerParametters() {
+		Scanner scanner=new Scanner(System.in);
+		System.out.println("Veuillez renseignez les informations suivantes :");
+		System.out.print("nom >");
+		String name=scanner.next();
+		System.out.print("date de creation >");
+		scanner.useDelimiter(Pattern.compile("/"));
+		String day=scanner.next();
+		String month=scanner.next();
+		String year=scanner.next();
+		System.out.println("day => "+day);
+		System.out.println("month => "+month);
+		System.out.println("year => "+year);
+		
+		return null;
 	}
 }

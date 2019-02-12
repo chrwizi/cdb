@@ -49,6 +49,20 @@ public class CompanyDao {
 		statement.executeUpdate(query);
 		connection.close();
 	}
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 * @throws SQLException
+	 */
+//	public static boolean isIdPresent(Long id) throws SQLException {
+//		Connection connection=dbAccess.getConnection();
+//		String query="SELECT * FROM "+TABLE+"WHERE "+FIELD_1+"="+id;
+//		Statement statement=connection.createStatement();
+//		ResultSet results=statement.executeQuery(query);
+//		return results.first()? true:false; 
+//	}
+
 	
 	/**
 	 * 
