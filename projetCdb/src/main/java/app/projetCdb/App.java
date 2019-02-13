@@ -4,13 +4,9 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Scanner;
-import java.util.regex.Pattern;
-
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 import app.projetCdb.dao.CompanyDao;
 import app.projetCdb.dao.ComputerDao;
@@ -84,7 +80,6 @@ public class App
 				try {
 					Computer computer=getComputerParamettersFromUser(companyDao);
 					computerDao.add(computer);
-					System.out.println(computer);
 				} 
 				catch (ParseException e) {
 					e.printStackTrace();
@@ -101,7 +96,11 @@ public class App
 				break;
 
 			case DELETE_COMPUTER:
-
+				try {
+					deleteComputerHandler(computerDao);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 				break;
 			case SHOW_COMPUTER_DETAILS:
 
@@ -115,6 +114,8 @@ public class App
 			}
 		}
 	}
+	
+	
 
 	/**
 	 * print list of all companies  in database
@@ -162,7 +163,15 @@ public class App
 		}
 	}
 	
+	/**
+	 * 
+	 * @param companyDao
+	 * @return
+	 * @throws ParseException
+	 * @throws SQLException
+	 */
 	public static Computer getComputerParamettersFromUser(CompanyDao companyDao) throws ParseException, SQLException {
+		//TODO Refactoring
 		Scanner scanner=new Scanner(System.in);
 		System.out.println("Veuillez renseignez les informations suivantes :");
 		System.out.print("nom >");
@@ -187,4 +196,20 @@ public class App
 		Computer computer=new Computer(0L, name, introducedTimestamp, discontunedTimestamp,companies.get(index).getId());
 		return computer;
 	}
+	
+	public static void deleteComputerHandler(ComputerDao computerDao) throws SQLException {
+		Scanner scanner=new Scanner(System.in);
+		System.out.println("Veuillez sélectionner le numéro de l'ordinateur à supprimer");
+		List<Computer> computers=computerDao.findAll();
+		ListIterator<Computer> listIterator=computers.listIterator();
+		Computer current;int index=0;
+		while(listIterator.hasNext()) {
+			current=listIterator.next();
+			System.out.println((index++)+":"+current);
+		}
+		System.out.println("compagnie entre 0 et "+(computers.size()-1)+" >");
+		index=scanner.nextInt();
+		computerDao.delete(computers.get(index).getId());
+	}
+	
 }
