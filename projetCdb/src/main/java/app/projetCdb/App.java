@@ -33,8 +33,6 @@ public class App
 	private final static int EXIT=7;
 
 	public static void main( String[] args ){
-		//DbAccess.loadDriver();
-		Company company=new Company("Keolys");
 		CompanyDao companyDao=new CompanyDao(DbAccess.getInstance());
 		ComputerDao computerDao=new ComputerDao(DbAccess.getInstance());
 		showCdbUi(companyDao,computerDao);
@@ -51,18 +49,8 @@ public class App
 		int userChoice=0;
 		Scanner scanner=new Scanner(System.in);
 		while(!fin){ 
-			System.out.println(); 
-			System.out.println("---------------------------"); 
-			System.out.println("-      Cdb interface      -"); 
-			System.out.println("---------------------------"); 
-			System.out.println(); 
-			System.out.println("1- List computers"); 
-			System.out.println("2- list companies"); 
-			System.out.println("3- Create a computer"); 
-			System.out.println("4- Update a computer"); 
-			System.out.println("5- Delete a computer"); 
-			System.out.println("5- Exit"); 
-			System.out.println("Votre choix :"); 
+			showMenu();
+			
 			userChoice=scanner.nextInt();
 			while (userChoice<1 || userChoice>6) { 
 				System.out.print("précisez votre choix >");
@@ -103,7 +91,11 @@ public class App
 				}
 				break;
 			case SHOW_COMPUTER_DETAILS:
-
+				try {
+					showComputerDetailsHandler(computerDao);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 				break;
 			case EXIT:
 
@@ -113,9 +105,45 @@ public class App
 				break;
 			}
 		}
+		scanner.close();
 	}
 	
 	
+
+	private static void showMenu() {
+		System.out.println(); 
+		System.out.println("---------------------------"); 
+		System.out.println("-      Cdb interface      -"); 
+		System.out.println("---------------------------"); 
+		System.out.println(); 
+		System.out.println("1- List computers"); 
+		System.out.println("2- list companies"); 
+		System.out.println("3- Create a computer"); 
+		System.out.println("4- Update a computer"); 
+		System.out.println("5- Delete a computer"); 
+		System.out.println("6- Exit"); 
+		System.out.println("Votre choix :"); 
+	}
+
+	private static void showComputerDetailsHandler(ComputerDao computerDao) throws SQLException {
+		Scanner scanner=new Scanner(System.in);
+		System.out.println("Veuillez choisir le numéro de l'ordinateur ");
+		List<Computer> computers=computerDao.findAll();
+		ListIterator<Computer> listIterator=computers.listIterator();
+		Computer current;int index=0;
+		while(listIterator.hasNext()) {
+			current=listIterator.next();
+			System.out.println((index++)+":"+current);
+		}
+		System.out.println("compagnie entre 0 et "+(computers.size()-1)+" >");
+		index=scanner.nextInt();
+		current=computers.get(index-1);
+		System.out.println("**** detailles ****");
+		System.out.println("[nom: "+current.getName()
+				+" date de creation: "+current.getIntroduced().toString()
+				+" date de retrait: "+current.getDiscontinued().toString()+"]");
+		scanner.close();
+	}
 
 	/**
 	 * print list of all companies  in database
@@ -194,6 +222,7 @@ public class App
 		System.out.println("compagnie entre 0 et "+(companies.size()-1)+" >");
 		index=scanner.nextInt();
 		Computer computer=new Computer(0L, name, introducedTimestamp, discontunedTimestamp,companies.get(index).getId());
+		scanner.close();
 		return computer;
 	}
 	
@@ -210,6 +239,7 @@ public class App
 		System.out.println("compagnie entre 0 et "+(computers.size()-1)+" >");
 		index=scanner.nextInt();
 		computerDao.delete(computers.get(index).getId());
+		scanner.close();
 	}
 	
 }

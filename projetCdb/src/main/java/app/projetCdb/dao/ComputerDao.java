@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
-import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
 
 public class ComputerDao {
