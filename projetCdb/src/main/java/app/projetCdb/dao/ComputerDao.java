@@ -36,22 +36,23 @@ public class ComputerDao {
 	 * @throws IDCompanyNotFoundException if the Id of company  given in parameter don't exit in Companies table
 	 */
 	public void add(Computer computer) throws SQLException, IDCompanyNotFoundException {
-		if(!isIdPresent(computer.getCompany_id())) {
-			//id of company not found in database
-			throw new IDCompanyNotFoundException();
-		}
-		else {
-			Connection connection=access.getConnection();
-			String query="INSERT INTO "+TABLE+"("+
-					FIELD_2+","+FIELD_3+","+
-					FIELD_4+","+FIELD_5+") "
-					+ "VALUES ('"+computer.getName()+"','"+computer.getIntroduced()+"','"+
-					computer.getDiscontinued()+"','"+computer.getCompany_id()+"'";
+		//		if(!isIdPresent(computer.getCompany_id())) {
+		//			//id of company not found in database
+		//			throw new IDCompanyNotFoundException();
+		//		}
+		//		else {
+		Connection connection=access.getConnection();
+		String query="INSERT INTO "+TABLE+"("+
+				FIELD_2+","+FIELD_3+","+
+				FIELD_4+","+FIELD_5+") "
+				+ "VALUES ('"+computer.getName()+"'"+",'"+computer.getIntroduced()+"'"+",'"+
+				computer.getDiscontinued()+"'"+",'"+computer.getCompany_id()+"')";
 
-			Statement statement=connection.createStatement();
-			statement.executeUpdate(query);
-			connection.close();
-		}
+		Statement statement=connection.createStatement();
+		System.out.println(query);
+		statement.executeUpdate(query);
+		connection.close();
+		//}
 	} 
 
 	/**
@@ -73,17 +74,17 @@ public class ComputerDao {
 	public void update(Computer computer) throws SQLException {
 		Connection connection=access.getConnection();
 		String query="UPDATE "+TABLE+" SET "
-						+FIELD_2+"='"+computer.getName()
-						+","+FIELD_3+"='"+computer.getIntroduced()+"'"
-						+","+FIELD_4+"='"+computer.getDiscontinued()+"'"
-						+","+FIELD_5+"='"+computer.getCompany_id()+"'"
-						+"' WHERE "+FIELD_1+"="+computer.getId();
+				+FIELD_2+"='"+computer.getName()+"'"
+				+","+FIELD_3+"='"+computer.getIntroduced()+"'"
+				+","+FIELD_4+"='"+computer.getDiscontinued()+"'"
+				+","+FIELD_5+"='"+computer.getCompany_id()+"'"
+				+" WHERE "+FIELD_1+"="+computer.getId()+")";
 		Statement statement=connection.createStatement();
 		statement.executeUpdate(query);
 		connection.close();
-		
+
 	}
-	
+
 	/**
 	 * delete computer witch id given in parameter from computers table 
 	 * @param id : id of computer to delete
@@ -113,8 +114,8 @@ public class ComputerDao {
 					new Computer(
 							resultSet.getLong(FIELD_1),
 							resultSet.getString(FIELD_2),
-							resultSet.getString(FIELD_3),
-							resultSet.getString(FIELD_4),
+							resultSet.getTimestamp(FIELD_3),
+							resultSet.getTimestamp(FIELD_4),
 							resultSet.getLong(FIELD_5)));
 		}
 		return computers;

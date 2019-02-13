@@ -1,6 +1,10 @@
 package app.projetCdb;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Scanner;
@@ -11,6 +15,7 @@ import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 import app.projetCdb.dao.CompanyDao;
 import app.projetCdb.dao.ComputerDao;
 import app.projetCdb.dao.DbAccess;
+import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
 
@@ -76,7 +81,19 @@ public class App
 				listCompaniesHandler(companyDao,10);
 				break;
 			case CREATE_COMPUTER:
-				getComputerParametters();
+				try {
+					Computer computer=getComputerParamettersFromUser(companyDao);
+					computerDao.add(computer);
+					System.out.println(computer);
+				} 
+				catch (ParseException e) {
+					e.printStackTrace();
+				} 
+				catch (SQLException e) {
+					e.printStackTrace();
+				} catch (IDCompanyNotFoundException e) {
+					e.printStackTrace();
+				}
 				break;
 
 			case UPDATE_COMPUTER:
@@ -145,20 +162,29 @@ public class App
 		}
 	}
 	
-	public static Computer getComputerParametters() {
+	public static Computer getComputerParamettersFromUser(CompanyDao companyDao) throws ParseException, SQLException {
 		Scanner scanner=new Scanner(System.in);
 		System.out.println("Veuillez renseignez les informations suivantes :");
 		System.out.print("nom >");
-		String name=scanner.next();
-		System.out.print("date de creation >");
-		scanner.useDelimiter(Pattern.compile("/"));
-		String day=scanner.next();
-		String month=scanner.next();
-		String year=scanner.next();
-		System.out.println("day => "+day);
-		System.out.println("month => "+month);
-		System.out.println("year => "+year);
-		
-		return null;
+		String name=scanner.nextLine();
+		System.out.print("date de creation au format yyyy-mm-dd >");
+		String strDate=scanner.next().concat(" 0:0:0.0");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+		Timestamp introducedTimestamp=CdbUtil.strDateToTimestamp(strDate, dateFormat);
+		System.out.print("date de Production au format yyyy-mm-dd >");
+		strDate=scanner.next().concat(" 0:0:0.0");
+		Timestamp discontunedTimestamp=CdbUtil.strDateToTimestamp(strDate, dateFormat);
+		System.out.println("veuillez indiquer le numéro de la compagnie");
+		List<Company> companies=companyDao.findAll();
+		ListIterator<Company> listIterator=companies.listIterator();
+		Company current;int index=0;
+		while(listIterator.hasNext()) {
+			current=listIterator.next();
+			System.out.println((index++)+":"+current);
+		}
+		System.out.println("compagnie entre 0 et "+(companies.size()-1)+" >");
+		index=scanner.nextInt();
+		Computer computer=new Computer(0L, name, introducedTimestamp, discontunedTimestamp,companies.get(index).getId());
+		return computer;
 	}
 }
