@@ -7,7 +7,7 @@ public class Computer {
 	private String name	;
 	private Timestamp introduced;
 	private Timestamp discontinued	;
-	private Long company_id;
+	private Long companyID;
 	
 	
 	
@@ -17,7 +17,7 @@ public class Computer {
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
-		this.company_id = company_id;
+		this.companyID = company_id;
 	}
 	
 	
@@ -46,10 +46,10 @@ public class Computer {
 		this.discontinued = discontinued;
 	}
 	public Long getCompany_id() {
-		return company_id;
+		return companyID;
 	}
 	public void setCompany_id(Long company_id) {
-		this.company_id = company_id;
+		this.companyID = company_id;
 	}
 
 

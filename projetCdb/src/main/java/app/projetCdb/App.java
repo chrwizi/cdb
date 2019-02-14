@@ -14,6 +14,12 @@ import app.projetCdb.dao.DbAccess;
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
+import app.projetCdb.services.DeleteComputerService;
+import app.projetCdb.services.IDeleteService;
+import app.projetCdb.services.IListCompaniesService;
+import app.projetCdb.services.IListComputersService;
+import app.projetCdb.services.ListCompaniesService;
+import app.projetCdb.services.ListComputersService;
 
 
 
@@ -38,7 +44,7 @@ public class App
 		showCdbUi(companyDao,computerDao);
 
 	}
- 
+
 	/**
 	 * 
 	 * @param companyDao
@@ -50,19 +56,18 @@ public class App
 		Scanner scanner=new Scanner(System.in);
 		while(!fin){ 
 			showMenu();
-			
 			userChoice=scanner.nextInt();
-			while (userChoice<1 || userChoice>6) { 
+			while (userChoice<1 || userChoice>7) { 
 				System.out.print("précisez votre choix >");
 				userChoice=scanner.nextInt();
 			}
 			System.out.println(" votre choix est : "+userChoice);
 			switch(userChoice) {
 			case LIST_COMPUTERS:
-				listComputersHandler(computerDao,5);
+				listComputersHandler(computerDao);
 				break;
 			case LIST_COMPANIES:
-				listCompaniesHandler(companyDao,10);
+				listCompaniesHandler(companyDao);
 				break;
 			case CREATE_COMPUTER:
 				try {
@@ -82,23 +87,11 @@ public class App
 			case UPDATE_COMPUTER:
 
 				break;
-
 			case DELETE_COMPUTER:
-				try {
 					deleteComputerHandler(computerDao);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
 				break;
 			case SHOW_COMPUTER_DETAILS:
-				try {
 					showComputerDetailsHandler(computerDao);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
 				break;
 			case EXIT:
 				fin=false;
@@ -110,8 +103,8 @@ public class App
 		}
 		scanner.close();
 	}
-	
-	
+
+
 
 	private static void showMenu() {
 		System.out.println(); 
@@ -129,74 +122,84 @@ public class App
 		System.out.println("Votre choix :"); 
 	}
 
-	private static void showComputerDetailsHandler(ComputerDao computerDao) throws SQLException {
-		Scanner scanner=new Scanner(System.in);
-		System.out.println("Veuillez choisir le numéro de l'ordinateur ");
-		List<Computer> computers=computerDao.findAll();
-		ListIterator<Computer> listIterator=computers.listIterator();
-		Computer current;int index=0;
-		
-		while(listIterator.hasNext()) {
-			current=listIterator.next();
-			System.out.println((index++)+":"+current);
+	private static void showComputerDetailsHandler(ComputerDao computerDao){
+		IListComputersService listComputersService=new ListComputersService(computerDao);
+		List<Computer> computers;
+		try {
+			//get list of computers
+			computers = listComputersService.getAll();
+			
+			System.out.println("Veuillez choisir le numéro de l'ordinateur ");
+			printComputerList(computers, true);
+			
+			Scanner scanner=new Scanner(System.in);
+			System.out.println("choisir un numéro entre 0 et "+(computers.size()-1)+" >");
+			int index=scanner.nextInt();
+			
+			Computer selectedComputer=computers.get(index); 
+			
+			System.out.println("**** detailles ****");
+			System.out.println(selectedComputer);
+			System.out.println("[nom: "+selectedComputer.getName()
+			+" date de creation: "+selectedComputer.getIntroduced()
+			+" date de retrait: "+selectedComputer.getDiscontinued()+"]");
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		System.out.println("choisir un numéro entre 0 et "+(computers.size()-1)+" >");
-		index=scanner.nextInt();
-		current=computers.get(index);
 		
-		System.out.println("**** detailles ****");
-		System.out.println(current);
-		System.out.println("[nom: "+current.getName()
-				+" date de creation: "+current.getIntroduced()
-				+" date de retrait: "+current.getDiscontinued()+"]");
 	}
 
 	/**
 	 * print list of all companies  in database
 	 * @param dao: object given access to companies table in database  
 	 */
-	public static void listCompaniesHandler(CompanyDao dao,int nbCompniesToPrintByLine) {
+	public static void listCompaniesHandler(CompanyDao dao) {
+		IListCompaniesService lisctCompaniesService = new ListCompaniesService(dao);
+		List<Company> companies;
 		try {
-			List<Company> companies=dao.findAll();
-			ListIterator<Company> iterator=companies.listIterator();
-			int i=0;
-			if(companies.isEmpty())System.out.println("Aucune company disponible");
-			else {
-				while(iterator.hasNext()) {
-					if((i++)%nbCompniesToPrintByLine<nbCompniesToPrintByLine-1) {
-						System.out.print(iterator.next()+"\t\t\t");
-					}
-					else System.out.println(iterator.next());
-				}
-			}
+			companies = lisctCompaniesService.getAll();
+			printCompanies(companies);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void printCompanies(List<Company> companies) {
+		ListIterator<Company> listIterator=companies.listIterator();
+		while(listIterator.hasNext()) {
+			System.out.println(listIterator.next());
+		}
+		
+	}
+
+	/**
+	 * print list of all computers in database 
+	 * @param dao : object given access to computers table in database
+	 */
+	public static void listComputersHandler(ComputerDao dao) {
+		IListComputersService listComputersService=new ListComputersService(dao);
+		List<Computer> computers;
+		try {
+			computers = listComputersService.getAll();
+			printComputerList(computers,false);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * print list of all computers in database 
-	 * @param dao : object given access to computers table in database
-	 * @param nbComputerToPrintByLine: number of computer to print in line .
+	 * 
+	 * @param computers
 	 */
-	public static void listComputersHandler(ComputerDao dao,int nbComputerToPrintByLine) {
-		try {
-			List<Computer> computers=dao.findAll();
-			ListIterator<Computer> listIterator=computers.listIterator();
-			if(computers.isEmpty())System.out.println(" Aucun ordinateur disponible");
-			else {
-				int i=0;
-				while(listIterator.hasNext()) {
-					if((i++)%nbComputerToPrintByLine<nbComputerToPrintByLine-1) {
-						System.out.printf("%-10s ",listIterator.next());
-					}else System.out.printf("%-10s\n",listIterator.next());
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+	private static void printComputerList(List<Computer> computers,boolean withIndex) {
+		ListIterator<Computer> listIterator=computers.listIterator();
+		int index=0;
+		while(listIterator.hasNext()) {
+			if(withIndex)System.out.println("["+(index++)+"]"+" : "+listIterator.next());
+			else System.out.println(listIterator.next());
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param companyDao
@@ -228,24 +231,35 @@ public class App
 		System.out.println("compagnie entre 0 et "+(companies.size()-1)+" >");
 		index=scanner.nextInt();
 		Computer computer=new Computer(0L, name, introducedTimestamp, discontunedTimestamp,companies.get(index).getId());
-		scanner.close();
 		return computer;
 	}
-	
-	public static void deleteComputerHandler(ComputerDao computerDao) throws SQLException {
-		Scanner scanner=new Scanner(System.in);
-		System.out.println("Veuillez sélectionner le numéro de l'ordinateur à supprimer");
-		List<Computer> computers=computerDao.findAll();
-		ListIterator<Computer> listIterator=computers.listIterator();
-		Computer current;int index=0;
-		while(listIterator.hasNext()) {
-			current=listIterator.next();
-			System.out.println((index++)+":"+current);
+
+	/**
+	 * 
+	 * @param computerDao
+	 */
+	public static void deleteComputerHandler(ComputerDao computerDao){
+		IListComputersService listComputersService=new ListComputersService(computerDao);
+		IDeleteService deleteComputerService= new DeleteComputerService(computerDao);
+		List<Computer> computers;
+		try {
+			//get list of computers in database
+			computers = listComputersService.getAll();
+			System.out.println("Veuillez sélectionner le numéro de l'ordinateur à supprimer");
+			//shwo user list of computers with index for each computer
+			printComputerList(computers, true);
+			System.out.println("Numéro compris entre 0 et "+(computers.size()-1)+" >");
+			//get the position of selected computer
+			Scanner scanner=new Scanner(System.in);
+			int index=scanner.nextInt();
+			//delete selected  computer from database
+			deleteComputerService.delete(computers.get(index).getId());
+			//scanner.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		System.out.println("compagnie entre 0 et "+(computers.size()-1)+" >");
-		index=scanner.nextInt();
-		computerDao.delete(computers.get(index).getId());
-		scanner.close();
+
 	}
-	
+
 }
