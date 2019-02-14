@@ -96,9 +96,12 @@ public class App
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
 				break;
 			case EXIT:
-
+				fin=false;
 				break;
 			default:
 
@@ -121,7 +124,8 @@ public class App
 		System.out.println("3- Create a computer"); 
 		System.out.println("4- Update a computer"); 
 		System.out.println("5- Delete a computer"); 
-		System.out.println("6- Exit"); 
+		System.out.println("6- show computer details"); 
+		System.out.println("7- Exit"); 
 		System.out.println("Votre choix :"); 
 	}
 
@@ -131,18 +135,20 @@ public class App
 		List<Computer> computers=computerDao.findAll();
 		ListIterator<Computer> listIterator=computers.listIterator();
 		Computer current;int index=0;
+		
 		while(listIterator.hasNext()) {
 			current=listIterator.next();
 			System.out.println((index++)+":"+current);
 		}
-		System.out.println("compagnie entre 0 et "+(computers.size()-1)+" >");
+		System.out.println("choisir un numéro entre 0 et "+(computers.size()-1)+" >");
 		index=scanner.nextInt();
-		current=computers.get(index-1);
+		current=computers.get(index);
+		
 		System.out.println("**** detailles ****");
+		System.out.println(current);
 		System.out.println("[nom: "+current.getName()
-				+" date de creation: "+current.getIntroduced().toString()
-				+" date de retrait: "+current.getDiscontinued().toString()+"]");
-		scanner.close();
+				+" date de creation: "+current.getIntroduced()
+				+" date de retrait: "+current.getDiscontinued()+"]");
 	}
 
 	/**
