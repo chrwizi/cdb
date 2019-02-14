@@ -2,6 +2,7 @@ package app.projetCdb.exceptions;
 
 public class IDCompanyNotFoundException extends Exception {
 
+
 	/**
 	 * 
 	 */

@@ -14,34 +14,33 @@ import app.projetCdb.dao.DbAccess;
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
+import app.projetCdb.services.CreateComputerService;
 import app.projetCdb.services.DeleteComputerService;
+import app.projetCdb.services.ICreateComputerService;
 import app.projetCdb.services.IDeleteService;
 import app.projetCdb.services.IListCompaniesService;
 import app.projetCdb.services.IListComputersService;
 import app.projetCdb.services.ListCompaniesService;
 import app.projetCdb.services.ListComputersService;
 
-
-
 /**
  * Hello world!
  *
  */
-public class App 
-{
-	/*Menu selections */
-	private final static int LIST_COMPUTERS=1;
-	private final static int LIST_COMPANIES=2;
-	private final static int CREATE_COMPUTER=3;
-	private final static int UPDATE_COMPUTER=4;
-	private final static int DELETE_COMPUTER=5;
-	private final static int SHOW_COMPUTER_DETAILS=6;
-	private final static int EXIT=7;
+public class App {
+	/* Menu selections */
+	private final static int LIST_COMPUTERS = 1;
+	private final static int LIST_COMPANIES = 2;
+	private final static int CREATE_COMPUTER = 3;
+	private final static int UPDATE_COMPUTER = 4;
+	private final static int DELETE_COMPUTER = 5;
+	private final static int SHOW_COMPUTER_DETAILS = 6;
+	private final static int EXIT = 7;
 
-	public static void main( String[] args ){
-		CompanyDao companyDao=new CompanyDao(DbAccess.getInstance());
-		ComputerDao computerDao=new ComputerDao(DbAccess.getInstance());
-		showCdbUi(companyDao,computerDao);
+	public static void main(String[] args) {
+		CompanyDao companyDao = new CompanyDao(DbAccess.getInstance());
+		ComputerDao computerDao = new ComputerDao(DbAccess.getInstance());
+		showCdbUi(companyDao, computerDao);
 
 	}
 
@@ -50,19 +49,19 @@ public class App
 	 * @param companyDao
 	 * @param computerDao
 	 */
-	public static void showCdbUi(CompanyDao companyDao,ComputerDao computerDao) {
-		boolean fin=false; 
-		int userChoice=0;
-		Scanner scanner=new Scanner(System.in);
-		while(!fin){ 
+	public static void showCdbUi(CompanyDao companyDao, ComputerDao computerDao) {
+		boolean fin = false;
+		int userChoice = 0;
+		Scanner scanner = new Scanner(System.in);
+		while (!fin) {
 			showMenu();
-			userChoice=scanner.nextInt();
-			while (userChoice<1 || userChoice>7) { 
+			userChoice = scanner.nextInt();
+			while (userChoice < 1 || userChoice > 7) {
 				System.out.print("précisez votre choix >");
-				userChoice=scanner.nextInt();
+				userChoice = scanner.nextInt();
 			}
-			System.out.println(" votre choix est : "+userChoice);
-			switch(userChoice) {
+			System.out.println(" votre choix est : " + userChoice);
+			switch (userChoice) {
 			case LIST_COMPUTERS:
 				listComputersHandler(computerDao);
 				break;
@@ -70,31 +69,20 @@ public class App
 				listCompaniesHandler(companyDao);
 				break;
 			case CREATE_COMPUTER:
-				try {
-					Computer computer=getComputerParamettersFromUser(companyDao);
-					computerDao.add(computer);
-				} 
-				catch (ParseException e) {
-					e.printStackTrace();
-				} 
-				catch (SQLException e) {
-					e.printStackTrace();
-				} catch (IDCompanyNotFoundException e) {
-					e.printStackTrace();
-				}
+				createComputerHandler(companyDao, computerDao);
 				break;
 
 			case UPDATE_COMPUTER:
 
 				break;
 			case DELETE_COMPUTER:
-					deleteComputerHandler(computerDao);
+				deleteComputerHandler(computerDao);
 				break;
 			case SHOW_COMPUTER_DETAILS:
-					showComputerDetailsHandler(computerDao);
+				showComputerDetailsHandler(computerDao);
 				break;
 			case EXIT:
-				fin=false;
+				fin = false;
 				break;
 			default:
 
@@ -104,84 +92,76 @@ public class App
 		scanner.close();
 	}
 
-
-
 	private static void showMenu() {
-		System.out.println(); 
-		System.out.println("---------------------------"); 
-		System.out.println("-      Cdb interface      -"); 
-		System.out.println("---------------------------"); 
-		System.out.println(); 
-		System.out.println("1- List computers"); 
-		System.out.println("2- list companies"); 
-		System.out.println("3- Create a computer"); 
-		System.out.println("4- Update a computer"); 
-		System.out.println("5- Delete a computer"); 
-		System.out.println("6- show computer details"); 
-		System.out.println("7- Exit"); 
-		System.out.println("Votre choix :"); 
+		System.out.println();
+		System.out.println("---------------------------");
+		System.out.println("-      Cdb interface      -");
+		System.out.println("---------------------------");
+		System.out.println();
+		System.out.println("1- List computers");
+		System.out.println("2- list companies");
+		System.out.println("3- Create a computer");
+		System.out.println("4- Update a computer");
+		System.out.println("5- Delete a computer");
+		System.out.println("6- show computer details");
+		System.out.println("7- Exit");
+		System.out.println("Votre choix :");
 	}
 
-	private static void showComputerDetailsHandler(ComputerDao computerDao){
-		IListComputersService listComputersService=new ListComputersService(computerDao);
+	private static void showComputerDetailsHandler(ComputerDao computerDao) {
+		IListComputersService listComputersService = new ListComputersService(computerDao);
 		List<Computer> computers;
 		try {
-			//get list of computers
+			// get list of computers
 			computers = listComputersService.getAll();
-			
+
 			System.out.println("Veuillez choisir le numéro de l'ordinateur ");
 			printComputerList(computers, true);
-			
-			Scanner scanner=new Scanner(System.in);
-			System.out.println("choisir un numéro entre 0 et "+(computers.size()-1)+" >");
-			int index=scanner.nextInt();
-			
-			Computer selectedComputer=computers.get(index); 
-			
+
+			Scanner scanner = new Scanner(System.in);
+			System.out.println("choisir un numéro entre 0 et " + (computers.size() - 1) + " >");
+			int index = scanner.nextInt();
+
+			Computer selectedComputer = computers.get(index);
+
 			System.out.println("**** detailles ****");
 			System.out.println(selectedComputer);
-			System.out.println("[nom: "+selectedComputer.getName()
-			+" date de creation: "+selectedComputer.getIntroduced()
-			+" date de retrait: "+selectedComputer.getDiscontinued()+"]");
+			System.out.println(
+					"[nom: " + selectedComputer.getName() + " date de creation: " + selectedComputer.getIntroduced()
+							+ " date de retrait: " + selectedComputer.getDiscontinued() + "]");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	/**
-	 * print list of all companies  in database
-	 * @param dao: object given access to companies table in database  
+	 * print list of all companies in database
+	 * 
+	 * @param dao: object given access to companies table in database
 	 */
 	public static void listCompaniesHandler(CompanyDao dao) {
 		IListCompaniesService lisctCompaniesService = new ListCompaniesService(dao);
 		List<Company> companies;
 		try {
 			companies = lisctCompaniesService.getAll();
-			printCompanies(companies);
+			printCompaniesWithIndex(companies, false);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private static void printCompanies(List<Company> companies) {
-		ListIterator<Company> listIterator=companies.listIterator();
-		while(listIterator.hasNext()) {
-			System.out.println(listIterator.next());
-		}
-		
-	}
-
 	/**
-	 * print list of all computers in database 
+	 * print list of all computers in database
+	 * 
 	 * @param dao : object given access to computers table in database
 	 */
 	public static void listComputersHandler(ComputerDao dao) {
-		IListComputersService listComputersService=new ListComputersService(dao);
+		IListComputersService listComputersService = new ListComputersService(dao);
 		List<Computer> computers;
 		try {
 			computers = listComputersService.getAll();
-			printComputerList(computers,false);
+			printComputerList(computers, false);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -191,71 +171,105 @@ public class App
 	 * 
 	 * @param computers
 	 */
-	private static void printComputerList(List<Computer> computers,boolean withIndex) {
-		ListIterator<Computer> listIterator=computers.listIterator();
-		int index=0;
-		while(listIterator.hasNext()) {
-			if(withIndex)System.out.println("["+(index++)+"]"+" : "+listIterator.next());
-			else System.out.println(listIterator.next());
+	private static void printComputerList(List<Computer> computers, boolean withIndex) {
+		ListIterator<Computer> listIterator = computers.listIterator();
+		int index = 0;
+		while (listIterator.hasNext()) {
+			if (withIndex)
+				System.out.println("[" + (index++) + "]" + " : " + listIterator.next());
+			else
+				System.out.println(listIterator.next());
 		}
 	}
 
 	/**
 	 * 
+	 * @param companies
+	 * @param withIndex
+	 */
+	private static void printCompaniesWithIndex(List<Company> companies, boolean withIndex) {
+		ListIterator<Company> listIterator = companies.listIterator();
+		int index = 0;
+		while (listIterator.hasNext()) {
+			if (withIndex)
+				System.out.println("[" + (index++) + "]" + " : " + listIterator.next());
+			else
+				System.out.println(listIterator.next());
+		}
+
+	}
+
+	/**
+	 * 
 	 * @param companyDao
-	 * @return
 	 * @throws ParseException
 	 * @throws SQLException
 	 */
-	public static Computer getComputerParamettersFromUser(CompanyDao companyDao) throws ParseException, SQLException {
-		//TODO Refactoring
-		Scanner scanner=new Scanner(System.in);
-		System.out.println("Veuillez renseignez les informations suivantes :");
-		System.out.print("nom >");
-		String name=scanner.nextLine();
-		System.out.print("date de creation au format yyyy-mm-dd >");
-		String strDate=scanner.next().concat(" 0:0:0.0");
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-		Timestamp introducedTimestamp=CdbUtil.strDateToTimestamp(strDate, dateFormat);
-		System.out.print("date de Production au format yyyy-mm-dd >");
-		strDate=scanner.next().concat(" 0:0:0.0");
-		Timestamp discontunedTimestamp=CdbUtil.strDateToTimestamp(strDate, dateFormat);
-		System.out.println("veuillez indiquer le numéro de la compagnie");
-		List<Company> companies=companyDao.findAll();
-		ListIterator<Company> listIterator=companies.listIterator();
-		Company current;int index=0;
-		while(listIterator.hasNext()) {
-			current=listIterator.next();
-			System.out.println((index++)+":"+current);
+	public static void createComputerHandler(CompanyDao companyDao, ComputerDao computerDao) {
+		IListCompaniesService listCompaniesService = new ListCompaniesService(companyDao);
+		ICreateComputerService createComputerService = new CreateComputerService(computerDao);
+
+		Scanner scanner = new Scanner(System.in);
+
+		List<Company> companies;
+		try {
+			// get computer informations
+			System.out.println("Veuillez renseignez les informations suivantes :");
+			System.out.print("nom >");
+			String name = scanner.nextLine();
+			// get introduced date
+			System.out.print("date de creation au format yyyy-mm-dd >");
+			String strDate = scanner.next().concat(" 0:0:0.0");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+			Timestamp introducedTimestamp = CdbUtil.strDateToTimestamp(strDate, dateFormat);
+			System.out.print("date de Production au format yyyy-mm-dd >");
+			// get discontuned date
+			strDate = scanner.next().concat(" 0:0:0.0");
+			Timestamp discontunedTimestamp = CdbUtil.strDateToTimestamp(strDate, dateFormat);
+			// get companyId
+			System.out.println("veuillez indiquer le numéro de la compagnie");
+			companies = listCompaniesService.getAll();
+			printCompaniesWithIndex(companies, true);
+
+			System.out.println("compagnie entre 0 et " + (companies.size() - 1) + " >");
+			int index = scanner.nextInt();
+
+			Computer computer = new Computer(0L, name, introducedTimestamp, discontunedTimestamp,
+					companies.get(index).getId());
+
+			createComputerService.createComputer(computer);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IDCompanyNotFoundException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			System.out.println("la date n'est pas ne correspond pas au format requis ");
+			e.printStackTrace();
 		}
-		System.out.println("compagnie entre 0 et "+(companies.size()-1)+" >");
-		index=scanner.nextInt();
-		Computer computer=new Computer(0L, name, introducedTimestamp, discontunedTimestamp,companies.get(index).getId());
-		return computer;
 	}
 
 	/**
 	 * 
 	 * @param computerDao
 	 */
-	public static void deleteComputerHandler(ComputerDao computerDao){
-		IListComputersService listComputersService=new ListComputersService(computerDao);
-		IDeleteService deleteComputerService= new DeleteComputerService(computerDao);
+	public static void deleteComputerHandler(ComputerDao computerDao) {
+		IListComputersService listComputersService = new ListComputersService(computerDao);
+		IDeleteService deleteComputerService = new DeleteComputerService(computerDao);
 		List<Computer> computers;
 		try {
-			//get list of computers in database
+			// get list of computers in database
 			computers = listComputersService.getAll();
 			System.out.println("Veuillez sélectionner le numéro de l'ordinateur à supprimer");
-			//shwo user list of computers with index for each computer
+			// shwo user list of computers with index for each computer
 			printComputerList(computers, true);
-			System.out.println("Numéro compris entre 0 et "+(computers.size()-1)+" >");
-			//get the position of selected computer
-			Scanner scanner=new Scanner(System.in);
-			int index=scanner.nextInt();
-			//delete selected  computer from database
+			System.out.println("Numéro compris entre 0 et " + (computers.size() - 1) + " >");
+			// get the position of selected computer
+			Scanner scanner = new Scanner(System.in);
+			int index = scanner.nextInt();
+			// delete selected computer from database
 			deleteComputerService.delete(computers.get(index).getId());
-			//scanner.close();
-			
+			// scanner.close();
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
