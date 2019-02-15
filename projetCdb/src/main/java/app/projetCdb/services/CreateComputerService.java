@@ -6,6 +6,11 @@ import app.projetCdb.dao.ComputerDao;
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Computer;
 
+/**
+ * Service to create a new computer in database
+ * @author chris_moyikoulou
+ *
+ */
 public class CreateComputerService implements ICreateComputerService {
 	private ComputerDao computerDao;
 
@@ -17,11 +22,9 @@ public class CreateComputerService implements ICreateComputerService {
 		this.computerDao = computerDao;
 	}
 
-
-
 	public CreateComputerService(ComputerDao computerDao) {
 		this.computerDao = computerDao;
-	} 
+	}
 
 	@Override
 	public void createComputer(Computer computer) throws IDCompanyNotFoundException, SQLException {

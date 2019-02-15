@@ -26,7 +26,6 @@ import app.projetCdb.services.IListComputersService;
 import app.projetCdb.services.ListCompaniesService;
 import app.projetCdb.services.ListComputersService;
 
-
 public class App {
 	/* Menu selections */
 	private final static int LIST_COMPUTERS = 1;
@@ -38,10 +37,10 @@ public class App {
 	private final static int EXIT = 7;
 
 	public static void main(String[] args) {
-		//objects to interact with database
+		// objects to interact with database
 		CompanyDao companyDao = new CompanyDao(DbAccess.getInstance());
 		ComputerDao computerDao = new ComputerDao(DbAccess.getInstance());
-		//show user interface
+		// show user interface
 		showCdbUi(companyDao, computerDao);
 
 	}
@@ -56,7 +55,7 @@ public class App {
 		int userChoice = 0;
 		Scanner scanner = new Scanner(System.in);
 		while (!fin) {
-			//show user selection menu 
+			// show user selection menu
 			showMenu();
 			userChoice = scanner.nextInt();
 			while (userChoice < 1 || userChoice > 7) {
@@ -75,7 +74,7 @@ public class App {
 				createComputerHandler(companyDao, computerDao);
 				break;
 			case UPDATE_COMPUTER:
-				//Uncompleted feature
+				// Uncompleted feature
 				System.out.println("fonctionnalité non implémenté totalement");
 				break;
 			case DELETE_COMPUTER:
@@ -116,6 +115,7 @@ public class App {
 
 	/**
 	 * show details of a selected computer on console
+	 * 
 	 * @param computerDao
 	 */
 	private static void showComputerDetailsHandler(ComputerDao computerDao) {
@@ -126,7 +126,7 @@ public class App {
 			computers = listComputersService.getAll();
 			System.out.println("Veuillez choisir le numéro de l'ordinateur ");
 			printComputerList(computers, true);
-			
+
 			Scanner scanner = new Scanner(System.in);
 			System.out.println("choisir un numéro entre 0 et " + (computers.size() - 1) + " >");
 			int index = scanner.nextInt();
@@ -146,6 +146,7 @@ public class App {
 
 	/**
 	 * print list of all companies in database
+	 * 
 	 * @param dao: object given access to companies table in database
 	 */
 	public static void listCompaniesHandler(CompanyDao dao) {
@@ -161,6 +162,7 @@ public class App {
 
 	/**
 	 * print list of all computers in database
+	 * 
 	 * @param dao : object given access to computers table in database
 	 */
 	public static void listComputersHandler(ComputerDao dao) {
@@ -176,7 +178,9 @@ public class App {
 
 	/**
 	 * print computers in console
-	 * @param withIndex indicates if the position of each computer must be concatenate with his string representation
+	 * 
+	 * @param withIndex indicates if the position of each computer must be
+	 *                  concatenate with his string representation
 	 * @param computers list of computers
 	 */
 	private static void printComputerList(List<Computer> computers, boolean withIndex) {
@@ -192,8 +196,10 @@ public class App {
 
 	/**
 	 * print companies in console
+	 * 
 	 * @param companies
-	 * @param withIndex indicates if the position of each company must be concatenate with his string representation
+	 * @param withIndex indicates if the position of each company must be
+	 *                  concatenate with his string representation
 	 */
 	private static void printCompaniesWithIndex(List<Company> companies, boolean withIndex) {
 		ListIterator<Company> listIterator = companies.listIterator();
@@ -209,6 +215,7 @@ public class App {
 
 	/**
 	 * Add a new computer in database
+	 * 
 	 * @param companyDao
 	 * @throws ParseException
 	 */
@@ -254,6 +261,7 @@ public class App {
 
 	/**
 	 * delete a computer from database
+	 * 
 	 * @param computerDao
 	 */
 	public static void deleteComputerHandler(ComputerDao computerDao) {

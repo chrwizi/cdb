@@ -2,7 +2,6 @@ package app.projetCdb.exceptions;
 
 public class IDCompanyNotFoundException extends Exception {
 
-
 	/**
 	 * 
 	 */
@@ -28,5 +27,5 @@ public class IDCompanyNotFoundException extends Exception {
 	public IDCompanyNotFoundException(Throwable cause) {
 		super(cause);
 	}
-	
+
 }
