@@ -1,4 +1,7 @@
 package app.projetCdb;
+/**
+ * cdbProject 
+ */
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -23,10 +26,7 @@ import app.projetCdb.services.IListComputersService;
 import app.projetCdb.services.ListCompaniesService;
 import app.projetCdb.services.ListComputersService;
 
-/**
- * Hello world!
- *
- */
+
 public class App {
 	/* Menu selections */
 	private final static int LIST_COMPUTERS = 1;
@@ -38,8 +38,10 @@ public class App {
 	private final static int EXIT = 7;
 
 	public static void main(String[] args) {
+		//objects to interact with database
 		CompanyDao companyDao = new CompanyDao(DbAccess.getInstance());
 		ComputerDao computerDao = new ComputerDao(DbAccess.getInstance());
+		//show user interface
 		showCdbUi(companyDao, computerDao);
 
 	}
@@ -49,11 +51,12 @@ public class App {
 	 * @param companyDao
 	 * @param computerDao
 	 */
-	public static void showCdbUi(CompanyDao companyDao, ComputerDao computerDao) {
+	private static void showCdbUi(CompanyDao companyDao, ComputerDao computerDao) {
 		boolean fin = false;
 		int userChoice = 0;
 		Scanner scanner = new Scanner(System.in);
 		while (!fin) {
+			//show user selection menu 
 			showMenu();
 			userChoice = scanner.nextInt();
 			while (userChoice < 1 || userChoice > 7) {
@@ -71,9 +74,9 @@ public class App {
 			case CREATE_COMPUTER:
 				createComputerHandler(companyDao, computerDao);
 				break;
-
 			case UPDATE_COMPUTER:
-
+				//Uncompleted feature
+				System.out.println("fonctionnalité non implémenté totalement");
 				break;
 			case DELETE_COMPUTER:
 				deleteComputerHandler(computerDao);
@@ -82,7 +85,7 @@ public class App {
 				showComputerDetailsHandler(computerDao);
 				break;
 			case EXIT:
-				fin = false;
+				fin = true;
 				break;
 			default:
 
@@ -92,6 +95,9 @@ public class App {
 		scanner.close();
 	}
 
+	/**
+	 * show the selection menu in console
+	 */
 	private static void showMenu() {
 		System.out.println();
 		System.out.println("---------------------------");
@@ -108,23 +114,26 @@ public class App {
 		System.out.println("Votre choix :");
 	}
 
+	/**
+	 * show details of a selected computer on console
+	 * @param computerDao
+	 */
 	private static void showComputerDetailsHandler(ComputerDao computerDao) {
 		IListComputersService listComputersService = new ListComputersService(computerDao);
 		List<Computer> computers;
 		try {
 			// get list of computers
 			computers = listComputersService.getAll();
-
 			System.out.println("Veuillez choisir le numéro de l'ordinateur ");
 			printComputerList(computers, true);
-
+			
 			Scanner scanner = new Scanner(System.in);
 			System.out.println("choisir un numéro entre 0 et " + (computers.size() - 1) + " >");
 			int index = scanner.nextInt();
 
 			Computer selectedComputer = computers.get(index);
 
-			System.out.println("**** detailles ****");
+			System.out.println("**** détailles ****");
 			System.out.println(selectedComputer);
 			System.out.println(
 					"[nom: " + selectedComputer.getName() + " date de creation: " + selectedComputer.getIntroduced()
@@ -137,7 +146,6 @@ public class App {
 
 	/**
 	 * print list of all companies in database
-	 * 
 	 * @param dao: object given access to companies table in database
 	 */
 	public static void listCompaniesHandler(CompanyDao dao) {
@@ -153,7 +161,6 @@ public class App {
 
 	/**
 	 * print list of all computers in database
-	 * 
 	 * @param dao : object given access to computers table in database
 	 */
 	public static void listComputersHandler(ComputerDao dao) {
@@ -168,8 +175,9 @@ public class App {
 	}
 
 	/**
-	 * 
-	 * @param computers
+	 * print computers in console
+	 * @param withIndex indicates if the position of each computer must be concatenate with his string representation
+	 * @param computers list of computers
 	 */
 	private static void printComputerList(List<Computer> computers, boolean withIndex) {
 		ListIterator<Computer> listIterator = computers.listIterator();
@@ -183,9 +191,9 @@ public class App {
 	}
 
 	/**
-	 * 
+	 * print companies in console
 	 * @param companies
-	 * @param withIndex
+	 * @param withIndex indicates if the position of each company must be concatenate with his string representation
 	 */
 	private static void printCompaniesWithIndex(List<Company> companies, boolean withIndex) {
 		ListIterator<Company> listIterator = companies.listIterator();
@@ -200,17 +208,14 @@ public class App {
 	}
 
 	/**
-	 * 
+	 * Add a new computer in database
 	 * @param companyDao
 	 * @throws ParseException
-	 * @throws SQLException
 	 */
 	public static void createComputerHandler(CompanyDao companyDao, ComputerDao computerDao) {
 		IListCompaniesService listCompaniesService = new ListCompaniesService(companyDao);
 		ICreateComputerService createComputerService = new CreateComputerService(computerDao);
-
 		Scanner scanner = new Scanner(System.in);
-
 		List<Company> companies;
 		try {
 			// get computer informations
@@ -226,17 +231,16 @@ public class App {
 			// get discontuned date
 			strDate = scanner.next().concat(" 0:0:0.0");
 			Timestamp discontunedTimestamp = CdbUtil.strDateToTimestamp(strDate, dateFormat);
-			// get companyId
+			// get company of computer
 			System.out.println("veuillez indiquer le numéro de la compagnie");
 			companies = listCompaniesService.getAll();
 			printCompaniesWithIndex(companies, true);
-
 			System.out.println("compagnie entre 0 et " + (companies.size() - 1) + " >");
 			int index = scanner.nextInt();
-
+			// creation of new computer
 			Computer computer = new Computer(0L, name, introducedTimestamp, discontunedTimestamp,
 					companies.get(index).getId());
-
+			// add computer in database
 			createComputerService.createComputer(computer);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -249,7 +253,7 @@ public class App {
 	}
 
 	/**
-	 * 
+	 * delete a computer from database
 	 * @param computerDao
 	 */
 	public static void deleteComputerHandler(ComputerDao computerDao) {
@@ -260,7 +264,7 @@ public class App {
 			// get list of computers in database
 			computers = listComputersService.getAll();
 			System.out.println("Veuillez sélectionner le numéro de l'ordinateur à supprimer");
-			// shwo user list of computers with index for each computer
+			// show user list of computers with index for each computer
 			printComputerList(computers, true);
 			System.out.println("Numéro compris entre 0 et " + (computers.size() - 1) + " >");
 			// get the position of selected computer
@@ -268,8 +272,6 @@ public class App {
 			int index = scanner.nextInt();
 			// delete selected computer from database
 			deleteComputerService.delete(computers.get(index).getId());
-			// scanner.close();
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

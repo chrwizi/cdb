@@ -7,11 +7,11 @@ import java.util.Date;
 public class CdbUtil {
 	
 	/**
-	 * 
-	 * @param date
-	 * @param dateFormat
-	 * @return
-	 * @throws ParseException
+	 * Convert date to timestamp
+	 * @param date : string representation of date 
+	 * @param dateFormat : format of string date given in parameter
+	 * @return the timestamp corresponding to date 
+	 * @throws ParseException if date and dateFormat don,t match 
 	 */
 	public static Timestamp strDateToTimestamp(String date,SimpleDateFormat dateFormat) throws ParseException {
 		Date parsedDate = dateFormat.parse(date);
