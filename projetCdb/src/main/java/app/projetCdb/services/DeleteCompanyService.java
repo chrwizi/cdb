@@ -1,21 +1,21 @@
 package app.projetCdb.services;
 
 import java.sql.SQLException;
-import app.projetCdb.dao.CompanyDao;
+
 
 public class DeleteCompanyService implements IDeleteService {
-	private CompanyDao CompanyDao;
+	private app.projetCdb.dao.CompanyDao CompanyDao;
 
-	public DeleteCompanyService(CompanyDao companyDao) {
+	public DeleteCompanyService(app.projetCdb.dao.CompanyDao companyDao) {
 		super();
 		CompanyDao = companyDao;
 	}
 
-	public CompanyDao getCompanyDao() {
+	public app.projetCdb.dao.CompanyDao getCompanyDao() {
 		return CompanyDao;
 	}
 
-	public void setCompanyDao(CompanyDao companyDao) {
+	public void setCompanyDao(app.projetCdb.dao.CompanyDao companyDao) {
 		CompanyDao = companyDao;
 	}
 

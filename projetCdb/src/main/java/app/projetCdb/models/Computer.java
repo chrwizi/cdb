@@ -1,17 +1,17 @@
 package app.projetCdb.models;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 public class Computer {
 	private Long id;
 	private String name	;
-	private Timestamp introduced;
-	private Timestamp discontinued	;
+	private Date introduced;
+	private Date discontinued	;
 	private Long companyID;
 	
 	
 	
-	public Computer(Long id, String name, Timestamp introduced, Timestamp discontinued, Long company_id) {
+	public Computer(Long id, String name, Date introduced, Date discontinued, Long company_id) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -33,16 +33,16 @@ public class Computer {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Timestamp getIntroduced() {
+	public Date getIntroduced() {
 		return introduced;
 	}
-	public void setIntroduced(Timestamp introduced) {
+	public void setIntroduced(Date introduced) {
 		this.introduced = introduced;
 	}
-	public Timestamp getDiscontinued() {
+	public Date getDiscontinued() {
 		return discontinued;
 	}
-	public void setDiscontinued(Timestamp discontinued) {
+	public void setDiscontinued(Date discontinued) {
 		this.discontinued = discontinued;
 	}
 	public Long getCompany_id() {

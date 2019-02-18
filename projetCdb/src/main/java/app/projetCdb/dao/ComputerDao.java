@@ -1,11 +1,15 @@
 package app.projetCdb.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalLong;
 
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Computer;
@@ -21,10 +25,23 @@ public class ComputerDao {
 	private final static String FIELD_4 = "discontinued";
 	private final static String FIELD_5 = "company_id";
 
+	/* Queries */
+	private final static String CREATE_QUERY = "INSERT INTO " + TABLE + "(" + FIELD_2 + "," + FIELD_3 + "," + FIELD_4
+			+ "," + FIELD_5 + ") " + "VALUES (?,?,?,?)";
+	private final static String DELETE_QUERY = "DELETE FROM " + TABLE + " WHERE " + FIELD_1 + " =?";
+
+	private final static String UPDATE_QUERY = "UPDATE " + TABLE + " SET " + FIELD_2 + "=?, " + FIELD_3 + "=?, "
+			+ FIELD_4 + "=?," + "," + FIELD_5 + "=?, " + " WHERE " + FIELD_1 + "=?)";
+
+	private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + "WHERE " + FIELD_1 + "=?";
+
+	
+	
+	
 	public ComputerDao(IDbAccess access) {
-		super();
 		this.access = access;
 	}
+
 
 	/**
 	 * Add computer given in parameter in computers table
@@ -34,17 +51,24 @@ public class ComputerDao {
 	 * @throws IDCompanyNotFoundException if the Id of company given in parameter
 	 *                                    don't exit in Companies table
 	 */
-	public void add(Computer computer) throws SQLException, IDCompanyNotFoundException {
+	public OptionalLong add(Computer computer) throws SQLException, IDCompanyNotFoundException {
 		Connection connection = access.getConnection();
-		String query = "INSERT INTO " + TABLE + "(" + FIELD_2 + "," + FIELD_3 + "," + FIELD_4 + "," + FIELD_5 + ") "
-				+ "VALUES ('" + computer.getName() + "'" + ",'" + computer.getIntroduced() + "'" + ",'"
-				+ computer.getDiscontinued() + "'" + ",'" + computer.getCompany_id() + "')";
-
-		Statement statement = connection.createStatement();
-		System.out.println(query);
-		statement.executeUpdate(query);
+		// prepare statement
+		PreparedStatement preparedstatement = connection.prepareStatement(CREATE_QUERY,
+				Statement.RETURN_GENERATED_KEYS);
+		// set statement parametters
+		preparedstatement.setString(1, computer.getName());
+		preparedstatement.setDate(2, (Date) computer.getIntroduced());
+		preparedstatement.setDate(3, (Date) computer.getDiscontinued());
+		preparedstatement.setLong(4, computer.getCompany_id());
+		// execute statement
+		preparedstatement.executeUpdate();
+		ResultSet keyResult = preparedstatement.getGeneratedKeys();
+		OptionalLong optionalId = OptionalLong.empty();
+		if (keyResult.first())
+			OptionalLong.of(keyResult.getLong(1));
 		connection.close();
-		// }
+		return optionalId;
 	}
 
 	/**
@@ -62,15 +86,53 @@ public class ComputerDao {
 		return results.first() ? true : false;
 	}
 
-	public void update(Computer computer) throws SQLException {
-		Connection connection = access.getConnection();
-		String query = "UPDATE " + TABLE + " SET " + FIELD_2 + "='" + computer.getName() + "'" + "," + FIELD_3 + "='"
-				+ computer.getIntroduced() + "'" + "," + FIELD_4 + "='" + computer.getDiscontinued() + "'" + ","
-				+ FIELD_5 + "='" + computer.getCompany_id() + "'" + " WHERE " + FIELD_1 + "=" + computer.getId() + ")";
-		Statement statement = connection.createStatement();
-		statement.executeUpdate(query);
-		connection.close();
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public Optional<Computer> findById(long id) {
+		Optional<Computer> optional = Optional.empty();
+		Connection connection;
+		try {
+			connection = access.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY,
+					Statement.RETURN_GENERATED_KEYS);
+			preparedStatement.setLong(1, id);
+			// execute statement
+			ResultSet resultSet = preparedStatement.executeQuery();
+			if (resultSet.first()) {
+				optional = Optional.of(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
+						resultSet.getDate(FIELD_3), resultSet.getDate(FIELD_4), resultSet.getLong(FIELD_5)));
 
+			}
+			connection.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return optional;
+
+	}
+
+	public OptionalLong update(Computer computer) throws SQLException {
+		Connection connection = access.getConnection();
+		// prepare statement
+		PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY,
+				Statement.RETURN_GENERATED_KEYS);
+		preparedStatement.setString(1, computer.getName());
+		preparedStatement.setDate(2, (Date) computer.getIntroduced());
+		preparedStatement.setDate(3, (Date) computer.getDiscontinued());
+		preparedStatement.setLong(4, computer.getId());
+		// execute
+		preparedStatement.executeUpdate();
+		// get updated computer id
+		ResultSet keyResult = preparedStatement.getGeneratedKeys();
+		OptionalLong optionalId = OptionalLong.empty();
+		if (keyResult.first())
+			OptionalLong.of(keyResult.getLong(1));
+		connection.close();
+		return optionalId;
 	}
 
 	/**
@@ -80,10 +142,11 @@ public class ComputerDao {
 	 * @throws SQLException if connection to database failure
 	 */
 	public void delete(Long id) throws SQLException {
-		String query = "DELETE FROM " + TABLE + " WHERE " + FIELD_1 + " =" + id;
 		Connection connection = access.getConnection();
-		Statement statement = connection.createStatement();
-		statement.executeUpdate(query);
+		PreparedStatement preparedStatement = connection.prepareStatement(DELETE_QUERY,
+				Statement.RETURN_GENERATED_KEYS);
+		preparedStatement.setLong(1, id);
+		preparedStatement.executeUpdate();
 		connection.close();
 	}
 
@@ -100,7 +163,7 @@ public class ComputerDao {
 		ResultSet resultSet = statement.executeQuery(query);
 		while (resultSet.next()) {
 			computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-					resultSet.getTimestamp(FIELD_3), resultSet.getTimestamp(FIELD_4), resultSet.getLong(FIELD_5)));
+					resultSet.getDate(FIELD_3), resultSet.getDate(FIELD_4), resultSet.getLong(FIELD_5)));
 		}
 		return computers;
 	}
