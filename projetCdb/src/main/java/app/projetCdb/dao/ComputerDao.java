@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public class ComputerDao {
 	private final static String UPDATE_QUERY = "UPDATE " + TABLE + " SET " + FIELD_2 + "=?, " + FIELD_3 + "=?, "
 			+ FIELD_4 + "=?," + "," + FIELD_5 + "=?, " + " WHERE " + FIELD_1 + "=?)";
 
-	private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + "WHERE " + FIELD_1 + "=?";
+	private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + " WHERE " + FIELD_1 + " = ? ";
 
 	
 	
@@ -58,15 +59,15 @@ public class ComputerDao {
 				Statement.RETURN_GENERATED_KEYS);
 		// set statement parametters
 		preparedstatement.setString(1, computer.getName());
-		preparedstatement.setDate(2, (Date) computer.getIntroduced());
-		preparedstatement.setDate(3, (Date) computer.getDiscontinued());
+		preparedstatement.setTimestamp(2,new Timestamp( computer.getIntroduced().getTime()));
+		preparedstatement.setTimestamp(3,new Timestamp( computer.getDiscontinued().getTime()));
 		preparedstatement.setLong(4, computer.getCompany_id());
 		// execute statement
 		preparedstatement.executeUpdate();
 		ResultSet keyResult = preparedstatement.getGeneratedKeys();
 		OptionalLong optionalId = OptionalLong.empty();
 		if (keyResult.first())
-			OptionalLong.of(keyResult.getLong(1));
+			optionalId=OptionalLong.of(keyResult.getLong(1));
 		connection.close();
 		return optionalId;
 	}
@@ -103,7 +104,8 @@ public class ComputerDao {
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if (resultSet.first()) {
 				optional = Optional.of(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						resultSet.getDate(FIELD_3), resultSet.getDate(FIELD_4), resultSet.getLong(FIELD_5)));
+						new java.util.Date(resultSet.getTimestamp(FIELD_3).getTime()), 
+						new java.util.Date(resultSet.getDate(FIELD_4).getTime()), resultSet.getLong(FIELD_5)));
 
 			}
 			connection.close();
