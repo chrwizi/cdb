@@ -157,9 +157,11 @@ public class ComputerDao {
 	 * @return list of all computers in database
 	 * @throws SQLException
 	 */
-	public List<Computer> findAll() throws SQLException {
+	public Optional<List<Computer>> findAll() throws SQLException {
 		String query = "SELECT * FROM " + TABLE;
 		ArrayList<Computer> computers = new ArrayList<Computer>();
+		
+		
 		Connection connection = access.getConnection();
 		Statement statement = connection.createStatement();
 		ResultSet resultSet = statement.executeQuery(query);
@@ -167,7 +169,7 @@ public class ComputerDao {
 			computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
 					resultSet.getDate(FIELD_3), resultSet.getDate(FIELD_4), resultSet.getLong(FIELD_5)));
 		}
-		return computers;
+		return (computers.isEmpty())?Optional.empty():Optional.of((computers));
 	}
 
 }

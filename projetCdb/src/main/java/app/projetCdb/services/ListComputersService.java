@@ -1,7 +1,9 @@
 package app.projetCdb.services;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import app.projetCdb.models.Computer;
 import app.projetCdb.dao.ComputerDao;
@@ -31,8 +33,8 @@ public class ListComputersService implements IListComputersService {
 	 * @return list of all computers in database
 	 */
 	public List<Computer> getAll() throws SQLException {
-		System.out.println("inside getAll");
-		return computerDao.findAll();
-	}
+		Optional<List<Computer>>computersOptional=computerDao.findAll();
+		return (computersOptional.isPresent()?computersOptional.get():new ArrayList<Computer>());
+	} 
 
 }
