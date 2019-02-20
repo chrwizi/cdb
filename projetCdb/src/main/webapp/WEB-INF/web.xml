@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE web-app
+	PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.5//EN"
+	"http://java.sun.com/dtd/web-app_2_5.dtd">
+<web-app>
+	<jsp-config>
+		<jsp-properety-groupp>
+			<url-pattern>*.jsp</url-pattern>
+			<include-prelude>/WEB-INF/taglibs.jsp</include-prelude>
+		</jsp-properety-groupp> 
+	</jsp-config>
+</web-app>

@@ -2,9 +2,9 @@ package app.projetCdb.services;
 
 import java.sql.SQLException;
 
-import app.projetCdb.dao.ComputerDao;
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Computer;
+import app.projetCdb.persistance.ComputerDao;
 
 /**
  * Service to create a new computer in database
@@ -17,7 +17,7 @@ public class CreateComputerService implements ICreateComputerService {
 	public ComputerDao getComputerDao() {
 		return computerDao;
 	}
-
+ 
 	public void setComputerDao(ComputerDao computerDao) {
 		this.computerDao = computerDao;
 	}

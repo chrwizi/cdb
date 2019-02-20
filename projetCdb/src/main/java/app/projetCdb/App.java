@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Scanner;
 
-import app.projetCdb.dao.CompanyDao;
-import app.projetCdb.dao.ComputerDao;
-import app.projetCdb.dao.DbAccess;
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
+import app.projetCdb.persistance.CompanyDao;
+import app.projetCdb.persistance.ComputerDao;
+import app.projetCdb.persistance.DbAccess;
 import app.projetCdb.services.CreateComputerService;
 import app.projetCdb.services.DeleteComputerService;
 import app.projetCdb.services.ICreateComputerService;

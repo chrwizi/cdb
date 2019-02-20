@@ -3,8 +3,8 @@ package app.projetCdb.services;
 import java.sql.SQLException;
 import java.util.List;
 
-import app.projetCdb.dao.CompanyDao;
 import app.projetCdb.models.Company;
+import app.projetCdb.persistance.CompanyDao;
 
 public class ListCompaniesService implements IListCompaniesService {
 	private CompanyDao CompanyDao;

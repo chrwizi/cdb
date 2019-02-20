@@ -2,7 +2,8 @@ package app.projetCdb.services;
 
 import java.sql.SQLException;
 
-import app.projetCdb.dao.ComputerDao;
+import app.projetCdb.persistance.ComputerDao;
+
 
 public class DeleteComputerService implements IDeleteService {
 	private ComputerDao computerDao;
