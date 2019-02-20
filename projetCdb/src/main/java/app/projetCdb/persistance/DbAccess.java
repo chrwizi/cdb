@@ -1,4 +1,4 @@
-package app.projetCdb.dao;
+package app.projetCdb.persistance;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,7 +8,8 @@ import java.sql.SQLException;
 public class DbAccess implements IDbAccess{
 	private static DbAccess instance=new DbAccess();
 	private static String DRIVER="com.mysql.cj.jdbc.Driver";
-	private static String URL="jdbc:mysql://localhost:3306/computer-database-db?zeroDateTimeBehavior=convertToNull&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+	private static String URL="jdbc:mysql://localhost:3306/computer-database-db?zeroDateTimeBehavior=convertToNull";
+	//&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 	private static String LOGIN="admincdb";
 	private static String PASSWORD="qwerty1234"; 
 

@@ -246,7 +246,7 @@ public class App {
 			int index = scanner.nextInt();
 			// creation of new computer
 			Computer computer = new Computer(0L, name, introducedTimestamp, discontunedTimestamp,
-					companies.get(index).getId());
+					new Company(companies.get(index).getId(),companies.get(index).getName()));
 			// add computer in database
 			createComputerService.createComputer(computer);
 		} catch (SQLException e) {

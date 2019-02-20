@@ -1,4 +1,4 @@
-package app.projetCdb.dao;
+package app.projetCdb.persistance;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -84,6 +84,7 @@ public class CompanyDao {
 				//there is a result
 				optional=Optional.of(new Company(resultSet.getLong(FIELD_1),resultSet.getString(FIELD_2)));
 			}
+			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -105,6 +106,7 @@ public class CompanyDao {
 		String query = "SELECT * FROM " + TABLE + "WHERE " + FIELD_1 + "=" + id;
 		Statement statement = connection.createStatement();
 		ResultSet results = statement.executeQuery(query);
+		connection.close();
 		return results.first() ? true : false;
 	}
 

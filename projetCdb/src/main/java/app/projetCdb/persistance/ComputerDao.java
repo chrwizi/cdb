@@ -1,4 +1,4 @@
-package app.projetCdb.dao;
+package app.projetCdb.persistance;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -13,10 +13,12 @@ import java.util.Optional;
 import java.util.OptionalLong;
 
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
+import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
 
 public class ComputerDao {
 	private IDbAccess access = DbAccess.getInstance();
+	private CompanyDao companyDao;
 	/* Name table */
 	private final static String TABLE = "computer";
 	/* fields table */
@@ -41,6 +43,7 @@ public class ComputerDao {
 	
 	public ComputerDao(IDbAccess access) {
 		this.access = access;
+		companyDao=new CompanyDao(access);
 	}
 
 
@@ -61,7 +64,7 @@ public class ComputerDao {
 		preparedstatement.setString(1, computer.getName());
 		preparedstatement.setTimestamp(2,new Timestamp( computer.getIntroduced().getTime()));
 		preparedstatement.setTimestamp(3,new Timestamp( computer.getDiscontinued().getTime()));
-		preparedstatement.setLong(4, computer.getCompany_id());
+		preparedstatement.setLong(4, computer.getCompany().getId());
 		// execute statement
 		preparedstatement.executeUpdate();
 		ResultSet keyResult = preparedstatement.getGeneratedKeys();
@@ -103,9 +106,13 @@ public class ComputerDao {
 			// execute statement
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if (resultSet.first()) {
-				optional = Optional.of(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						new java.util.Date(resultSet.getTimestamp(FIELD_3).getTime()), 
-						new java.util.Date(resultSet.getDate(FIELD_4).getTime()), resultSet.getLong(FIELD_5)));
+				Optional<Company> optionalCompany=companyDao.findById(resultSet.getLong(FIELD_5));
+				if(optionalCompany.isPresent()) {
+					optional = Optional.of(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
+							new java.util.Date(resultSet.getTimestamp(FIELD_3).getTime()), 
+							new java.util.Date(resultSet.getDate(FIELD_4).getTime()), optionalCompany.get()));
+				}
+				
 
 			}
 			connection.close();
@@ -166,9 +173,14 @@ public class ComputerDao {
 		Statement statement = connection.createStatement();
 		ResultSet resultSet = statement.executeQuery(query);
 		while (resultSet.next()) {
+			Optional<Company> optionalCompany=companyDao.findById(resultSet.getLong(FIELD_5));
+			System.out.println("\n\n>>>>>>>>>>>>>>>>>>\n\n");
+			if(optionalCompany.isPresent())
+				
 			computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-					resultSet.getDate(FIELD_3), resultSet.getDate(FIELD_4), resultSet.getLong(FIELD_5)));
+					resultSet.getDate(FIELD_3), resultSet.getDate(FIELD_4), optionalCompany.get()));
 		}
+		connection.close();
 		return (computers.isEmpty())?Optional.empty():Optional.of((computers));
 	}
 

@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.ComputerDao;
 import app.projetCdb.persistance.DbAccess;
+import app.projetCdb.persistance.dto.ComputerDto;
+import app.projetCdb.persistance.dto.IMapperComputerDto;
+import app.projetCdb.persistance.dto.MapperComputer;
 import app.projetCdb.services.IListComputersService;
 import app.projetCdb.services.ListComputersService;
    
@@ -25,18 +28,24 @@ public class Homeservlet extends HttpServlet {
 	
 	private ComputerDao computerDao=new ComputerDao(DbAccess.getInstance());
 	private IListComputersService listcomputerSService = new ListComputersService(computerDao);
-	
+	private IMapperComputerDto mapper=new MapperComputer();
+			
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			ArrayList<Computer>computersList=(ArrayList<Computer>) listcomputerSService.getAll();
 			
-			ArrayList<Computer>computers=new ArrayList<Computer> ();
-			computers.add(computersList.get(0));
-			computers.add(computersList.get(1));
-			computers.add(computersList.get(2));
-			computers.add(computersList.get(3));
-			computers.add(computersList.get(4));
+			ArrayList<Computer>computersSubList=new ArrayList<Computer> ();
+			
+			computersSubList.add(computersList.get(0));
+			computersSubList.add(computersList.get(1));
+			computersSubList.add(computersList.get(2));
+			computersSubList.add(computersList.get(3));
+			computersSubList.add(computersList.get(4));
+			
+			ArrayList<ComputerDto> computers=(ArrayList<ComputerDto>) mapper.mapListComputer(computersSubList);
+			
+			
 			request.setAttribute("computers", computers);
 			request.setAttribute("nbComputers", computers.size());
 			

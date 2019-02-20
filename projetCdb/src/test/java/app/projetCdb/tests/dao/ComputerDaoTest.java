@@ -65,7 +65,7 @@ public class ComputerDaoTest {
 	@Test
 	public void testAddANewComputer() {
 		// DEFINE
-		Computer computer = new Computer(0L, "MonPc", new Date(), new Date(), companies.get(0).getId());
+		Computer computer = new Computer(0L, "MonPc", new Date(), new Date(), companies.get(0));
 		OptionalLong id = null;
 		// WHEN
 		try {

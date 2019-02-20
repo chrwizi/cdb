@@ -87,8 +87,8 @@
 									class="cb" value="0"></td>
 								<td>
 								<a href="editComputer.html">${computer.name}</a></td>
-								<td>2006-01-10</td>
-								<td></td>
+								<td>${empty computer.introduced?2:4}</td>
+								<td>${empty computer.discontinued?3:6}</td>
 								<td>${computer.getName()}</td>
 							</tr>
 						</c:forEach>
