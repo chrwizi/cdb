@@ -16,18 +16,18 @@ import app.projetCdb.persistance.DbAccess;
 import app.projetCdb.persistance.dto.ComputerDto;
 import app.projetCdb.persistance.dto.IMapperComputerDto;
 import app.projetCdb.persistance.dto.MapperComputer;
-import app.projetCdb.services.IListComputersService;
-import app.projetCdb.services.ListComputersService;
+import app.projetCdb.services.IComputerService;
+import app.projetCdb.services.ComputerServices;
    
 
-@WebServlet(name="cdb",urlPatterns="/cdb")
+@WebServlet(name="cdb",urlPatterns="/")
 public class Homeservlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private static final String REDIRECT_VIEW="/WEB-INF/dashboard.jsp";
 	
 	private ComputerDao computerDao=new ComputerDao(DbAccess.getInstance());
-	private IListComputersService listcomputerSService = new ListComputersService(computerDao);
+	private IComputerService listcomputerSService = new ComputerServices(computerDao);
 	private IMapperComputerDto mapper=new MapperComputer();
 			
 	@Override
@@ -42,6 +42,11 @@ public class Homeservlet extends HttpServlet {
 			computersSubList.add(computersList.get(2));
 			computersSubList.add(computersList.get(3));
 			computersSubList.add(computersList.get(4));
+			computersSubList.add(computersList.get(5));
+			computersSubList.add(computersList.get(6));
+			computersSubList.add(computersList.get(7));
+			computersSubList.add(computersList.get(8));
+			computersSubList.add(computersList.get(9));
 			
 			ArrayList<ComputerDto> computers=(ArrayList<ComputerDto>) mapper.mapListComputer(computersSubList);
 			

@@ -10,41 +10,42 @@ import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
 
 public class MapperComputer implements IMapperComputerDto {
-	private SimpleDateFormat computerDateFormat=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-	private SimpleDateFormat dtoDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+	private SimpleDateFormat computerDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+	private SimpleDateFormat dtoDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Override
 	public Computer mapDto(ComputerDto dto) {
 		if (dto == null)
 			return null;
-		
-		return new Computer(dto.getId(), dto.getName(), dto.getDiscontinued(), dto.getDiscontinued(),
-				new Company(dto.getCompanyId(), dto.getCompagny()));
-	}
-
-	
-	@Override
-	public ComputerDto mapComputer (Computer computer) {
-		if (computer == null)
-			return null;
-/*		Date parsedDate;
+		Date introduced = null;
+		Date discontinued = null;
 		try {
-			parsedDate = computerDateFormat.parse(computerDateFormat.format(computer.getIntroduced()));
-			System.out.println(parsedDate.toString());
+			introduced = computerDateFormat.parse(dto.getIntroduced().concat(" 0:0:0.0"));
+			discontinued = computerDateFormat.parse(dto.getDiscontinued().concat(" 0:0:0.0"));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		*/
-		return new ComputerDto(computer.getId(), computer.getName(), computer.getIntroduced(),
-				computer.getDiscontinued(), computer.getCompany().getName(), computer.getCompany().getId());
+		return new Computer(dto.getId(), dto.getName(), introduced, discontinued,
+				new Company(dto.getCompanyId(), dto.getCompany()));
+	}
+
+	@Override
+	public ComputerDto mapComputer(Computer computer) {
+		if (computer == null)
+			return null;
+		return new ComputerDto(computer.getId(), computer.getName(),
+				(computer.getIntroduced() != null) ? computer.getIntroduced().toString() : "unknow",
+				(computer.getDiscontinued() != null) ? computer.getDiscontinued().toString() : "unknow",
+				(computer.getCompany()!=null)?computer.getCompany().getName():"unknown", (computer.getCompany()!=null)?computer.getCompany().getId():0L);
+
 
 	}
 
 	@Override
 	public List<Computer> mapListDto(List<ComputerDto> listComputers) {
-		if(listComputers==null) return null;
-		ArrayList<Computer> computers=new ArrayList<Computer>();
+		if (listComputers == null)
+			return null;
+		ArrayList<Computer> computers = new ArrayList<Computer>();
 		for (ComputerDto dto : listComputers) {
 			computers.add(mapDto(dto));
 		}
@@ -53,14 +54,17 @@ public class MapperComputer implements IMapperComputerDto {
 
 	@Override
 	public List<ComputerDto> mapListComputer(List<Computer> listComputers) {
-		if(listComputers==null)return null;
-		ArrayList<ComputerDto> dto=new ArrayList<>();
-		for (Computer computer: listComputers) {
+		if (listComputers == null)
+			return null;
+		ArrayList<ComputerDto> dto = new ArrayList<>();
+		for (Computer computer : listComputers) {
 			dto.add(mapComputer(computer));
 		}
 		return dto;
 	}
-	
-	
+
+	public String DateToString() {
+		return null;
+	}
 
 }

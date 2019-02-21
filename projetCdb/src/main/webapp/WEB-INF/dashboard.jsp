@@ -23,7 +23,7 @@
 
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${nbComputers}computersfound</h1>
+			<h1 id="homeTitle">${nbComputers} computers found</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
@@ -47,12 +47,6 @@
 		</form>
 
 		<!--  Table -->
-		<%-- 		<section>
-			<c:forEach items="${computers}" var="computer">
-				<p>${computer.name}</p>
-			</c:forEach>
-
-		</section> --%>
 		<section>
 			<div class="container" style="margin-top: 10px;">
 				<table class="table table-striped table-bordered">
@@ -86,10 +80,10 @@
 								<td class="editMode"><input type="checkbox" name="cb"
 									class="cb" value="0"></td>
 								<td>
-								<a href="editComputer.html">${computer.name}</a></td>
-								<td>${empty computer.introduced?2:4}</td>
-								<td>${empty computer.discontinued?3:6}</td>
-								<td>${computer.getName()}</td>
+								<a href="/projetCdb/editComputer?idComputer=<c:out value="${computer.id}"/>">${computer.name}</a></td>
+								<td>${computer.introduced}</td>
+								<td>${computer.discontinued}</td>
+								<td>${computer.company}</td>
 							</tr>
 						</c:forEach>
 					</tbody>

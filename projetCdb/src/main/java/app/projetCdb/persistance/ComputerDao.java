@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
-
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
@@ -108,9 +107,15 @@ public class ComputerDao {
 					company = optionalCompany.get();
 
 				}
+				
+				Timestamp introduced=resultSet.getTimestamp(FIELD_3);
+				Timestamp discontinued=resultSet.getTimestamp(FIELD_4);
+
+				java.util.Date introDate=(introduced!=null)?new java.util.Date(introduced.getTime()):null;
+				java.util.Date discont=(discontinued!=null)?new java.util.Date(discontinued.getTime()):null;
+				
 				optional = Optional.of(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						new java.util.Date(resultSet.getTimestamp(FIELD_3).getTime()),
-						new java.util.Date(resultSet.getDate(FIELD_4).getTime()), company));
+						introDate,discont, company));
 
 			}
 			connection.close();
@@ -119,7 +124,6 @@ public class ComputerDao {
 			e.printStackTrace();
 		}
 		return optional;
-
 	}
 
 	public OptionalLong update(Computer computer) throws SQLException {

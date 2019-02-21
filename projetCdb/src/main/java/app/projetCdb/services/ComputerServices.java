@@ -12,10 +12,10 @@ import app.projetCdb.persistance.ComputerDao;
  * @author chris_moyikoulou
  *
  */
-public class ListComputersService implements IListComputersService {
+public class ComputerServices implements IComputerService {
 	private ComputerDao computerDao;
 
-	public ListComputersService(ComputerDao computerDao) {
+	public ComputerServices(ComputerDao computerDao) {
 		super();
 		this.computerDao = computerDao;
 	}
@@ -35,6 +35,13 @@ public class ListComputersService implements IListComputersService {
 	public List<Computer> getAll() throws SQLException {
 		Optional<List<Computer>>computersOptional=computerDao.findAll();
 		return (computersOptional.isPresent()?computersOptional.get():new ArrayList<Computer>());
-	} 
+	}
+
+	@Override
+	public Optional<Computer> finById(Long id) {
+		return this.computerDao.findById(id);
+	}
+
+	
 
 }

@@ -58,7 +58,7 @@ public class ComputerDaoTest {
 	public static void tearDown() {
 		// clean database
 		for (Company company : companies) {
-			// companyDao.delete(company.getId());
+			companyDao.delete(company.getId());
 		}
 	}
 
@@ -83,6 +83,36 @@ public class ComputerDaoTest {
 		} catch (IDCompanyNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Test
+	public void testFindByIdWithExistingComputer() {
+		//DEFINE
+		Computer computer = new Computer(0L, "MonPc", new Date(), new Date(), companies.get(0));
+		OptionalLong id = null;
+
+		//WHEN
+		try {
+			id = computerDao.add(computer);
+			computer.setId(id.getAsLong());
+			// THEN
+			if (id.isPresent()) {
+				Optional<Computer> optional = computerDao.findById(id.getAsLong());
+				//THEN
+				assertTrue(optional.isPresent());
+				assertEquals(computer, optional.get());
+				computerDao.delete(optional.get().getId());
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IDCompanyNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testFindByIdWithUnexistingComputer() {
+		
 
 	}
 

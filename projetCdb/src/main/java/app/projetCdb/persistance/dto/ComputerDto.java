@@ -5,23 +5,25 @@ import java.util.Date;
 public class ComputerDto {
 	private Long id;
 	private String name	;
-	private Date introduced;
-	private Date discontinued	;
-	private String compagny;
+	private String introduced;
+	private String discontinued	;
+	private String commpany;
 	private Long companyId;
 	
 	
 	
 	
 	
-	public ComputerDto(Long id, String name, Date introduced, Date discontinued, String compagny, Long companyId) {
+	public ComputerDto(Long id, String name, String introduced, String discontinued, String company, Long companyId) {
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
-		this.compagny = compagny;
+		this.commpany = company;
 		this.companyId = companyId;
 	}
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -34,23 +36,23 @@ public class ComputerDto {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Date getIntroduced() {
+	public String getIntroduced() {
 		return introduced;
 	}
-	public void setIntroduced(Date introduced) {
+	public void setIntroduced(String introduced) {
 		this.introduced = introduced;
 	}
-	public Date getDiscontinued() {
+	public String getDiscontinued() {
 		return discontinued;
 	}
-	public void setDiscontinued(Date discontinued) {
+	public void setDiscontinued(String discontinued) {
 		this.discontinued = discontinued;
 	}
-	public String getCompagny() {
-		return compagny;
+	public String getCompany() {
+		return commpany;
 	}
-	public void setCompagny(String compagny) {
-		this.compagny = compagny;
+	public void setCompany(String compagny) {
+		this.commpany = compagny;
 	}
 	public Long getCompanyId() {
 		return companyId;

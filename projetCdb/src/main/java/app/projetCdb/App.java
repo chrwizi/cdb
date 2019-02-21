@@ -22,9 +22,9 @@ import app.projetCdb.services.DeleteComputerService;
 import app.projetCdb.services.ICreateComputerService;
 import app.projetCdb.services.IDeleteService;
 import app.projetCdb.services.IListCompaniesService;
-import app.projetCdb.services.IListComputersService;
+import app.projetCdb.services.IComputerService;
 import app.projetCdb.services.ListCompaniesService;
-import app.projetCdb.services.ListComputersService;
+import app.projetCdb.services.ComputerServices;
 
 public class App {
 	/* Menu selections */
@@ -119,7 +119,7 @@ public class App {
 	 * @param computerDao
 	 */
 	private static void showComputerDetailsHandler(ComputerDao computerDao) {
-		IListComputersService listComputersService = new ListComputersService(computerDao);
+		IComputerService listComputersService = new ComputerServices(computerDao);
 		List<Computer> computers;
 		try {
 			// get list of computers
@@ -166,7 +166,7 @@ public class App {
 	 * @param dao : object given access to computers table in database
 	 */
 	public static void listComputersHandler(ComputerDao dao) {
-		IListComputersService listComputersService = new ListComputersService(dao);
+		IComputerService listComputersService = new ComputerServices(dao);
 		List<Computer> computers;
 		try {
 			computers = listComputersService.getAll();
@@ -265,7 +265,7 @@ public class App {
 	 * @param computerDao
 	 */
 	public static void deleteComputerHandler(ComputerDao computerDao) {
-		IListComputersService listComputersService = new ListComputersService(computerDao);
+		IComputerService listComputersService = new ComputerServices(computerDao);
 		IDeleteService deleteComputerService = new DeleteComputerService(computerDao);
 		List<Computer> computers;
 		try {
