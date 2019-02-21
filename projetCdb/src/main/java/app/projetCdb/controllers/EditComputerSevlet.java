@@ -28,7 +28,9 @@ public class EditComputerSevlet extends HttpServlet{
 	private static final String REDIRECT_COMPUTER_NOT_FOUND="/WEB-INF/500.jsp";
 	//database access
 	private ComputerDao computerDao=new ComputerDao(DbAccess.getInstance());
+	//services
 	private IComputerService computerService = new ComputerServices(computerDao);
+	
 	private IMapperComputerDto mapper=new MapperComputer();
 
 	@Override
