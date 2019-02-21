@@ -38,14 +38,10 @@ public class ComputerDao {
 
 	private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + " WHERE " + FIELD_1 + " = ? ";
 
-	
-	
-	
 	public ComputerDao(IDbAccess access) {
 		this.access = access;
-		companyDao=new CompanyDao(access);
+		companyDao = new CompanyDao(access);
 	}
-
 
 	/**
 	 * Add computer given in parameter in computers table
@@ -62,15 +58,15 @@ public class ComputerDao {
 				Statement.RETURN_GENERATED_KEYS);
 		// set statement parametters
 		preparedstatement.setString(1, computer.getName());
-		preparedstatement.setTimestamp(2,new Timestamp( computer.getIntroduced().getTime()));
-		preparedstatement.setTimestamp(3,new Timestamp( computer.getDiscontinued().getTime()));
+		preparedstatement.setTimestamp(2, new Timestamp(computer.getIntroduced().getTime()));
+		preparedstatement.setTimestamp(3, new Timestamp(computer.getDiscontinued().getTime()));
 		preparedstatement.setLong(4, computer.getCompany().getId());
 		// execute statement
 		preparedstatement.executeUpdate();
 		ResultSet keyResult = preparedstatement.getGeneratedKeys();
 		OptionalLong optionalId = OptionalLong.empty();
 		if (keyResult.first())
-			optionalId=OptionalLong.of(keyResult.getLong(1));
+			optionalId = OptionalLong.of(keyResult.getLong(1));
 		connection.close();
 		return optionalId;
 	}
@@ -106,13 +102,15 @@ public class ComputerDao {
 			// execute statement
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if (resultSet.first()) {
-				Optional<Company> optionalCompany=companyDao.findById(resultSet.getLong(FIELD_5));
-				if(optionalCompany.isPresent()) {
-					optional = Optional.of(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-							new java.util.Date(resultSet.getTimestamp(FIELD_3).getTime()), 
-							new java.util.Date(resultSet.getDate(FIELD_4).getTime()), optionalCompany.get()));
+				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FIELD_5));
+				Company company = null;
+				if (optionalCompany.isPresent()) {
+					company = optionalCompany.get();
+
 				}
-				
+				optional = Optional.of(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
+						new java.util.Date(resultSet.getTimestamp(FIELD_3).getTime()),
+						new java.util.Date(resultSet.getDate(FIELD_4).getTime()), company));
 
 			}
 			connection.close();
@@ -167,21 +165,20 @@ public class ComputerDao {
 	public Optional<List<Computer>> findAll() throws SQLException {
 		String query = "SELECT * FROM " + TABLE;
 		ArrayList<Computer> computers = new ArrayList<Computer>();
-		
-		
+
 		Connection connection = access.getConnection();
 		Statement statement = connection.createStatement();
 		ResultSet resultSet = statement.executeQuery(query);
 		while (resultSet.next()) {
-			Optional<Company> optionalCompany=companyDao.findById(resultSet.getLong(FIELD_5));
-			System.out.println("\n\n>>>>>>>>>>>>>>>>>>\n\n");
-			if(optionalCompany.isPresent())
-				
-			computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-					resultSet.getDate(FIELD_3), resultSet.getDate(FIELD_4), optionalCompany.get()));
+			Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FIELD_5));
+			Company company = null;
+			computers.add(
+					new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2), resultSet.getDate(FIELD_3),
+							resultSet.getDate(FIELD_4), optionalCompany.isPresent() ? optionalCompany.get() : company));
+
 		}
 		connection.close();
-		return (computers.isEmpty())?Optional.empty():Optional.of((computers));
+		return (computers.isEmpty()) ? Optional.empty() : Optional.of((computers));
 	}
 
 }

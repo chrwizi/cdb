@@ -73,10 +73,10 @@ public class CompanyDao {
 	
 	public Optional<Company> findById(Long id){
 		Optional<Company> optional=Optional.empty();
-		Connection connection;
+		Connection connection = null;
 		try {
 			connection = dbAccess.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY);
+			PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY);
 			preparedStatement.setLong(1, id);
 			// execute statement
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -84,9 +84,16 @@ public class CompanyDao {
 				//there is a result
 				optional=Optional.of(new Company(resultSet.getLong(FIELD_1),resultSet.getString(FIELD_2)));
 			}
-			connection.close();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+		finally {
+			try {
+				if(connection!=null)connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return optional;
 	}
