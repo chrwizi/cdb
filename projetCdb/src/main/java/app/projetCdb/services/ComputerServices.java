@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.ComputerDao;
 /**
@@ -40,6 +41,11 @@ public class ComputerServices implements IComputerService {
 	@Override
 	public Optional<Computer> finById(Long id) {
 		return this.computerDao.findById(id);
+	}
+	
+	@Override
+	public void createComputer(Computer computer) throws IDCompanyNotFoundException, SQLException {
+		computerDao.add(computer);
 	}
 
 	

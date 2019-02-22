@@ -36,9 +36,8 @@ public class MapperComputer implements IMapperComputerDto {
 		return new ComputerDto(computer.getId(), computer.getName(),
 				(computer.getIntroduced() != null) ? computer.getIntroduced().toString() : "unknow",
 				(computer.getDiscontinued() != null) ? computer.getDiscontinued().toString() : "unknow",
-				(computer.getCompany()!=null)?computer.getCompany().getName():"unknown", (computer.getCompany()!=null)?computer.getCompany().getId():0L);
-
-
+				(computer.getCompany() != null) ? computer.getCompany().getName() : "unknown",
+				(computer.getCompany() != null) ? computer.getCompany().getId() : 0L);
 	}
 
 	@Override
@@ -51,7 +50,7 @@ public class MapperComputer implements IMapperComputerDto {
 		}
 		return computers;
 	}
-
+ 
 	@Override
 	public List<ComputerDto> mapListComputer(List<Computer> listComputers) {
 		if (listComputers == null)

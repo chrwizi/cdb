@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Optional;
 import java.util.Scanner;
 
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
@@ -17,13 +18,9 @@ import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.CompanyDao;
 import app.projetCdb.persistance.ComputerDao;
 import app.projetCdb.persistance.DbAccess;
-import app.projetCdb.services.CreateComputerService;
-import app.projetCdb.services.DeleteComputerService;
-import app.projetCdb.services.ICreateComputerService;
-import app.projetCdb.services.IDeleteService;
-import app.projetCdb.services.IListCompaniesService;
+import app.projetCdb.services.ICompanyServices;
 import app.projetCdb.services.IComputerService;
-import app.projetCdb.services.ListCompaniesService;
+import app.projetCdb.services.CompanyService;
 import app.projetCdb.services.ComputerServices;
 
 public class App {
@@ -150,14 +147,11 @@ public class App {
 	 * @param dao: object given access to companies table in database
 	 */
 	public static void listCompaniesHandler(CompanyDao dao) {
-		IListCompaniesService lisctCompaniesService = new ListCompaniesService(dao);
-		List<Company> companies;
-		try {
-			companies = lisctCompaniesService.getAll();
-			printCompaniesWithIndex(companies, false);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		ICompanyServices lisctCompaniesService = new CompanyService(dao);
+		Optional<List<Company>> companies;
+		companies = lisctCompaniesService.getAll();
+		printCompaniesWithIndex(companies.get(), false);
+
 	}
 
 	/**
@@ -220,10 +214,10 @@ public class App {
 	 * @throws ParseException
 	 */
 	public static void createComputerHandler(CompanyDao companyDao, ComputerDao computerDao) {
-		IListCompaniesService listCompaniesService = new ListCompaniesService(companyDao);
-		ICreateComputerService createComputerService = new CreateComputerService(computerDao);
+		ICompanyServices listCompaniesService = new CompanyService(companyDao);
+		IComputerService computerService = new ComputerServices(computerDao);
 		Scanner scanner = new Scanner(System.in);
-		List<Company> companies;
+		Optional<List<Company>> companies;
 		try {
 			// get computer informations
 			System.out.println("Veuillez renseignez les informations suivantes :");
@@ -241,14 +235,14 @@ public class App {
 			// get company of computer
 			System.out.println("veuillez indiquer le numéro de la compagnie");
 			companies = listCompaniesService.getAll();
-			printCompaniesWithIndex(companies, true);
-			System.out.println("compagnie entre 0 et " + (companies.size() - 1) + " >");
+			printCompaniesWithIndex(companies.get(), true);
+			System.out.println("compagnie entre 0 et " + (companies.get().size() - 1) + " >");
 			int index = scanner.nextInt();
 			// creation of new computer
 			Computer computer = new Computer(0L, name, introducedTimestamp, discontunedTimestamp,
-					new Company(companies.get(index).getId(),companies.get(index).getName()));
+					new Company(companies.get().get(index).getId(), companies.get().get(index).getName()));
 			// add computer in database
-			createComputerService.createComputer(computer);
+			computerService.createComputer(computer);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (IDCompanyNotFoundException e) {
@@ -266,7 +260,7 @@ public class App {
 	 */
 	public static void deleteComputerHandler(ComputerDao computerDao) {
 		IComputerService listComputersService = new ComputerServices(computerDao);
-		IDeleteService deleteComputerService = new DeleteComputerService(computerDao);
+		IComputerService deleteComputerService = new ComputerServices(computerDao);
 		List<Computer> computers;
 		try {
 			// get list of computers in database

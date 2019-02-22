@@ -31,20 +31,24 @@
                         <fieldset>
                             <div class="form-group">
                                 <label for="computerName">Computer name</label>
-                                <input type="text" class="form-control" id="computerName" placeholder="C${computer.name}">
+                                <input type="text" class="form-control" id="computerName" placeholder="${computer.name}">
                             </div>
                             <div class="form-group">
                                 <label for="introduced">Introduced date</label>
-                                <input type="date" class="form-control" id="introduced" placeholder="Introduced date">
+                                <input type="date" class="form-control" id="introduced"   value="03-03/2004">
                             </div>
                             <div class="form-group">
                                 <label for="discontinued">Discontinued date</label>
-                                <input type="date" class="form-control" id="discontinued" placeholder="Discontinued date">
+                                <input type="date" class="form-control" id="discontinued" placeholder="${computer.discontinued}">
                             </div>
                             <div class="form-group">
                                 <label for="companyId">Company</label>
-                                <select class="form-control" id="companyId" >
-                                    <option value="0">--</option>
+                                <select class="form-control" id="companyId" value="${computer.company}">
+                                	<option value="0">${computer.company}</option>
+                                	<c:forEach items="${companies}" var="company">
+                                		<option value="0">${company.name}</option>
+                                	</c:forEach>
+                                    
                                 </select>
                             </div>            
                         </fieldset>
