@@ -33,8 +33,13 @@ public class ComputerServices implements IComputerService {
 	/**
 	 * @return list of all computers in database
 	 */
-	public List<Computer> getAll() throws SQLException {
-		Optional<List<Computer>>computersOptional=computerDao.findAll();
+	public List<Computer> getAll() {
+		Optional<List<Computer>> computersOptional=Optional.empty();
+		try {
+			computersOptional = computerDao.findAll();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return (computersOptional.isPresent()?computersOptional.get():new ArrayList<Computer>());
 	}
 
@@ -44,10 +49,23 @@ public class ComputerServices implements IComputerService {
 	}
 	
 	@Override
-	public void createComputer(Computer computer) throws IDCompanyNotFoundException, SQLException {
-		computerDao.add(computer);
+	public void createComputer(Computer computer) {
+		try {
+			computerDao.add(computer);
+		} catch (IDCompanyNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
+
+	@Override
+	public void delete(Long id){
+		try {
+			computerDao.delete(id);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	
 
 }

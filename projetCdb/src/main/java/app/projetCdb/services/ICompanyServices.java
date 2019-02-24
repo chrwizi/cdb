@@ -9,4 +9,6 @@ import app.projetCdb.models.Company;
 public interface ICompanyServices {
 	public Optional<List<Company>> getAll();
 	public void delete(Long id) throws SQLException;
+	public Optional<Company> findById(Long id);
 }
+ 

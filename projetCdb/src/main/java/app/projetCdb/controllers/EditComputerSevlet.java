@@ -26,6 +26,8 @@ import app.projetCdb.services.CompanyService;
 import app.projetCdb.services.ComputerServices;
 import app.projetCdb.services.ICompanyServices;
 import app.projetCdb.services.IComputerService;
+import app.projetCdb.services.validators.FormEditComputerValidator;
+import app.projetCdb.services.validators.IFormEditComputerValidator;
 
 
 @WebServlet(name="edit",urlPatterns="/editComputer")
@@ -43,7 +45,8 @@ public class EditComputerSevlet extends HttpServlet{
 	//mappers
 	private IMapperComputerDto mapper=new MapperComputer();
 	private IMapperCompanyDto mapperCompany=new MapperCompanyDto();
-
+	//edit computer validator
+	private IFormEditComputerValidator validator=new FormEditComputerValidator();
 	
 	
 	@Override
@@ -69,6 +72,19 @@ public class EditComputerSevlet extends HttpServlet{
 			this.getServletContext().getRequestDispatcher(REDIRECT_VIEW).forward(req, resp);
 		}
 	}
+
+
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		
+		
+		this.getServletContext().getRequestDispatcher(REDIRECT_VIEW).forward(req, resp);
+	}
+	
+	
+	
 
 
 

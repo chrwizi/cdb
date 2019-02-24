@@ -118,26 +118,22 @@ public class App {
 	private static void showComputerDetailsHandler(ComputerDao computerDao) {
 		IComputerService listComputersService = new ComputerServices(computerDao);
 		List<Computer> computers;
-		try {
-			// get list of computers
-			computers = listComputersService.getAll();
-			System.out.println("Veuillez choisir le numéro de l'ordinateur ");
-			printComputerList(computers, true);
 
-			Scanner scanner = new Scanner(System.in);
-			System.out.println("choisir un numéro entre 0 et " + (computers.size() - 1) + " >");
-			int index = scanner.nextInt();
+		// get list of computers
+		computers = listComputersService.getAll();
+		System.out.println("Veuillez choisir le numéro de l'ordinateur ");
+		printComputerList(computers, true);
 
-			Computer selectedComputer = computers.get(index);
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("choisir un numéro entre 0 et " + (computers.size() - 1) + " >");
+		int index = scanner.nextInt();
 
-			System.out.println("**** détailles ****");
-			System.out.println(selectedComputer);
-			System.out.println(
-					"[nom: " + selectedComputer.getName() + " date de creation: " + selectedComputer.getIntroduced()
-							+ " date de retrait: " + selectedComputer.getDiscontinued() + "]");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		Computer selectedComputer = computers.get(index);
+
+		System.out.println("**** détailles ****");
+		System.out.println(selectedComputer);
+		System.out.println("[nom: " + selectedComputer.getName() + " date de creation: "
+				+ selectedComputer.getIntroduced() + " date de retrait: " + selectedComputer.getDiscontinued() + "]");
 
 	}
 
@@ -162,12 +158,9 @@ public class App {
 	public static void listComputersHandler(ComputerDao dao) {
 		IComputerService listComputersService = new ComputerServices(dao);
 		List<Computer> computers;
-		try {
-			computers = listComputersService.getAll();
-			printComputerList(computers, false);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		computers = listComputersService.getAll();
+		printComputerList(computers, false);
+
 	}
 
 	/**
@@ -229,7 +222,7 @@ public class App {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 			Timestamp introducedTimestamp = CdbUtil.strDateToTimestamp(strDate, dateFormat);
 			System.out.print("date de Production au format yyyy-mm-dd >");
-			// get discontuned date
+			// get discontinued date
 			strDate = scanner.next().concat(" 0:0:0.0");
 			Timestamp discontunedTimestamp = CdbUtil.strDateToTimestamp(strDate, dateFormat);
 			// get company of computer
@@ -243,10 +236,6 @@ public class App {
 					new Company(companies.get().get(index).getId(), companies.get().get(index).getName()));
 			// add computer in database
 			computerService.createComputer(computer);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (IDCompanyNotFoundException e) {
-			e.printStackTrace();
 		} catch (ParseException e) {
 			System.out.println("la date n'est pas ne correspond pas au format requis ");
 			e.printStackTrace();
@@ -262,21 +251,17 @@ public class App {
 		IComputerService listComputersService = new ComputerServices(computerDao);
 		IComputerService deleteComputerService = new ComputerServices(computerDao);
 		List<Computer> computers;
-		try {
-			// get list of computers in database
-			computers = listComputersService.getAll();
-			System.out.println("Veuillez sélectionner le numéro de l'ordinateur à supprimer");
-			// show user list of computers with index for each computer
-			printComputerList(computers, true);
-			System.out.println("Numéro compris entre 0 et " + (computers.size() - 1) + " >");
-			// get the position of selected computer
-			Scanner scanner = new Scanner(System.in);
-			int index = scanner.nextInt();
-			// delete selected computer from database
-			deleteComputerService.delete(computers.get(index).getId());
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		// get list of computers in database
+		computers = listComputersService.getAll();
+		System.out.println("Veuillez sélectionner le numéro de l'ordinateur à supprimer");
+		// show user list of computers with index for each computer
+		printComputerList(computers, true);
+		System.out.println("Numéro compris entre 0 et " + (computers.size() - 1) + " >");
+		// get the position of selected computer
+		Scanner scanner = new Scanner(System.in);
+		int index = scanner.nextInt();
+		// delete selected computer from database
+		deleteComputerService.delete(computers.get(index).getId());
 
 	}
 

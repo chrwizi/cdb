@@ -43,6 +43,11 @@ public class CompanyService implements ICompanyServices {
 	public void delete(Long id) throws SQLException {
 		CompanyDao.delete(id);
 	}
+
+	@Override
+	public Optional<Company> findById(Long id) {
+		return CompanyDao.findById(id);
+	}
 	
 
 

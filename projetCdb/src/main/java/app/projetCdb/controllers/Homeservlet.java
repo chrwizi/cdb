@@ -18,49 +18,42 @@ import app.projetCdb.persistance.dto.IMapperComputerDto;
 import app.projetCdb.persistance.dto.MapperComputer;
 import app.projetCdb.services.IComputerService;
 import app.projetCdb.services.ComputerServices;
-   
 
-@WebServlet(name="cdb",urlPatterns="/")
+@WebServlet(name = "cdb", urlPatterns = "/")
 public class Homeservlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private static final String REDIRECT_VIEW="/WEB-INF/dashboard.jsp";
-	
-	private ComputerDao computerDao=new ComputerDao(DbAccess.getInstance());
+	private static final String REDIRECT_VIEW = "/WEB-INF/dashboard.jsp";
+
+	private ComputerDao computerDao = new ComputerDao(DbAccess.getInstance());
 	private IComputerService listcomputerSService = new ComputerServices(computerDao);
-	private IMapperComputerDto mapper=new MapperComputer();
-			
+	private IMapperComputerDto mapper = new MapperComputer();
+
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
-			ArrayList<Computer>computersList=(ArrayList<Computer>) listcomputerSService.getAll();
-			
-			ArrayList<Computer>computersSubList=new ArrayList<Computer> ();
-			
-			computersSubList.add(computersList.get(0));
-			computersSubList.add(computersList.get(1));
-			computersSubList.add(computersList.get(2));
-			computersSubList.add(computersList.get(3));
-			computersSubList.add(computersList.get(4));
-			computersSubList.add(computersList.get(5));
-			computersSubList.add(computersList.get(6));
-			computersSubList.add(computersList.get(7));
-			computersSubList.add(computersList.get(8));
-			computersSubList.add(computersList.get(9));
-			
-			ArrayList<ComputerDto> computers=(ArrayList<ComputerDto>) mapper.mapListComputer(computersSubList);
-			
-			
-			request.setAttribute("computers", computers);
-			request.setAttribute("nbComputers", computers.size());
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		ArrayList<Computer> computersList = (ArrayList<Computer>) listcomputerSService.getAll();
+
+		ArrayList<Computer> computersSubList = new ArrayList<Computer>();
+
+		computersSubList.add(computersList.get(0));
+		computersSubList.add(computersList.get(1));
+		computersSubList.add(computersList.get(2));
+		computersSubList.add(computersList.get(3));
+		computersSubList.add(computersList.get(4));
+		computersSubList.add(computersList.get(5));
+		computersSubList.add(computersList.get(6));
+		computersSubList.add(computersList.get(7));
+		computersSubList.add(computersList.get(8));
+		computersSubList.add(computersList.get(9));
+
+		ArrayList<ComputerDto> computers = (ArrayList<ComputerDto>) mapper.mapListComputer(computersSubList);
+
+		request.setAttribute("computers", computers);
+		request.setAttribute("nbComputers", computers.size());
+
 		this.getServletContext().getRequestDispatcher(REDIRECT_VIEW).forward(request, response);
 	}
-	
-	
- 
 
 }
