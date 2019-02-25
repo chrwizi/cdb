@@ -8,6 +8,8 @@ import java.util.Optional;
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.ComputerDao;
+import app.projetCdb.persistance.ComputersPage;
+import app.projetCdb.persistance.IPageSelect;
 /**
  * 
  * @author chris_moyikoulou
@@ -15,11 +17,27 @@ import app.projetCdb.persistance.ComputerDao;
  */
 public class ComputerServices implements IComputerService {
 	private ComputerDao computerDao;
-
+	private IPageSelect pageComputers;
+	private int defaultNbComputersByPage=30;
+	
 	public ComputerServices(ComputerDao computerDao) {
 		super();
 		this.computerDao = computerDao;
+		int nbComputersInDatabase=computerDao.count();
+		pageComputers=new ComputersPage(0,
+				(Integer.valueOf(nbComputersInDatabase)<defaultNbComputersByPage?nbComputersInDatabase:defaultNbComputersByPage));
+	} 
+
+	
+	public IPageSelect getPageComputers() {
+		return pageComputers;
 	}
+
+
+	public void setPageComputers(IPageSelect pageComputers) {
+		this.pageComputers = pageComputers;
+	}
+
 
 	public ComputerDao getComputerDao() {
 		return computerDao;
@@ -41,6 +59,17 @@ public class ComputerServices implements IComputerService {
 			e.printStackTrace();
 		}
 		return (computersOptional.isPresent()?computersOptional.get():new ArrayList<Computer>());
+	}
+	
+	@Override
+	public Optional<List<Computer>> getAll(IPageSelect page) {
+		Optional<List<Computer>> computers=Optional.empty();
+		try {
+			computers=computerDao.findAll(page.getCurrentPage(),page.getOffset());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return computers;
 	}
 
 	@Override
@@ -66,6 +95,40 @@ public class ComputerServices implements IComputerService {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void updateComputer(Computer computer) {
+		try {
+			computerDao.update(computer);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public int count() {
+		return computerDao.count();
+	}
+
+	@Override
+	public Optional<List<Computer>> getPage(int num) {
+		pageComputers.setCurrentPage(num);
+		Optional<List<Computer>> computers=Optional.empty();
+		try {
+			computers=computerDao.findAll(pageComputers.getCurrentPage(), pageComputers.getOffset());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return computers;
+	}
+
+
+	@Override
+	public int getNbPages() {
+		return pageComputers.getNbPages();
+	}
+
+
 	
 
 }

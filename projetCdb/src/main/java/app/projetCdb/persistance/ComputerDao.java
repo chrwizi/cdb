@@ -36,7 +36,8 @@ public class ComputerDao {
 			+ FIELD_4 + "=?," + "," + FIELD_5 + "=?, " + " WHERE " + FIELD_1 + "=?)";
 
 	private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + " WHERE " + FIELD_1 + " = ? ";
-
+	private final static String GET_PAGE_QUERY = "SELECT * FROM " + TABLE + " LIMIT ?,? ";
+	
 	public ComputerDao(IDbAccess access) {
 		this.access = access;
 		companyDao = new CompanyDao(access);
@@ -55,7 +56,7 @@ public class ComputerDao {
 		// prepare statement
 		PreparedStatement preparedstatement = connection.prepareStatement(CREATE_QUERY,
 				Statement.RETURN_GENERATED_KEYS);
-		// set statement parametters
+		// set statement parameters
 		preparedstatement.setString(1, computer.getName());
 		preparedstatement.setTimestamp(2, new Timestamp(computer.getIntroduced().getTime()));
 		preparedstatement.setTimestamp(3, new Timestamp(computer.getDiscontinued().getTime()));
@@ -107,15 +108,15 @@ public class ComputerDao {
 					company = optionalCompany.get();
 
 				}
-				
-				Timestamp introduced=resultSet.getTimestamp(FIELD_3);
-				Timestamp discontinued=resultSet.getTimestamp(FIELD_4);
 
-				java.util.Date introDate=(introduced!=null)?new java.util.Date(introduced.getTime()):null;
-				java.util.Date discont=(discontinued!=null)?new java.util.Date(discontinued.getTime()):null;
-				
-				optional = Optional.of(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						introDate,discont, company));
+				Timestamp introduced = resultSet.getTimestamp(FIELD_3);
+				Timestamp discontinued = resultSet.getTimestamp(FIELD_4);
+
+				java.util.Date introDate = (introduced != null) ? new java.util.Date(introduced.getTime()) : null;
+				java.util.Date discont = (discontinued != null) ? new java.util.Date(discontinued.getTime()) : null;
+
+				optional = Optional.of(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2), introDate,
+						discont, company));
 
 			}
 			connection.close();
@@ -183,6 +184,43 @@ public class ComputerDao {
 		}
 		connection.close();
 		return (computers.isEmpty()) ? Optional.empty() : Optional.of((computers));
+	}
+
+	public Optional<List<Computer>> findAll(int sizePage, int offset) throws SQLException {
+		ArrayList<Computer> computers = new ArrayList<Computer>();
+
+		Connection connection = access.getConnection();
+		PreparedStatement preparedStatement = connection.prepareStatement(GET_PAGE_QUERY);
+		preparedStatement.setInt(1, sizePage);
+		preparedStatement.setInt(2, offset);
+		ResultSet resultSet = preparedStatement.executeQuery();
+		while (resultSet.next()) {
+			Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FIELD_5));
+			Company company = null;
+			computers.add(
+					new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2), resultSet.getDate(FIELD_3),
+							resultSet.getDate(FIELD_4), optionalCompany.isPresent() ? optionalCompany.get() : company));
+
+		}
+		connection.close();
+		return (computers.isEmpty()) ? Optional.empty() : Optional.of((computers));
+	}
+
+	public int count() {
+		Connection connection;
+		String query = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE;
+
+		try {
+			connection = access.getConnection();
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(query);
+			if(resultSet.first()) return resultSet.getInt("count");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return 0;
 	}
 
 }

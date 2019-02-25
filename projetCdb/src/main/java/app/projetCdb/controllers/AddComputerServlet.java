@@ -61,7 +61,6 @@ public class AddComputerServlet extends HttpServlet {
 		String introducedDate = (String) req.getParameter("introducedDate");
 		String discontinueddDate = (String) req.getParameter("discontinuedDate");
 		Long idCompany = Long.valueOf(req.getParameter("idCompany"));
-
 		// treate data
 		Optional<Company> company = companyService.findById(idCompany);
 

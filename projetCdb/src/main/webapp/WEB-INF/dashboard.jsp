@@ -235,6 +235,7 @@
 
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
+			<p>Nombre de page => ${nbPages}</p>
 			<ul class="pagination">
 				<li><a href="#" aria-label="Previous"> <span
 						aria-hidden="true">&laquo;</span>

@@ -34,8 +34,9 @@ import app.projetCdb.services.validators.IFormEditComputerValidator;
 public class EditComputerSevlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	//views
-	private static final String REDIRECT_VIEW="/WEB-INF/editComputer.jsp";
+	private static final String GET_VIEW="/WEB-INF/editComputer.jsp";
 	private static final String REDIRECT_COMPUTER_NOT_FOUND="/WEB-INF/500.jsp";
+	private static final String POST_VIEW="/WEB-INF/tmp.jsp";
 	//database access
 	private ComputerDao computerDao=new ComputerDao(DbAccess.getInstance());
 	private CompanyDao companyDao=new CompanyDao(DbAccess.getInstance());
@@ -69,7 +70,7 @@ public class EditComputerSevlet extends HttpServlet{
 			req.setAttribute("companies", companiesDto.get());
 			req.setAttribute("computer", computerDto);
 			
-			this.getServletContext().getRequestDispatcher(REDIRECT_VIEW).forward(req, resp);
+			this.getServletContext().getRequestDispatcher(GET_VIEW).forward(req, resp);
 		}
 	}
 
@@ -77,10 +78,22 @@ public class EditComputerSevlet extends HttpServlet{
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// get form data
+		String computerName = (String) req.getParameter("computerName");
+		String introducedDate = (String) req.getParameter("introducedDate");
+		String discontinueddDate = (String) req.getParameter("discontinuedDate");
+		Long idCompany = Long.valueOf(req.getParameter("idCompany"));
+		//treat data
+		Optional<Company> company = companyService.findById(idCompany);
+		ComputerDto computerDto = new ComputerDto(0L, computerName, introducedDate, discontinueddDate,
+				(company.isPresent() ? company.get().getName() : null),
+				company.isPresent() ? company.get().getId() : null);
+
+		Computer editingComputer = mapper.mapDto(computerDto);
+		computerService.updateComputer(editingComputer);
+		req.setAttribute("computer", computerDto);
 		
-		
-		
-		this.getServletContext().getRequestDispatcher(REDIRECT_VIEW).forward(req, resp);
+		this.getServletContext().getRequestDispatcher(GET_VIEW).forward(req, resp);
 	}
 	
 	

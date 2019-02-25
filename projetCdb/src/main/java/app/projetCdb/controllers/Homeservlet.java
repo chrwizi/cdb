@@ -3,6 +3,8 @@ package app.projetCdb.controllers;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,7 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.ComputerDao;
+import app.projetCdb.persistance.ComputersPage;
 import app.projetCdb.persistance.DbAccess;
+import app.projetCdb.persistance.IPageSelect;
 import app.projetCdb.persistance.dto.ComputerDto;
 import app.projetCdb.persistance.dto.IMapperComputerDto;
 import app.projetCdb.persistance.dto.MapperComputer;
@@ -26,30 +30,17 @@ public class Homeservlet extends HttpServlet {
 	private static final String REDIRECT_VIEW = "/WEB-INF/dashboard.jsp";
 
 	private ComputerDao computerDao = new ComputerDao(DbAccess.getInstance());
-	private IComputerService listcomputerSService = new ComputerServices(computerDao);
+	private IComputerService computerService = new ComputerServices(computerDao);
 	private IMapperComputerDto mapper = new MapperComputer();
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		ArrayList<Computer> computersList = (ArrayList<Computer>) listcomputerSService.getAll();
+		Optional<List<Computer>> optionalComputers = computerService.getPage(1);
+		ArrayList<ComputerDto> computers = (ArrayList<ComputerDto>) mapper.mapListComputer(optionalComputers.get());
 
-		ArrayList<Computer> computersSubList = new ArrayList<Computer>();
-
-		computersSubList.add(computersList.get(0));
-		computersSubList.add(computersList.get(1));
-		computersSubList.add(computersList.get(2));
-		computersSubList.add(computersList.get(3));
-		computersSubList.add(computersList.get(4));
-		computersSubList.add(computersList.get(5));
-		computersSubList.add(computersList.get(6));
-		computersSubList.add(computersList.get(7));
-		computersSubList.add(computersList.get(8));
-		computersSubList.add(computersList.get(9));
-
-		ArrayList<ComputerDto> computers = (ArrayList<ComputerDto>) mapper.mapListComputer(computersSubList);
-
+		request.setAttribute("nbPages", computerService.getNbPages());
 		request.setAttribute("computers", computers);
 		request.setAttribute("nbComputers", computers.size());
 
