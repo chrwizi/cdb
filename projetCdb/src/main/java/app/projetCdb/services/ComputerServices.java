@@ -26,6 +26,8 @@ public class ComputerServices implements IComputerService {
 		int nbComputersInDatabase=computerDao.count();
 		pageComputers=new ComputersPage(0,
 				(Integer.valueOf(nbComputersInDatabase)<defaultNbComputersByPage?nbComputersInDatabase:defaultNbComputersByPage));
+		pageComputers.setMaxResult(nbComputersInDatabase);
+	
 	} 
 
 	
@@ -115,7 +117,7 @@ public class ComputerServices implements IComputerService {
 		pageComputers.setCurrentPage(num);
 		Optional<List<Computer>> computers=Optional.empty();
 		try {
-			computers=computerDao.findAll(pageComputers.getCurrentPage(), pageComputers.getOffset());
+			computers=computerDao.findAll(pageComputers.getCursor(), pageComputers.getOffset());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

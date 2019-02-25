@@ -7,7 +7,12 @@ public class ComputersPage implements IPageSelect {
 	private int currentPage; 
 	private int offset;
 	
-	
+	@Override
+	public int getCursor() {
+		return (currentPage==1?0:currentPage*offset);
+	}
+
+
 	public ComputersPage(int currentPage, int offset) {
 		this.currentPage = currentPage;
 		this.offset = offset;

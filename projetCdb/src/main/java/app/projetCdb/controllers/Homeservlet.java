@@ -36,8 +36,10 @@ public class Homeservlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		Optional<List<Computer>> optionalComputers = computerService.getPage(1);
+		String selectedPage=request.getParameter("selectedPage");
+		
+		Optional<List<Computer>> optionalComputers = computerService.getPage((selectedPage==null?1:Integer.parseInt(selectedPage)));
+		
 		ArrayList<ComputerDto> computers = (ArrayList<ComputerDto>) mapper.mapListComputer(optionalComputers.get());
 
 		request.setAttribute("nbPages", computerService.getNbPages());

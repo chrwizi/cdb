@@ -10,4 +10,5 @@ public interface IPageSelect {
 	void setMaxResult(int maxResult);
 	int getMaxResult();
 	void setCurrentPage(int currentPage);
+	int getCursor();
 }
