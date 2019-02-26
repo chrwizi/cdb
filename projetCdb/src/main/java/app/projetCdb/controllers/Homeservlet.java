@@ -27,12 +27,10 @@ import app.projetCdb.services.ComputerServices;
 public class Homeservlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private static final String REDIRECT_VIEW = "/WEB-INF/dashboard.jsp";
-
-	private ComputerDao computerDao = new ComputerDao(DbAccess.getInstance());
-	private IComputerService computerService = new ComputerServices(computerDao);
+	private static final String DASHBOARD_VIEW = "/WEB-INF/dashboard.jsp";
+	private IComputerService computerService = new ComputerServices();
 	private IMapperComputerDto mapper = new MapperComputer();
-
+ 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -46,7 +44,24 @@ public class Homeservlet extends HttpServlet {
 		request.setAttribute("computers", computers);
 		request.setAttribute("nbComputers", computers.size());
 
-		this.getServletContext().getRequestDispatcher(REDIRECT_VIEW).forward(request, response);
+		this.getServletContext().getRequestDispatcher(DASHBOARD_VIEW).forward(request, response);
 	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String search=(String)req.getParameter("search");
+		String selectedPage=req.getParameter("selectedPage");
+		
+		Optional<List<Computer>> optionalComputers = computerService.getPage((selectedPage==null?1:Integer.parseInt(selectedPage)),search);
+		ArrayList<ComputerDto> computers = (ArrayList<ComputerDto>) mapper.mapListComputer(optionalComputers.get());
+		req.setAttribute("nbPages", computerService.getNbPages());
+		req.setAttribute("computers", computers);
+		req.setAttribute("nbComputers", computers.size());
+		this.getServletContext().getRequestDispatcher(DASHBOARD_VIEW).forward(req, resp);
+	}
+	
+	
+	
+	
 
 }

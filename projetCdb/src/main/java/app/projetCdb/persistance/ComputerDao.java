@@ -37,6 +37,8 @@ public class ComputerDao {
 
 	private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + " WHERE " + FIELD_1 + " = ? ";
 	private final static String GET_PAGE_QUERY = "SELECT * FROM " + TABLE + " LIMIT ?,? ";
+	private final static String SEARCH_COMPUTER_QUERY = "SELECT * FROM " + TABLE+"  WHERE "+FIELD_2+" LIKE ?  LIMIT ?,?";
+	private final static String SEARCH_COUNT_QUERY="SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE+" WHERE "+FIELD_2+" LIKE ?";
 	
 	public ComputerDao(IDbAccess access) {
 		this.access = access;
@@ -200,11 +202,30 @@ public class ComputerDao {
 			computers.add(
 					new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2), resultSet.getDate(FIELD_3),
 							resultSet.getDate(FIELD_4), optionalCompany.isPresent() ? optionalCompany.get() : company));
-
-		}
+			}
 		connection.close();
 		return (computers.isEmpty()) ? Optional.empty() : Optional.of((computers));
 	}
+	
+	public Optional<List<Computer>> search(int sizePage, int offset,String computerName) throws SQLException {
+		ArrayList<Computer> computers = new ArrayList<Computer>();
+		Connection connection = access.getConnection();
+		PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_COMPUTER_QUERY);
+		preparedStatement.setString(1, "%"+computerName+"%"); 
+		preparedStatement.setInt(2, sizePage);
+		preparedStatement.setInt(3, offset);
+		ResultSet resultSet = preparedStatement.executeQuery();
+		while (resultSet.next()) {
+			Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FIELD_5));
+			Company company = null;
+			computers.add(
+					new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2), resultSet.getDate(FIELD_3),
+							resultSet.getDate(FIELD_4), optionalCompany.isPresent() ? optionalCompany.get() : company));
+			}
+		connection.close();
+		return (computers.isEmpty()) ? Optional.empty() : Optional.of((computers));
+	}
+	
 
 	public int count() {
 		Connection connection;
@@ -214,7 +235,29 @@ public class ComputerDao {
 			connection = access.getConnection();
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(query);
-			if(resultSet.first()) return resultSet.getInt("count");
+			if(resultSet.first()) {
+				return resultSet.getInt("count");
+			}
+			
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return 0;
+	}
+	
+	public int seachcount(String name) {
+		Connection connection;
+		try {
+			connection = access.getConnection();
+			PreparedStatement preparedStatement=connection.prepareStatement(SEARCH_COUNT_QUERY);
+			preparedStatement.setString(1, "%"+name+"%");
+			ResultSet resultSet = preparedStatement.executeQuery();
+			if(resultSet.first()) {
+				System.out.println("\n\n>>> count vaut "+resultSet.getInt("count"));
+				return resultSet.getInt("count");
+			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();

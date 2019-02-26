@@ -16,4 +16,5 @@ public interface IComputerService {
 	public int count();
 	public Optional<List<Computer>> getPage(int num);
 	int getNbPages();
+	Optional<List<Computer>> getPage(int num, String computerNa);
 }

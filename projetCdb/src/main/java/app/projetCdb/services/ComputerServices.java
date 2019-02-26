@@ -9,6 +9,7 @@ import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.ComputerDao;
 import app.projetCdb.persistance.ComputersPage;
+import app.projetCdb.persistance.DbAccess;
 import app.projetCdb.persistance.IPageSelect;
 /**
  * 
@@ -21,7 +22,6 @@ public class ComputerServices implements IComputerService {
 	private int defaultNbComputersByPage=30;
 	
 	public ComputerServices(ComputerDao computerDao) {
-		super();
 		this.computerDao = computerDao;
 		int nbComputersInDatabase=computerDao.count();
 		pageComputers=new ComputersPage(0,
@@ -29,8 +29,21 @@ public class ComputerServices implements IComputerService {
 		pageComputers.setMaxResult(nbComputersInDatabase);
 	
 	} 
+	
+	
 
 	
+	public ComputerServices() {
+		this.computerDao = new ComputerDao(DbAccess.getInstance());
+		int nbComputersInDatabase=computerDao.count();
+		pageComputers=new ComputersPage(0,
+				(Integer.valueOf(nbComputersInDatabase)<defaultNbComputersByPage?nbComputersInDatabase:defaultNbComputersByPage));
+		pageComputers.setMaxResult(nbComputersInDatabase);	
+	}
+
+
+
+
 	public IPageSelect getPageComputers() {
 		return pageComputers;
 	}
@@ -121,9 +134,24 @@ public class ComputerServices implements IComputerService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		//update number max of result
+		pageComputers.setMaxResult(computerDao.count());
 		return computers;
 	}
-
+	
+	@Override
+	public Optional<List<Computer>> getPage(int num,String computerName) {
+		pageComputers.setCurrentPage(num);
+		Optional<List<Computer>> computers=Optional.empty();
+		try {
+			computers=computerDao.search(pageComputers.getCursor(), pageComputers.getOffset(),computerName);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		pageComputers.setMaxResult(computerDao.seachcount(computerName));
+		return computers;
+	}
+ 
 
 	@Override
 	public int getNbPages() {

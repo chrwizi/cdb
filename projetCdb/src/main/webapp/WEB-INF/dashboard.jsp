@@ -16,17 +16,17 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboard.html"> Application -
+			<a class="navbar-brand" href="/projetCdb/"> Application -
 				Computer Database </a>
 		</div>
 	</header>
 
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${nbComputers}computersfound</h1>
+			<h1 id="homeTitle">${nbComputers} computers found</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
-					<form id="searchForm" action="#" method="GET" class="form-inline">
+					<form id="searchForm" action="/projetCdb/" method="POST" class="form-inline">
 
 						<input type="search" id="searchbox" name="search"
 							class="form-control" placeholder="Search name" /> <input
@@ -95,7 +95,6 @@
 
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
-			<p>Nombre de page => ${nbPages}</p>
 			<ul class="pagination">
 				<li><a href="#" aria-label="Previous"> <span
 						aria-hidden="true">&laquo;</span>
@@ -113,9 +112,9 @@
 				<button type="button" class="btn btn-default">100</button>
 			</div>
 	</footer>
-	<script src="../js/jquery.min.js"></script>
-	<script src="../js/bootstrap.min.js"></script>
-	<script src="../js/dashboard.js"></script>
+	<script src="static/js/jquery.min.js"></script>
+	<script src="static/js/bootstrap.min.js"></script>
+	<script src="static/js/dashboard.js"></script>
 
 </body>
 </html>
