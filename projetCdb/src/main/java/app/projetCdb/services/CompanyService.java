@@ -9,13 +9,16 @@ import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.CompanyDao;
+import app.projetCdb.persistance.DbAccess;
 
 public class CompanyService implements ICompanyServices {
 	private CompanyDao CompanyDao;
 
 	public CompanyService(CompanyDao companyDao) {
-		super();
 		CompanyDao = companyDao;
+	}
+	public CompanyService() {
+		CompanyDao =new CompanyDao(DbAccess.getInstance());
 	}
 
 	public CompanyDao getCompanyDao() {

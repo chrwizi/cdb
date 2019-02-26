@@ -37,12 +37,9 @@ public class EditComputerSevlet extends HttpServlet{
 	private static final String GET_VIEW="/WEB-INF/editComputer.jsp";
 	private static final String REDIRECT_COMPUTER_NOT_FOUND="/WEB-INF/500.jsp";
 	private static final String POST_VIEW="/WEB-INF/tmp.jsp";
-	//database access
-	private ComputerDao computerDao=new ComputerDao(DbAccess.getInstance());
-	private CompanyDao companyDao=new CompanyDao(DbAccess.getInstance());
 	//services
-	private IComputerService computerService = new ComputerServices(computerDao);
-	private ICompanyServices companyService=new CompanyService(companyDao);
+	private IComputerService computerService = new ComputerServices();
+	private ICompanyServices companyService=new CompanyService();
 	//mappers
 	private IMapperComputerDto mapper=new MapperComputer();
 	private IMapperCompanyDto mapperCompany=new MapperCompanyDto();
@@ -53,8 +50,7 @@ public class EditComputerSevlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Long idComputer=Long.valueOf(req.getParameter("idComputer"));
-		//erreur sur id à gérer 
-
+		//error to handle
 		Optional<Computer> optionalComputer=computerService.finById(idComputer);
 		if(!optionalComputer.isPresent()) {
 			//there is no computer corresponding with Id
@@ -88,11 +84,10 @@ public class EditComputerSevlet extends HttpServlet{
 		ComputerDto computerDto = new ComputerDto(0L, computerName, introducedDate, discontinueddDate,
 				(company.isPresent() ? company.get().getName() : null),
 				company.isPresent() ? company.get().getId() : null);
-
+		//data mapping 
 		Computer editingComputer = mapper.mapDto(computerDto);
 		computerService.updateComputer(editingComputer);
 		req.setAttribute("computer", computerDto);
-		
 		this.getServletContext().getRequestDispatcher(GET_VIEW).forward(req, resp);
 	}
 	
