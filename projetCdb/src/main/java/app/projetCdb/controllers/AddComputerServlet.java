@@ -30,44 +30,39 @@ import app.projetCdb.services.IComputerService;
 
 @WebServlet(name = "add", urlPatterns = "/addComputer")
 public class AddComputerServlet extends HttpServlet {
-
-	private static final long serialVersionUID = 1L;
-	private static final String ADD_COMPUTER_VIEW = "/WEB-INF/addComputer.jsp";
-	private static final String POST_ADD_COMPUTER = "/WEB-INF/tmp.jsp";
-	// database access
-	private ComputerDao computerDao = new ComputerDao(DbAccess.getInstance());
-	private CompanyDao companyDao = new CompanyDao(DbAccess.getInstance());
 	// services
-	private IComputerService computerService = new ComputerServices(computerDao);
-	private ICompanyServices companyService = new CompanyService(companyDao);
-	// mappers
+	private IComputerService computerService = new ComputerServices();
+	private ICompanyServices companyService = new CompanyService();
+	// mapping objects
 	private IMapperComputerDto mapper = new MapperComputer();
 	private IMapperCompanyDto mapperCompany = new MapperCompanyDto();
+	//
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		final String ADD_COMPUTER_VIEW = "/WEB-INF/addComputer.jsp";
+		//get computers from database 
 		Optional<List<Company>> optionalCompanies = companyService.getAll();
 		Optional<List<CompanyDto>> companiesDto = mapperCompany.mapListCompany(optionalCompanies.get());
-
+		//send computers Dto to view 
 		req.setAttribute("companies", companiesDto.get());
-
 		this.getServletContext().getRequestDispatcher(ADD_COMPUTER_VIEW).forward(req, resp);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		final String POST_ADD_COMPUTER = "/WEB-INF/tmp.jsp";
 		// get form data
 		String computerName = (String) req.getParameter("computerName");
 		String introducedDate = (String) req.getParameter("introducedDate");
 		String discontinueddDate = (String) req.getParameter("discontinuedDate");
 		Long idCompany = Long.valueOf(req.getParameter("idCompany"));
-		// treate data
+		// treat data
 		Optional<Company> company = companyService.findById(idCompany);
-
 		ComputerDto computerDto = new ComputerDto(0L, computerName, introducedDate, discontinueddDate,
 				(company.isPresent() ? company.get().getName() : null),
 				company.isPresent() ? company.get().getId() : null);
-		
 		Computer newComputer = mapper.mapDto(computerDto);
 		//create new computer in database
 		computerService.createComputer(newComputer);

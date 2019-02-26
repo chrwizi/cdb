@@ -1,6 +1,7 @@
 package app.projetCdb.controllers;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,8 +51,13 @@ public class EditComputerSevlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Long idComputer=Long.valueOf(req.getParameter("idComputer"));
-		//error to handle
-		Optional<Computer> optionalComputer=computerService.finById(idComputer);
+		//parse error to handle
+		Optional<Computer> optionalComputer = Optional.empty();
+		try {
+			optionalComputer = computerService.finById(idComputer);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		if(!optionalComputer.isPresent()) {
 			//there is no computer corresponding with Id
 			String errorMessage="Aucun ordinateur trouvé";
@@ -61,11 +67,9 @@ public class EditComputerSevlet extends HttpServlet{
 		else {
 			Optional<List<Company>> optionalCompanies=companyService.getAll();  
 			ComputerDto computerDto=mapper.mapComputer(optionalComputer.get());		
-			Optional<List<CompanyDto>>companiesDto=mapperCompany.mapListCompany(optionalCompanies.get());
-			
+			Optional<List<CompanyDto>>companiesDto=mapperCompany.mapListCompany(optionalCompanies.get());		
 			req.setAttribute("companies", companiesDto.get());
 			req.setAttribute("computer", computerDto);
-			
 			this.getServletContext().getRequestDispatcher(GET_VIEW).forward(req, resp);
 		}
 	}

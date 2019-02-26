@@ -21,7 +21,7 @@ public class ComputerServices implements IComputerService {
 	private IPageSelect pageComputers;
 	private int defaultNbComputersByPage=30;
 	
-	public ComputerServices(ComputerDao computerDao) {
+	public ComputerServices(ComputerDao computerDao) throws SQLException {
 		this.computerDao = computerDao;
 		int nbComputersInDatabase=computerDao.count();
 		pageComputers=new ComputersPage(0,
@@ -34,7 +34,12 @@ public class ComputerServices implements IComputerService {
 	
 	public ComputerServices() {
 		this.computerDao = new ComputerDao(DbAccess.getInstance());
-		int nbComputersInDatabase=computerDao.count();
+		int nbComputersInDatabase = 0;
+		try {
+			nbComputersInDatabase = computerDao.count();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		pageComputers=new ComputersPage(0,
 				(Integer.valueOf(nbComputersInDatabase)<defaultNbComputersByPage?nbComputersInDatabase:defaultNbComputersByPage));
 		pageComputers.setMaxResult(nbComputersInDatabase);	
@@ -87,7 +92,7 @@ public class ComputerServices implements IComputerService {
 	}
 
 	@Override
-	public Optional<Computer> finById(Long id) {
+	public Optional<Computer> finById(Long id) throws SQLException {
 		return this.computerDao.findById(id);
 	}
 	
@@ -120,12 +125,12 @@ public class ComputerServices implements IComputerService {
 	}
 
 	@Override
-	public int count() {
+	public int count() throws SQLException {
 		return computerDao.count();
 	}
 
 	@Override
-	public Optional<List<Computer>> getPage(int num) {
+	public Optional<List<Computer>> getPage(int num) throws SQLException {
 		pageComputers.setCurrentPage(num);
 		Optional<List<Computer>> computers=Optional.empty();
 		try {
@@ -139,7 +144,7 @@ public class ComputerServices implements IComputerService {
 	}
 	
 	@Override
-	public Optional<List<Computer>> getPage(int num,String computerName) {
+	public Optional<List<Computer>> getPage(int num,String computerName) throws SQLException {
 		pageComputers.setCurrentPage(num);
 		Optional<List<Computer>> computers=Optional.empty();
 		try {

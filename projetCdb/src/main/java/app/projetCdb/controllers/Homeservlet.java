@@ -35,15 +35,20 @@ public class Homeservlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String selectedPage=request.getParameter("selectedPage");
+		Optional<List<Computer>> optionalComputers =Optional.empty();
 		
-		Optional<List<Computer>> optionalComputers = computerService.getPage((selectedPage==null?1:Integer.parseInt(selectedPage)));
+		try {
+			optionalComputers = computerService.getPage((selectedPage==null?1:Integer.parseInt(selectedPage)));
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 		ArrayList<ComputerDto> computers = (ArrayList<ComputerDto>) mapper.mapListComputer(optionalComputers.get());
-
 		request.setAttribute("nbPages", computerService.getNbPages());
 		request.setAttribute("computers", computers);
 		request.setAttribute("nbComputers", computers.size());
-
 		this.getServletContext().getRequestDispatcher(DASHBOARD_VIEW).forward(request, response);
 	}
 
@@ -51,8 +56,16 @@ public class Homeservlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String search=(String)req.getParameter("search");
 		String selectedPage=req.getParameter("selectedPage");
+		Optional<List<Computer>> optionalComputers = Optional.empty();
 		
-		Optional<List<Computer>> optionalComputers = computerService.getPage((selectedPage==null?1:Integer.parseInt(selectedPage)),search);
+		try {
+			optionalComputers = computerService.getPage((selectedPage==null?1:Integer.parseInt(selectedPage)),search);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 		ArrayList<ComputerDto> computers = (ArrayList<ComputerDto>) mapper.mapListComputer(optionalComputers.get());
 		req.setAttribute("nbPages", computerService.getNbPages());
 		req.setAttribute("computers", computers);

@@ -3,7 +3,6 @@ package app.projetCdb;
  * cdbProject 
  */
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,7 +11,6 @@ import java.util.ListIterator;
 import java.util.Optional;
 import java.util.Scanner;
 
-import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.CompanyDao;
@@ -62,23 +60,23 @@ public class App {
 			System.out.println(" votre choix est : " + userChoice);
 			switch (userChoice) {
 			case LIST_COMPUTERS:
-				listComputersHandler(computerDao);
+				listComputersHandler();
 				break;
 			case LIST_COMPANIES:
 				listCompaniesHandler(companyDao);
 				break;
 			case CREATE_COMPUTER:
-				createComputerHandler(companyDao, computerDao);
+				createComputerHandler(companyDao);
 				break;
 			case UPDATE_COMPUTER:
 				// Uncompleted feature
 				System.out.println("fonctionnalité non implémenté totalement");
 				break;
 			case DELETE_COMPUTER:
-				deleteComputerHandler(computerDao);
+				deleteComputerHandler();
 				break;
 			case SHOW_COMPUTER_DETAILS:
-				showComputerDetailsHandler(computerDao);
+				showComputerDetailsHandler();
 				break;
 			case EXIT:
 				fin = true;
@@ -115,8 +113,8 @@ public class App {
 	 * 
 	 * @param computerDao
 	 */
-	private static void showComputerDetailsHandler(ComputerDao computerDao) {
-		IComputerService listComputersService = new ComputerServices(computerDao);
+	private static void showComputerDetailsHandler() {
+		IComputerService listComputersService =new ComputerServices();
 		List<Computer> computers;
 
 		// get list of computers
@@ -155,8 +153,8 @@ public class App {
 	 * 
 	 * @param dao : object given access to computers table in database
 	 */
-	public static void listComputersHandler(ComputerDao dao) {
-		IComputerService listComputersService = new ComputerServices(dao);
+	public static void listComputersHandler() {
+		IComputerService listComputersService =new ComputerServices();
 		List<Computer> computers;
 		computers = listComputersService.getAll();
 		printComputerList(computers, false);
@@ -206,9 +204,9 @@ public class App {
 	 * @param companyDao
 	 * @throws ParseException
 	 */
-	public static void createComputerHandler(CompanyDao companyDao, ComputerDao computerDao) {
+	public static void createComputerHandler(CompanyDao companyDao) {
 		ICompanyServices listCompaniesService = new CompanyService(companyDao);
-		IComputerService computerService = new ComputerServices(computerDao);
+		IComputerService computerService =new ComputerServices();
 		Scanner scanner = new Scanner(System.in);
 		Optional<List<Company>> companies;
 		try {
@@ -247,9 +245,8 @@ public class App {
 	 * 
 	 * @param computerDao
 	 */
-	public static void deleteComputerHandler(ComputerDao computerDao) {
-		IComputerService listComputersService = new ComputerServices(computerDao);
-		IComputerService deleteComputerService = new ComputerServices(computerDao);
+	public static void deleteComputerHandler() {
+		IComputerService listComputersService = new ComputerServices();
 		List<Computer> computers;
 		// get list of computers in database
 		computers = listComputersService.getAll();
@@ -261,7 +258,7 @@ public class App {
 		Scanner scanner = new Scanner(System.in);
 		int index = scanner.nextInt();
 		// delete selected computer from database
-		deleteComputerService.delete(computers.get(index).getId());
+		listComputersService.delete(computers.get(index).getId());
 
 	}
 

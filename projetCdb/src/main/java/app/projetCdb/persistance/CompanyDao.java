@@ -30,6 +30,10 @@ public class CompanyDao {
 	public CompanyDao(IDbAccess dbAccess) {
 		this.dbAccess = dbAccess;
 	}
+	
+	public CompanyDao() {
+		this.dbAccess =DbAccess.getInstance();
+	}
 
 	/**
 	 * 
