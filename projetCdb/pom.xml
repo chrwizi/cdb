@@ -27,6 +27,11 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>database</directory>
+			</resource>
+		</resources>
 	</build>
 	<dependencies>
 		<dependency>
