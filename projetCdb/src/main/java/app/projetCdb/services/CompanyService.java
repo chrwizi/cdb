@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Company;
-import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.CompanyDao;
 import app.projetCdb.persistance.DbAccess;
 

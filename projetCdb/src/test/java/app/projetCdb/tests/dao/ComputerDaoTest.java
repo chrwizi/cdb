@@ -91,11 +91,11 @@ public class ComputerDaoTest {
 		try {
 			//DEFINE
 			Computer computer = new Computer(0L, "MonPc", new Date(), new Date(), companies.get(0));
-			OptionalLong id = null;
+			OptionalLong id = OptionalLong.empty();
 			id = computerDao.add(computer);
-			//WHEN
 			if(id.isPresent()) {
-				
+				computer.setId(id.getAsLong());
+				//WHEN
 			}
 			
 			

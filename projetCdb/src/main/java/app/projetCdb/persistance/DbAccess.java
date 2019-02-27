@@ -4,14 +4,20 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 
 public class DbAccess implements IDbAccess{
+	
 	private static DbAccess instance=new DbAccess();
-	private static String DRIVER="com.mysql.cj.jdbc.Driver";
 	private static String URL="jdbc:mysql://localhost:3306/computer-database-db?zeroDateTimeBehavior=convertToNull&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 	//&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 	private static String LOGIN="admincdb";
 	private static String PASSWORD="qwerty1234"; 
+	private HikariDataSource hikariDataSource;
+	private static int NB_POOL=10;
+	private static final long TIME_OUT = 10000L;
 
 	private DbAccess() { 
 		super();
@@ -21,18 +27,38 @@ public class DbAccess implements IDbAccess{
 		return (instance == null) ? new DbAccess() : instance;
 	}
 
-	public static void loadDriver() throws ClassNotFoundException {
-		Class.forName(DRIVER);
-	}
 
 	@Override
 	public Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(URL, LOGIN, PASSWORD);
+		if(hikariDataSource==null) {
+			setUpHikari();
+		}
+		return hikariDataSource.getConnection();
 	}
+	
+	
+	private void setUpHikari() {
+		final HikariConfig hikariConfig=new HikariConfig();
+		hikariConfig.setJdbcUrl(URL);
+		hikariConfig.setUsername(LOGIN);
+		hikariConfig.setPassword(PASSWORD);
+		hikariConfig.setMaximumPoolSize(NB_POOL);
+		hikariConfig.setConnectionTimeout(TIME_OUT);
+		this.hikariDataSource=new HikariDataSource(hikariConfig);
+	}
+	
+	
+	public void initPool() {
+		setUpHikari();
+	}
+	
+	public void closePool() {
+		this.hikariDataSource.close();
+	}
+	
+	
 
-	public static String getDriver() {
-		return DRIVER;
-	}
+
 
 	public static String getUrl() {
 		return URL;
@@ -46,13 +72,6 @@ public class DbAccess implements IDbAccess{
 		return PASSWORD;
 	}
 
-	public static String getDRIVER() {
-		return DRIVER;
-	}
-
-	public static void setDRIVER(String dRIVER) {
-		DRIVER = dRIVER;
-	}
 
 	public static String getURL() {
 		return URL;
