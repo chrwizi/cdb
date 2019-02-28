@@ -137,8 +137,8 @@ public class ComputerDao {
 			PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY,
 					Statement.RETURN_GENERATED_KEYS);
 			preparedStatement.setString(1, computer.getName());
-			preparedStatement.setDate(2, (Date) computer.getIntroduced());
-			preparedStatement.setDate(3, (Date) computer.getDiscontinued());
+			preparedStatement.setTimestamp(2,  (Timestamp) computer.getIntroduced());
+			preparedStatement.setTimestamp(3,  (Timestamp) computer.getDiscontinued());
 			preparedStatement.setLong(4, computer.getId());
 			// execute
 			preparedStatement.executeUpdate();
@@ -174,24 +174,22 @@ public class ComputerDao {
 	 * @return list of all computers in database
 	 * @throws SQLException
 	 */
-	public Optional<List<Computer>> findAll() throws SQLException {
+	public List<Computer> findAll() throws SQLException {
 		String query = "SELECT * FROM " + TABLE;
 		ArrayList<Computer> computers = new ArrayList<Computer>();
-
 		try (Connection connection = access.getConnection()) {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(query);
 			while (resultSet.next()) {
 				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FIELD_5));
-				Company company = null;
 				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
 						resultSet.getDate(FIELD_3), resultSet.getDate(FIELD_4),
-						optionalCompany.isPresent() ? optionalCompany.get() : company));
+						optionalCompany.isPresent() ? optionalCompany.get() : null));
 			}
 		} catch (SQLException e) {
 			throw e;
 		}
-		return (computers.isEmpty()) ? Optional.empty() : Optional.of((computers));
+		return computers;
 	}
 
 	public Optional<List<Computer>> findAll(int sizePage, int offset) throws SQLException {

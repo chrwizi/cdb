@@ -71,13 +71,13 @@ public class ComputerServices implements IComputerService {
 	 * @return list of all computers in database
 	 */
 	public List<Computer> getAll() {
-		Optional<List<Computer>> computersOptional=Optional.empty();
+		List<Computer> computers=new ArrayList<Computer>();
 		try {
-			computersOptional = computerDao.findAll();
+			computers = computerDao.findAll();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return (computersOptional.isPresent()?computersOptional.get():new ArrayList<Computer>());
+		return computers;
 	}
 	
 	@Override
