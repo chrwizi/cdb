@@ -6,157 +6,111 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import app.projetCdb.exceptions.DbAccessPropertyNotFoundException;
 
-public class DbAccess implements IDbAccess{
-	
-	private static DbAccess instance=new DbAccess();
-	
-	
-	private static String URL="jdbc:mysql://localhost:3306/computer-database-db?zeroDateTimeBehavior=convertToNull&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-	//&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-	private static String LOGIN="admincdb";
-	private static String PASSWORD="qwerty1234"; 
-	
-	
-	//default database  configuration file
-	private String DEFAULT_DATABASE_CONFIGURATION_FILE="database/database.properties";
-	//properties from configuration file
-	private static String URL_PROPERTIE="db_url";
-	private static String USERNAME_PROPERTIE="db_username";
-	private static String PASSWORD_PROPERTIE="db_password";
-	
-	
-	
+public class DbAccess implements IDbAccess {
+	// default database configuration file
+	private String DEFAULT_DATABASE_CONFIGURATION_FILE = "database/database.properties";
+	private static Properties databaseProperties = new Properties();
+	// properties from configuration file
+	private static String URL_PROPERTIE_NAME = "db_url";
+	private static String USERNAME_PROPERTIE_NAME = "db_username";
+	private static String PASSWORD_PROPERTIE_NAME = "db_password";
+	// hiraki properties
 	private HikariDataSource hikariDataSource;
-	private static int NB_POOL=10;
+	private static int NB_POOL = 10;
 	private static final long TIME_OUT = 10000L;
-	private Properties databaseProperties=new Properties();
+	// logger
+	private Logger logger = LoggerFactory.getLogger(DbAccess.class);
+	// singleton instance
+	private static DbAccess instance = new DbAccess();
 	
-	
-
-	private DbAccess() { 
-		try(FileInputStream input=new FileInputStream(DEFAULT_DATABASE_CONFIGURATION_FILE)){
+	/**
+	 * @throws DbAccessPropertyNotFoundException 
+	 * 
+	 */
+	private DbAccess(){
+		try (FileInputStream input = new FileInputStream(DEFAULT_DATABASE_CONFIGURATION_FILE)) {
 			databaseProperties.load(input);
-			/*ca marche */
-			System.out.println(databaseProperties.values());
-			System.out.println(databaseProperties.stringPropertyNames());
+			if((databaseProperties.getProperty(URL_PROPERTIE_NAME))==null) logger.debug("Property "+URL_PROPERTIE_NAME+" not found");
+			if((databaseProperties.getProperty(USERNAME_PROPERTIE_NAME))==null) logger.debug("Property "+URL_PROPERTIE_NAME+" not found");
+			if((databaseProperties.getProperty(PASSWORD_PROPERTIE_NAME))==null)logger.debug("Property "+PASSWORD_PROPERTIE_NAME+" not found");
 			
-			
-			databaseProperties.entrySet().forEach(o -> System.out.println(o.getKey() + "=" + o.getValue()));
-			
-			/*testt: renvoie un NullPointerException*/
-			System.out.println(databaseProperties.getProperty(USERNAME_PROPERTIE));
-			System.out.println(databaseProperties.getProperty(URL_PROPERTIE));
-			
-			/*renvoie un NullPointerException*/
-			databaseProperties.getProperty(URL_PROPERTIE);
-			databaseProperties.getProperty(USERNAME_PROPERTIE);
-			databaseProperties.getProperty(PASSWORD_PROPERTIE);
-			
-			
-			
+			logger.info("[database properties loaded ]");
 		} catch (FileNotFoundException e) {
-			System.out.println("\n\n>>>> fichier non trouvé <<<<<<<\n\n");
+			logger.error("[file configuration of database  not found ]");  
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("\n\n>>>> IOException <<<<<<<\n\n");
+			logger.error("[file configuration of database  not found ]");
 			e.printStackTrace();
 		}
 	}
 	
-	private DbAccess(Properties dbProperties) { 
-		databaseProperties=dbProperties;
+	/**
+	 * 
+	 * @param dbProperties
+	 */
+	private DbAccess(Properties dbProperties) {
+		databaseProperties = dbProperties;
 	}
-	
-	
+
 	private void setUpHikari() {
-		final HikariConfig hikariConfig=new HikariConfig(databaseProperties);
-/*		
-		hikariConfig.setJdbcUrl(databaseProperties.getProperty(URL_PROPERTIE));
-		hikariConfig.setUsername(databaseProperties.getProperty(USERNAME_PROPERTIE));
-		hikariConfig.setPassword(databaseProperties.getProperty(PASSWORD_PROPERTIE));
-		
+		final HikariConfig hikariConfig = new HikariConfig();
+		hikariConfig.setJdbcUrl(databaseProperties.getProperty(URL_PROPERTIE_NAME));
+		hikariConfig.setUsername(databaseProperties.getProperty(USERNAME_PROPERTIE_NAME));
+		hikariConfig.setPassword(databaseProperties.getProperty(PASSWORD_PROPERTIE_NAME));
 		hikariConfig.setMaximumPoolSize(NB_POOL);
-		hikariConfig.setConnectionTimeout(TIME_OUT);*/
-		this.hikariDataSource=new HikariDataSource(hikariConfig);
+		hikariConfig.setConnectionTimeout(TIME_OUT);
+		this.hikariDataSource = new HikariDataSource(hikariConfig);
+		logger.info("[hikari data source configurated]");
 	}
 
 	public static DbAccess getInstance() {
 		return (instance == null) ? new DbAccess() : instance;
 	}
-	
-	public static DbAccess getInstance(Properties databaseProperties) {
-		return (instance == null) ? new DbAccess(databaseProperties) : instance;
-	}
 
+	
+	public static DbAccess getInstance(Properties dbProperties) {
+		if (instance == null) {
+			return new DbAccess(dbProperties);
+		}
+		databaseProperties=dbProperties;
+		return instance;
+	} 
 
 	@Override
 	public Connection getConnection() throws SQLException {
-		if(hikariDataSource==null) {
+		if (hikariDataSource == null) {
 			setUpHikari();
 		}
 		return hikariDataSource.getConnection();
 	}
-	
 
-	
-	
 	public void initPool() {
 		setUpHikari();
 	}
-	
+ 
 	public void closePool() {
 		this.hikariDataSource.close();
 	}
-	
-	
 
-
-
-	public static String getUrl() {
-		return URL;
+	public static String getUrlPropertyName() {
+		return URL_PROPERTIE_NAME;
 	}
 
-	public static String getLogin() {
-		return LOGIN;
+	public static String getUsernamePropertyName() {
+		return USERNAME_PROPERTIE_NAME;
 	}
 
-	public static String getPassword() {
-		return PASSWORD;
+	public static String getPasswordPropertyName() {
+		return PASSWORD_PROPERTIE_NAME;
 	}
 
-
-	public static String getURL() {
-		return URL;
-	}
-
-	public static void setURL(String uRL) {
-		URL = uRL;
-	}
-
-	public static String getLOGIN() {
-		return LOGIN;
-	}
-
-	public static void setLOGIN(String lOGIN) {
-		LOGIN = lOGIN;
-	}
-
-	public static String getPASSWORD() {
-		return PASSWORD;
-	}
-
-	public static void setPASSWORD(String pASSWORD) {
-		PASSWORD = pASSWORD;
-	}
-	
-
-	
-	
-	
 }

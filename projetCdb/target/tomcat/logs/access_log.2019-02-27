@@ -53,3 +53,8 @@
 0:0:0:0:0:0:0:1 - - [27/Feb/2019:16:03:02 +0000] "GET /projetCdb/cdb HTTP/1.1" 500 5205 http-bio-9000-exec-1 572
 0:0:0:0:0:0:0:1 - - [27/Feb/2019:16:03:05 +0000] "GET /projetCdb/cdb HTTP/1.1" 404 949 http-bio-9000-exec-2 5
 0:0:0:0:0:0:0:1 - - [27/Feb/2019:16:06:49 +0000] "GET /projetCdb/cdb HTTP/1.1" 500 5205 http-bio-9000-exec-1 701
+0:0:0:0:0:0:0:1 - - [27/Feb/2019:16:57:00 +0000] "GET /projetCdb/cdb HTTP/1.1" 500 4208 http-bio-9000-exec-2 711
+0:0:0:0:0:0:0:1 - - [27/Feb/2019:17:02:31 +0000] "GET /projetCdb/cdb HTTP/1.1" 500 4208 http-bio-9000-exec-1 788
+0:0:0:0:0:0:0:1 - - [27/Feb/2019:17:02:33 +0000] "GET /projetCdb/cdb HTTP/1.1" 404 949 http-bio-9000-exec-3 9
+0:0:0:0:0:0:0:1 - - [27/Feb/2019:17:03:57 +0000] "GET /projetCdb/cdb HTTP/1.1" 500 6902 http-bio-9000-exec-1 3233
+0:0:0:0:0:0:0:1 - - [27/Feb/2019:17:05:06 +0000] "GET /projetCdb/cdb HTTP/1.1" 500 6902 http-bio-9000-exec-1 3041
