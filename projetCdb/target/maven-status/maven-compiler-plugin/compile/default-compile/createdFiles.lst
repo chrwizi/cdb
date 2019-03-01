@@ -11,8 +11,8 @@ app/projetCdb/persistance/dto/ComputerDto.class
 app/projetCdb/persistance/dto/IMapperCompanyDto.class
 app/projetCdb/persistance/IDbAccess.class
 app/projetCdb/services/IComputerService.class
-app/projetCdb/services/ComputerServices.class
 app/projetCdb/services/ICompanyServices.class
+app/projetCdb/services/ComputerServices.class
 app/projetCdb/persistance/dto/CompanyDto.class
 app/projetCdb/CdbUtil.class
 app/projetCdb/services/validators/IFormEditComputerValidator.class

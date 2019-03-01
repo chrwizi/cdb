@@ -48,7 +48,7 @@ public class Homeservlet extends HttpServlet {
 		ArrayList<ComputerDto> computers = (ArrayList<ComputerDto>) mapper.mapListComputer(optionalComputers.get());
 		request.setAttribute("nbPages", computerService.getNbPages());
 		request.setAttribute("computers", computers);
-		request.setAttribute("nbComputers", computers.size());
+		request.setAttribute("nbComputers", computers.size()); 
 		this.getServletContext().getRequestDispatcher(DASHBOARD_VIEW).forward(request, response);
 	}
 

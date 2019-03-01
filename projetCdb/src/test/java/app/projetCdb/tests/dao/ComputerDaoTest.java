@@ -74,6 +74,8 @@ public class ComputerDaoTest {
 
 	}
 
+	
+	
 	@AfterClass
 	public static void tearDown() {
 		// clean database
@@ -81,6 +83,8 @@ public class ComputerDaoTest {
 			// companyDao.delete(company.getId());
 		}
 	}
+	
+	
 
 	@Test
 	public void testAddANewComputer() {
@@ -105,7 +109,7 @@ public class ComputerDaoTest {
 			e.printStackTrace();
 		}
 	}
-/*
+
 	@Test
 	public void testUpdateComputer() {
 		try {
@@ -137,7 +141,7 @@ public class ComputerDaoTest {
 		}
 	}
 
-	*/
+	
 	
 	@Test
 	public void testFindByIdWithExistingComputer() {
