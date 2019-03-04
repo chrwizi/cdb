@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -62,8 +63,8 @@ public class ComputerDao {
 				Statement.RETURN_GENERATED_KEYS);
 		// set statement parameters
 		preparedstatement.setString(1, computer.getName());
-		preparedstatement.setTimestamp(2, new Timestamp(computer.getIntroduced().getTime()));
-		preparedstatement.setTimestamp(3, new Timestamp(computer.getDiscontinued().getTime()));
+		preparedstatement.setObject(2, (computer.getIntroduced()));
+		preparedstatement.setObject(3, computer.getDiscontinued());
 		preparedstatement.setLong(4, computer.getCompany().getId());
 		// execute statement
 		preparedstatement.executeUpdate();
@@ -94,11 +95,11 @@ public class ComputerDao {
 	 * 
 	 * @param id
 	 * @return
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	public Optional<Computer> findById(long id) throws SQLException {
 		Optional<Computer> optional = Optional.empty();
-		try (Connection  connection = access.getConnection()){
+		try (Connection connection = access.getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY,
 					Statement.RETURN_GENERATED_KEYS);
 			preparedStatement.setLong(1, id);
@@ -110,10 +111,11 @@ public class ComputerDao {
 				if (optionalCompany.isPresent()) {
 					company = optionalCompany.get();
 				}
-				Timestamp introduced = resultSet.getTimestamp(FIELD_3);
-				Timestamp discontinued = resultSet.getTimestamp(FIELD_4);
-				java.util.Date introDate = (introduced != null) ? new java.util.Date(introduced.getTime()) : null;
-				java.util.Date discont = (discontinued != null) ? new java.util.Date(discontinued.getTime()) : null;
+				LocalDate introduced = (LocalDate) resultSet.getObject(FIELD_3);
+				LocalDate discontinued = (LocalDate) resultSet.getObject(FIELD_4);
+
+				LocalDate introDate = (introduced != null) ? introduced : null;
+				LocalDate discont = (discontinued != null) ? discontinued : null;
 				optional = Optional.of(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2), introDate,
 						discont, company));
 			}
@@ -137,8 +139,8 @@ public class ComputerDao {
 			PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY,
 					Statement.RETURN_GENERATED_KEYS);
 			preparedStatement.setString(1, computer.getName());
-			preparedStatement.setTimestamp(2,  (Timestamp) computer.getIntroduced());
-			preparedStatement.setTimestamp(3,  (Timestamp) computer.getDiscontinued());
+			preparedStatement.setObject(2, computer.getIntroduced());
+			preparedStatement.setObject(3, computer.getDiscontinued());
 			preparedStatement.setLong(4, computer.getId());
 			// execute
 			preparedStatement.executeUpdate();
@@ -183,7 +185,12 @@ public class ComputerDao {
 			while (resultSet.next()) {
 				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FIELD_5));
 				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						resultSet.getDate(FIELD_3), resultSet.getDate(FIELD_4),
+						(resultSet.getTimestamp(FIELD_3) != null)
+								? (LocalDate) resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate()
+								: null,
+						(resultSet.getTimestamp(FIELD_4) != null)
+								? (LocalDate) resultSet.getTimestamp(FIELD_4).toLocalDateTime().toLocalDate()
+								: null,
 						optionalCompany.isPresent() ? optionalCompany.get() : null));
 			}
 		} catch (SQLException e) {
@@ -204,7 +211,7 @@ public class ComputerDao {
 				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FIELD_5));
 				Company company = null;
 				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						resultSet.getDate(FIELD_3), resultSet.getDate(FIELD_4),
+						(LocalDate) resultSet.getObject(FIELD_3), (LocalDate) resultSet.getObject(FIELD_4),
 						optionalCompany.isPresent() ? optionalCompany.get() : company));
 			}
 		} catch (SQLException e) {
@@ -225,7 +232,7 @@ public class ComputerDao {
 				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FIELD_5));
 				Company company = null;
 				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						resultSet.getDate(FIELD_3), resultSet.getDate(FIELD_4),
+						(LocalDate) resultSet.getObject(FIELD_3), (LocalDate) resultSet.getObject(FIELD_4),
 						optionalCompany.isPresent() ? optionalCompany.get() : company));
 			}
 		} catch (SQLException e) {
@@ -237,11 +244,11 @@ public class ComputerDao {
 	public int count() throws SQLException {
 		String query = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE;
 		ResultSet resultSet;
-		int counter=0;
+		int counter = 0;
 		try (Connection connection = access.getConnection()) {
 			Statement statement = connection.createStatement();
 			resultSet = statement.executeQuery(query);
-			counter=(resultSet.first() ? resultSet.getInt("count") : 0);
+			counter = (resultSet.first() ? resultSet.getInt("count") : 0);
 		} catch (SQLException e) {
 			throw e;
 		}
@@ -250,12 +257,12 @@ public class ComputerDao {
 
 	public int seachcount(String name) throws SQLException {
 		ResultSet resultSet;
-		int counter=0;
+		int counter = 0;
 		try (Connection connection = access.getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_COUNT_QUERY);
 			preparedStatement.setString(1, "%" + name + "%");
 			resultSet = preparedStatement.executeQuery();
-			counter=(resultSet.first() ? resultSet.getInt("count") : 0);
+			counter = (resultSet.first() ? resultSet.getInt("count") : 0);
 		} catch (SQLException e) {
 			throw e;
 		}

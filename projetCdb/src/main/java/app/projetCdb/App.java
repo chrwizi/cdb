@@ -6,6 +6,8 @@ package app.projetCdb;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
@@ -214,15 +216,15 @@ public class App {
 			System.out.println("Veuillez renseignez les informations suivantes :");
 			System.out.print("nom >");
 			String name = scanner.nextLine();
-			// get introduced date
+			// get introduced date 
 			System.out.print("date de creation au format yyyy-mm-dd >");
 			String strDate = scanner.next().concat(" 0:0:0.0");
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-			Timestamp introducedTimestamp = CdbUtil.strDateToTimestamp(strDate, dateFormat);
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate introducedDate = CdbUtil.strDateToTimestamp(strDate, dateFormat);
 			System.out.print("date de Production au format yyyy-mm-dd >");
 			// get discontinued date
 			strDate = scanner.next().concat(" 0:0:0.0");
-			Timestamp discontunedTimestamp = CdbUtil.strDateToTimestamp(strDate, dateFormat);
+			LocalDate discontunedDate = CdbUtil.strDateToTimestamp(strDate, dateFormat);
 			// get company of computer
 			System.out.println("veuillez indiquer le numéro de la compagnie");
 			companies = listCompaniesService.getAll();
@@ -230,7 +232,7 @@ public class App {
 			System.out.println("compagnie entre 0 et " + (companies.get().size() - 1) + " >");
 			int index = scanner.nextInt();
 			// creation of new computer
-			Computer computer = new Computer(0L, name, introducedTimestamp, discontunedTimestamp,
+			Computer computer = new Computer(0L, name, introducedDate, discontunedDate,
 					new Company(companies.get().get(index).getId(), companies.get().get(index).getName()));
 			// add computer in database
 			computerService.createComputer(computer);

@@ -134,3 +134,9 @@
 0:0:0:0:0:0:0:1 - - [04/Mar/2019:15:42:21 +0100] "GET /projetCdb/editComputer?idComputer=9 HTTP/1.1" 200 7354 http-bio-9000-exec-8 165
 0:0:0:0:0:0:0:1 - - [04/Mar/2019:15:42:23 +0100] "GET /projetCdb/editComputer?idComputer=9 HTTP/1.1" 200 7354 http-bio-9000-exec-10 15
 0:0:0:0:0:0:0:1 - - [04/Mar/2019:15:42:37 +0100] "GET /projetCdb/editComputer?idComputer=9 HTTP/1.1" 200 7354 http-bio-9000-exec-1 189
+0:0:0:0:0:0:0:1 - - [04/Mar/2019:16:00:16 +0100] "GET /projetCdb/cdb HTTP/1.1" 200 13397 http-bio-9000-exec-1 815
+0:0:0:0:0:0:0:1 - - [04/Mar/2019:16:00:22 +0100] "GET /projetCdb/editComputer?idComputer=3 HTTP/1.1" 200 7369 http-bio-9000-exec-3 54
+0:0:0:0:0:0:0:1 - - [04/Mar/2019:16:00:29 +0100] "GET /projetCdb/cdb HTTP/1.1" 200 13397 http-bio-9000-exec-4 55
+0:0:0:0:0:0:0:1 - - [04/Mar/2019:16:00:31 +0100] "GET /projetCdb/editComputer?idComputer=1 HTTP/1.1" 200 7384 http-bio-9000-exec-6 18
+0:0:0:0:0:0:0:1 - - [04/Mar/2019:16:00:39 +0100] "GET /projetCdb/editComputer?idComputer=1 HTTP/1.1" 200 7384 http-bio-9000-exec-7 18
+0:0:0:0:0:0:0:1 - - [04/Mar/2019:16:01:08 +0100] "POST /projetCdb/editComputer HTTP/1.1" 500 1919 http-bio-9000-exec-9 24

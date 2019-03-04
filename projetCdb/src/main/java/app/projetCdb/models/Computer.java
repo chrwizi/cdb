@@ -1,17 +1,17 @@
 package app.projetCdb.models;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Computer {
 	private Long id;
 	private String name	;
-	private Date introduced;
-	private Date discontinued	;
+	private LocalDate introduced;
+	private LocalDate discontinued	;
 	private Company company;
 	
 	
 	
-	public Computer(Long id, String name, Date introduced, Date discontinued, Company company) {
+	public Computer(Long id, String name, LocalDate introduced, LocalDate discontinued, Company company) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -33,16 +33,16 @@ public class Computer {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Date getIntroduced() {
+	public LocalDate getIntroduced() {
 		return introduced;
 	}
-	public void setIntroduced(Date introduced) {
+	public void setIntroduced(LocalDate introduced) {
 		this.introduced = introduced;
 	}
-	public Date getDiscontinued() {
+	public LocalDate getDiscontinued() {
 		return discontinued;
 	}
-	public void setDiscontinued(Date discontinued) {
+	public void setDiscontinued(LocalDate discontinued) {
 		this.discontinued = discontinued;
 	}
 
@@ -50,7 +50,17 @@ public class Computer {
 	@Override
 	public String toString() {
 		StringBuffer buffer=new StringBuffer("[");
-		buffer.append(getName()+" companyId: "+company.getId()+" introduced: "+introduced+"]");
+		buffer.append(getName());
+		if(introduced!=null) {
+			buffer.append(" *Introduced: "+introduced.toString()+"* ");
+		}
+		if(discontinued!=null) {
+			buffer.append(" #Discontinued: "+discontinued.toString()+"# ");
+		}
+		if(company!=null) {
+			buffer.append(" companyId: "+company.getId());
+		}
+		buffer.append(" ]");
 		return buffer.toString();
 	}
 
