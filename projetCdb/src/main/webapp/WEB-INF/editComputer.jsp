@@ -28,34 +28,44 @@
 					<h1>Edit Computer</h1>
 
 					<form action="editComputer" method="POST">
-						<input type="hidden" value="0" id="${computer.id}" />
+						<input type="hidden" value="${computer.id}" id="${computer.id}" />
 						<!-- TODO: Change this value with the computer id -->
 						<fieldset>
 							<div class="form-group">
 								<label for="computerName">Computer name</label> <input
-									type="text" class="form-control" id="computerName" name="computerName"
-									placeholder="${computer.name}">
+									type="text" class="form-control" id="computerName"
+									name="computerName" value="${computer.name}">
 							</div>
 							<div class="form-group">
 								<label for="introduced">Introduced date</label> <input
-									type="date" class="form-control" id="introduced" name="introducedDate"
-									value="03-03/2004">
+									type="date" class="form-control" id="introduced"
+									name="introducedDate" value="2004-02-02">
 							</div>
 							<div class="form-group">
 								<label for="discontinued">Discontinued date</label> <input
-									type="date" class="form-control" id="discontinued" name="discontinuedDate"
-									placeholder="${computer.discontinued}">
+									type="date" class="form-control" id="discontinued"
+									name="discontinuedDate" valuer="${computer.discontinued}">
 							</div>
-							<div class="form-group">
-								<label for="companyId">Company</label> <select
-									class="form-control" id="companyId" value="${computer.company}">
-									<option value="0">${computer.company}</option>
-									<c:forEach items="${companies}" var="company">
-										<option value="${company.id}">${company.name}</option>
-									</c:forEach>
 
+
+							<div class="form-group">
+								<label for="companyId">Company</label> <select name="idCompany"
+									class="form-control" id="idCompany">
+									<c:forEach items="${companies}" var="company">
+										<c:choose>
+											<c:when test="${computer.companyId==company.id}">
+												<option value="${company.id}" selected="selected">${company.name}</option>
+											</c:when>
+											<c:when test="${computer.companyId!=company.id}">
+												<option  value="${company.id}">${company.name}</option>
+											</c:when>
+										</c:choose>
+									</c:forEach>
+									<option value=" " selected="selected">${company.name}</option>
 								</select>
 							</div>
+
+
 						</fieldset>
 						<div class="actions pull-right">
 							<input type="submit" value="Edit" class="btn btn-primary">
@@ -64,6 +74,11 @@
 					</form>
 				</div>
 			</div>
+		</div>
+	</section>
+	<section>
+		<div>
+			<p>${errorMessage}</p>
 		</div>
 	</section>
 </body>

@@ -8,6 +8,7 @@
 /home/excilys/cdb/projetCdb/src/main/java/app/projetCdb/persistance/ComputersPage.java
 /home/excilys/cdb/projetCdb/src/main/java/app/projetCdb/persistance/dto/IMapperComputerDto.java
 /home/excilys/cdb/projetCdb/src/main/java/app/projetCdb/services/IComputerService.java
+/home/excilys/cdb/projetCdb/src/main/java/app/projetCdb/exceptions/ValidatorCause.java
 /home/excilys/cdb/projetCdb/src/main/java/app/projetCdb/persistance/IDbAccess.java
 /home/excilys/cdb/projetCdb/src/main/java/app/projetCdb/models/Company.java
 /home/excilys/cdb/projetCdb/src/main/java/app/projetCdb/persistance/CompanyDao.java
@@ -24,4 +25,5 @@
 /home/excilys/cdb/projetCdb/src/main/java/app/projetCdb/services/ICompanyServices.java
 /home/excilys/cdb/projetCdb/src/main/java/app/projetCdb/persistance/dto/CompanyDto.java
 /home/excilys/cdb/projetCdb/src/main/java/app/projetCdb/controllers/AddComputerServlet.java
+/home/excilys/cdb/projetCdb/src/main/java/app/projetCdb/exceptions/ValidatorFormException.java
 /home/excilys/cdb/projetCdb/src/main/java/app/projetCdb/persistance/dto/MapperCompanyDto.java

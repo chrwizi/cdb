@@ -4,6 +4,7 @@ app/projetCdb/persistance/CompanyDao.class
 app/projetCdb/persistance/IPageSelect.class
 app/projetCdb/persistance/dto/MapperComputer.class
 app/projetCdb/persistance/dto/IMapperComputerDto.class
+app/projetCdb/controllers/EditComputerSevlet$1.class
 app/projetCdb/persistance/ComputerDao.class
 app/projetCdb/models/Company.class
 app/projetCdb/controllers/AddComputerServlet.class
