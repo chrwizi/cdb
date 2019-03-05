@@ -2,7 +2,6 @@ package app.projetCdb.controllers;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +36,6 @@ public class EditComputerSevlet extends HttpServlet {
 	// views
 	private static final String GET_VIEW = "/WEB-INF/editComputer.jsp";
 	private static final String REDIRECT_COMPUTER_NOT_FOUND = "/WEB-INF/500.jsp";
-	private static final String POST_VIEW = "/WEB-INF/tmp.jsp";
 	// services
 	private IComputerService computerService = new ComputerServices();
 	private ICompanyServices companyService = new CompanyService();
@@ -108,10 +106,10 @@ public class EditComputerSevlet extends HttpServlet {
 				req.setAttribute("errorMessage", "Le champ computer ne doit pas Ãªtre vide");
 				req.setAttribute("computer", computerDto);
 				this.getServletContext().getRequestDispatcher(GET_VIEW).forward(req, resp);
-				logger.debug("Le champs d'édition du nom du computer est vide");
+				logger.debug("Le champs d'ï¿½dition du nom du computer est vide");
 				break;
 			default:
-				logger.warn("Erreur lors de la validation du formulaire d'édition du computeur "+computerName);
+				logger.warn("Erreur lors de la validation du formulaire d'ï¿½dition du computeur "+computerName);
 			}
 		}
 	}

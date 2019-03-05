@@ -1,36 +1,28 @@
 package app.projetCdb.persistance.dto;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import javax.swing.text.DateFormatter;
 
 import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
 
 public class MapperComputer implements IMapperComputerDto {
-	private SimpleDateFormat computerDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-	private SimpleDateFormat dtoDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	@Override
 	public Computer mapDto(ComputerDto dto) {
-		if (dto == null)
+		if (dto == null){
 			return null;
-		LocalDate introduced = null;
-		LocalDate discontinued = null;
-//			introduced = dateFormatter.parse(dto.getIntroduced().concat(" 0:0:0.0"));
-		introduced = (LocalDate) dateFormatter.parse(dto.getIntroduced());
-		discontinued = (LocalDate) dateFormatter.parse(dto.getDiscontinued());
+		}
+		LocalDate introduced = (dto.getIntroduced()!=null)?LocalDate.parse(dto.getIntroduced(), dateFormatter):null;
+		LocalDate discontinued =(dto.getDiscontinued()!=null)?LocalDate.parse(dto.getDiscontinued(), dateFormatter):null;
 		return new Computer(dto.getId(), dto.getName(), introduced, discontinued,
 				new Company(dto.getCompanyId(), dto.getCompany()));
 	}
-
+ 
 	@Override
 	public ComputerDto mapComputer(Computer computer) {
 		if (computer == null)
@@ -64,8 +56,5 @@ public class MapperComputer implements IMapperComputerDto {
 		return dto;
 	}
 
-	public String DateToString() {
-		return null;
-	}
 
 }

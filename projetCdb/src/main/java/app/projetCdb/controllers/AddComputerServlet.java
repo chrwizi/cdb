@@ -1,7 +1,6 @@
 package app.projetCdb.controllers;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,13 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.exceptions.ValidatorFormException;
 import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
-import app.projetCdb.persistance.CompanyDao;
-import app.projetCdb.persistance.ComputerDao;
-import app.projetCdb.persistance.DbAccess;
 import app.projetCdb.persistance.dto.CompanyDto;
 import app.projetCdb.persistance.dto.ComputerDto;
 import app.projetCdb.persistance.dto.IMapperCompanyDto;
@@ -61,7 +56,7 @@ public class AddComputerServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		final String POST_ADD_COMPUTER = "/WEB-INF/tmp.jsp";
+		final String POST_ADD_COMPUTER ="/WEB-INF/addComputer.jsp";
 		// get form data
 		String computerName = (String) req.getParameter("computerName");
 		String introducedDate = (String) req.getParameter("introducedDate");
@@ -90,10 +85,10 @@ public class AddComputerServlet extends HttpServlet {
 				req.setAttribute("errorMessage", "Le champ computer ne doit pas Ãªtre vide");
 				req.setAttribute("computer", computerDto);
 				this.getServletContext().getRequestDispatcher(POST_ADD_COMPUTER).forward(req, resp);
-				logger.debug("Le champs d'édition du nom du computer est vide");
+				logger.debug("Le champs d'ï¿½dition du nom du computer est vide");
 				break;
 			default:
-				logger.warn("Erreur lors de la validation du formulaire d'édition du computeur "+computerName);
+				logger.warn("Erreur lors de la validation du formulaire d'ï¿½dition du computeur "+computerName);
 			}
 		}
 	}

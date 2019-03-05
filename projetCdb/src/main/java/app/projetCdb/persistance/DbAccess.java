@@ -34,7 +34,7 @@ public class DbAccess implements IDbAccess {
 	
 	/**
 	 * @throws DbAccessPropertyNotFoundException 
-	 * 
+	 *  
 	 */
 	private DbAccess(){
 		try (FileInputStream input = new FileInputStream(DEFAULT_DATABASE_CONFIGURATION_FILE)) {

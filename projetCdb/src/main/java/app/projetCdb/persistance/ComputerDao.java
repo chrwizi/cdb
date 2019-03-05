@@ -211,7 +211,8 @@ public class ComputerDao {
 				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FIELD_5));
 				Company company = null;
 				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						(LocalDate) resultSet.getObject(FIELD_3), (LocalDate) resultSet.getObject(FIELD_4),
+						(resultSet.getTimestamp(FIELD_3)!=null)?(LocalDate) resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate():null,
+						(resultSet.getTimestamp(FIELD_4)!=null)?(LocalDate) resultSet.getTimestamp(FIELD_4).toLocalDateTime().toLocalDate():null,
 						optionalCompany.isPresent() ? optionalCompany.get() : company));
 			}
 		} catch (SQLException e) {

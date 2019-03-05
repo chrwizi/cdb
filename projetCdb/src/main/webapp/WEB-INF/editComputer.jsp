@@ -34,7 +34,7 @@
 							<div class="form-group">
 								<label for="computerName">Computer name</label> <input
 									type="text" class="form-control" id="computerName"
-									name="computerName" value="${computer.name}">
+									name="computerName" value="${computer.name}" required="required">
 							</div>
 							<div class="form-group">
 								<label for="introduced">Introduced date</label> <input

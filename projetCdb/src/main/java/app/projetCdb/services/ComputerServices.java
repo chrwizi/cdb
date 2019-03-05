@@ -114,6 +114,18 @@ public class ComputerServices implements IComputerService {
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public void delete(long idTab[]) {
+		for (long id : idTab) {
+			try {
+				computerDao.delete(id);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 
 	@Override
 	public void updateComputer(Computer computer) {

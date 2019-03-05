@@ -61,5 +61,12 @@
 			</div>
 		</div>
 	</section>
+	<section>
+		<div class="container">
+			<div class="row">
+				<p>${errorMessage}</p>
+			</div>
+		</div>
+	</section>
 </body>
 </html>

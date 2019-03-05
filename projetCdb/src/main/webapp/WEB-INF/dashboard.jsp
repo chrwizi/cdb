@@ -23,10 +23,11 @@
 
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${nbComputers} computers found</h1>
+			<h1 id="homeTitle">${nbComputers}computers found</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
-					<form id="searchForm" action="/projetCdb/" method="POST" class="form-inline">
+					<form id="searchForm" action="/projetCdb/" method="POST"
+						class="form-inline">
 
 						<input type="search" id="searchbox" name="search"
 							class="form-control" placeholder="Search name" /> <input
@@ -43,7 +44,7 @@
 			</div>
 		</div>
 
-		<form id="deleteForm" action="#" method="POST">
+		<form id="deleteForm" action="/projetCdb/delete" method="POST">
 			<input type="hidden" name="selection" value="">
 		</form>
 
@@ -78,8 +79,9 @@
 					<tbody id="results">
 						<c:forEach items="${computers}" var="computer">
 							<tr>
-								<td class="editMode"><input type="checkbox" name="cb"
-									class="cb" value="0"></td>
+								<td class="editMode">
+									<input type="checkbox" name="cb" class="cb" value="${computer.id}">
+								</td>
 								<td><a
 									href="/projetCdb/editComputer?idComputer=<c:out value="${computer.id}"/>">${computer.name}</a></td>
 								<td>${computer.introduced}</td>

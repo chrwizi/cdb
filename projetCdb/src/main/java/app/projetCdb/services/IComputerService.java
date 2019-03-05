@@ -18,4 +18,5 @@ public interface IComputerService {
 	public Optional<List<Computer>> getPage(int num) throws SQLException;
 	int getNbPages();
 	Optional<List<Computer>> getPage(int num, String computerNa) throws SQLException;
+	void delete(long[] idTab);
 }
