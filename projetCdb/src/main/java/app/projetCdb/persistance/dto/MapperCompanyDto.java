@@ -19,29 +19,25 @@ public class MapperCompanyDto implements IMapperCompanyDto {
 	}
 
 	@Override
-	public Optional<List<Company>> mapListCompanyDto(List<CompanyDto> listDto) {
-		Optional<List<Company>> optionalCompanies = Optional.empty();
+	public List<Company> mapListCompanyDto(List<CompanyDto> listDto) {
 		List<Company> companies = new ArrayList<>();
 		if (listDto != null) {
 			for (CompanyDto companyDto : listDto) {
 				companies.add(mapDto(companyDto));
 			}
-			optionalCompanies = Optional.of(companies);
 		}
-		return optionalCompanies;
+		return companies;
 	}
  
 	@Override
-	public Optional<List<CompanyDto>> mapListCompany(List<Company> companies) {
-		Optional<List<CompanyDto>> optionalListDto = Optional.empty();
+	public List<CompanyDto> mapListCompany(List<Company> companies) {
 		List<CompanyDto> companiesDto = new ArrayList<>();
 		if (companies != null) {
 			for (Company company : companies) {
 				companiesDto.add(mapCompany(company));
 			}
-			optionalListDto = Optional.of(companiesDto);
 		}
-		return optionalListDto;
+		return companiesDto;
 	}
 
 }

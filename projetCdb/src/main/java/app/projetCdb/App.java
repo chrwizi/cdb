@@ -144,9 +144,8 @@ public class App {
 	 */
 	public static void listCompaniesHandler(CompanyDao dao) {
 		ICompanyServices lisctCompaniesService = new CompanyService(dao);
-		Optional<List<Company>> companies;
-		companies = lisctCompaniesService.getAll();
-		printCompaniesWithIndex(companies.get(), false);
+		List<Company> companies = lisctCompaniesService.getAll();
+		printCompaniesWithIndex(companies, false);
 
 	}
 
@@ -210,7 +209,7 @@ public class App {
 		ICompanyServices listCompaniesService = new CompanyService(companyDao);
 		IComputerService computerService =new ComputerServices();
 		Scanner scanner = new Scanner(System.in);
-		Optional<List<Company>> companies;
+		List<Company> companies;
 		try {
 			// get computer informations
 			System.out.println("Veuillez renseignez les informations suivantes :");
@@ -228,12 +227,12 @@ public class App {
 			// get company of computer
 			System.out.println("veuillez indiquer le numéro de la compagnie");
 			companies = listCompaniesService.getAll();
-			printCompaniesWithIndex(companies.get(), true);
-			System.out.println("compagnie entre 0 et " + (companies.get().size() - 1) + " >");
+			printCompaniesWithIndex(companies, true);
+			System.out.println("compagnie entre 0 et " + (companies.size() - 1) + " >");
 			int index = scanner.nextInt();
 			// creation of new computer
 			Computer computer = new Computer(0L, name, introducedDate, discontunedDate,
-					new Company(companies.get().get(index).getId(), companies.get().get(index).getName()));
+					new Company(companies.get(index).getId(), companies.get(index).getName()));
 			// add computer in database
 			computerService.createComputer(computer);
 		} catch (ParseException e) {
@@ -242,7 +241,7 @@ public class App {
 		}
 	}
 
-	/**
+	/** 
 	 * delete a computer from database
 	 * 
 	 * @param computerDao

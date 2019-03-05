@@ -8,6 +8,6 @@ import app.projetCdb.models.Company;
 public interface IMapperCompanyDto {
 	public Company mapDto(CompanyDto dto);
 	public CompanyDto mapCompany(Company company);
-	public Optional<List<Company>>mapListCompanyDto(List<CompanyDto> listDto);
-	public Optional<List<CompanyDto>>mapListCompany(List<Company> companies);
+	public List<Company> mapListCompanyDto(List<CompanyDto> listDto);
+	public List<CompanyDto> mapListCompany(List<Company> companies);
 }

@@ -28,15 +28,14 @@ public class CompanyService implements ICompanyServices {
 	}
 
 	@Override
-	public Optional<List<Company>> getAll(){
-		Optional<List<Company>> optional=Optional.empty();
+	public List<Company> getAll(){
 		List<Company> companies = new ArrayList<>();
 		try {
 			companies = CompanyDao.findAll();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return (!companies.isEmpty())?Optional.of(companies):optional;
+		return companies;
 	}
 	
   

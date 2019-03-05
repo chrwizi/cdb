@@ -53,9 +53,9 @@ public class AddComputerServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		final String ADD_COMPUTER_VIEW = "/WEB-INF/addComputer.jsp";
 		//get computers from database 
-		Optional<List<Company>> optionalCompanies = companyService.getAll();
-		Optional<List<CompanyDto>> companiesDto = mapperCompany.mapListCompany(optionalCompanies.get());
-		req.setAttribute("companies", companiesDto.get());
+		List<Company> companies = companyService.getAll();
+		List<CompanyDto> companiesDto = mapperCompany.mapListCompany(companies);
+		req.setAttribute("companies", companiesDto);
 		this.getServletContext().getRequestDispatcher(ADD_COMPUTER_VIEW).forward(req, resp);
 	}
 

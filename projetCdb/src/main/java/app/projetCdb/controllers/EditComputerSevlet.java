@@ -66,10 +66,10 @@ public class EditComputerSevlet extends HttpServlet {
 			req.setAttribute("errorMessage", errorMessage);
 			this.getServletContext().getRequestDispatcher(REDIRECT_COMPUTER_NOT_FOUND).forward(req, resp);
 		} else {
-			Optional<List<Company>> optionalCompanies = companyService.getAll();
+			List<Company> companies = companyService.getAll();
 			ComputerDto computerDto = mapper.mapComputer(optionalComputer.get());
-			Optional<List<CompanyDto>> companiesDto = mapperCompany.mapListCompany(optionalCompanies.get());
-			req.setAttribute("companies", companiesDto.get());
+			List<CompanyDto> companiesDto = mapperCompany.mapListCompany(companies);
+			req.setAttribute("companies", companiesDto);
 			req.setAttribute("computer", computerDto);
 			this.getServletContext().getRequestDispatcher(GET_VIEW).forward(req, resp);
 		}
