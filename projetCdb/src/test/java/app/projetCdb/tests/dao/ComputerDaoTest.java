@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -89,7 +90,7 @@ public class ComputerDaoTest {
 	@Test
 	public void testAddANewComputer() {
 		// DEFINE
-		Computer computer = new Computer(0L, "MonPc", new Date(), new Date(), companies.get(0));
+		Computer computer = new Computer(0L, "MonPc", LocalDate.of(2019, 3, 20),  LocalDate.of(2019, 4, 20), companies.get(0));
 		OptionalLong id = OptionalLong.empty();
 		// WHEN
 		try {
@@ -114,7 +115,7 @@ public class ComputerDaoTest {
 	public void testUpdateComputer() {
 		try {
 			// DEFINE
-			Computer computer = new Computer(0L, "MonPc", new Date(), new Date(), companies.get(0));
+			Computer computer = new Computer(0L, "MonPc", LocalDate.of(2019, 3, 20),  LocalDate.of(2019, 4, 20), companies.get(0));
 			OptionalLong id = OptionalLong.empty();
 			id = computerDao.add(computer);
 			if (id.isPresent()) {
@@ -146,7 +147,7 @@ public class ComputerDaoTest {
 	@Test
 	public void testFindByIdWithExistingComputer() {
 		// DEFINE
-		Computer computer = new Computer(0L, "MonPc", new Date(), new Date(), companies.get(0));
+		Computer computer = new Computer(0L, "MonPc", LocalDate.of(2019, 3, 20),  LocalDate.of(2019, 4, 20), companies.get(0));
 		OptionalLong id =OptionalLong.empty();
 		// WHEN
 		try {

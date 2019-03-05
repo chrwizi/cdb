@@ -11,7 +11,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
+import app.projetCdb.exceptions.ValidatorFormException;
 import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.CompanyDao;
@@ -27,6 +31,8 @@ import app.projetCdb.services.CompanyService;
 import app.projetCdb.services.ComputerServices;
 import app.projetCdb.services.ICompanyServices;
 import app.projetCdb.services.IComputerService;
+import app.projetCdb.services.validators.FormEditComputerValidator;
+import app.projetCdb.services.validators.IFormEditComputerValidator;
 
 @WebServlet(name = "add", urlPatterns = "/addComputer")
 public class AddComputerServlet extends HttpServlet {
@@ -38,6 +44,10 @@ public class AddComputerServlet extends HttpServlet {
 	private IMapperCompanyDto mapperCompany = new MapperCompanyDto();
 	//
 	private static final long serialVersionUID = 1L;
+	private final long DEFAULT_ID=0L;
+	//
+	IFormEditComputerValidator validator=new FormEditComputerValidator();
+	Logger logger=LoggerFactory.getLogger(this.getClass());
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -45,7 +55,6 @@ public class AddComputerServlet extends HttpServlet {
 		//get computers from database 
 		Optional<List<Company>> optionalCompanies = companyService.getAll();
 		Optional<List<CompanyDto>> companiesDto = mapperCompany.mapListCompany(optionalCompanies.get());
-		//send computers Dto to view 
 		req.setAttribute("companies", companiesDto.get());
 		this.getServletContext().getRequestDispatcher(ADD_COMPUTER_VIEW).forward(req, resp);
 	}
@@ -57,18 +66,36 @@ public class AddComputerServlet extends HttpServlet {
 		String computerName = (String) req.getParameter("computerName");
 		String introducedDate = (String) req.getParameter("introducedDate");
 		String discontinueddDate = (String) req.getParameter("discontinuedDate");
-		Long idCompany = Long.valueOf(req.getParameter("idCompany"));
+		Long idCompany =req.getParameter("idCompany")!=null? Long.valueOf(req.getParameter("idCompany")):DEFAULT_ID;
 		// treat data
 		Optional<Company> company = companyService.findById(idCompany);
-		ComputerDto computerDto = new ComputerDto(0L, computerName, introducedDate, discontinueddDate,
+		ComputerDto computerDto = new ComputerDto(DEFAULT_ID, computerName, introducedDate, discontinueddDate,
 				(company.isPresent() ? company.get().getName() : null),
 				company.isPresent() ? company.get().getId() : null);
-		Computer newComputer = mapper.mapDto(computerDto);
-		//create new computer in database
-		computerService.createComputer(newComputer);
-		req.setAttribute("computer", computerDto);
-		// redirect request
-		this.getServletContext().getRequestDispatcher(POST_ADD_COMPUTER).forward(req, resp);
+		Computer newComputer = mapper.mapDto(computerDto); 
+		try {
+			validator.isValidEditForm(computerName, introducedDate, discontinueddDate, idCompany);
+			computerService.createComputer(newComputer);
+			req.setAttribute("computer", computerDto);
+			this.getServletContext().getRequestDispatcher(POST_ADD_COMPUTER).forward(req, resp);
+		} catch (ValidatorFormException e) {
+			switch (e.getInvalidityCause()) {
+			case INCONSITENT_DATES:
+				req.setAttribute("errorMessage", "les dates de sont incohÃ©rentes id vaut ");
+				req.setAttribute("computer", computerDto);
+				this.getServletContext().getRequestDispatcher(POST_ADD_COMPUTER).forward(req, resp);
+				logger.debug("Les dates non conformes ");
+				break;
+			case EMPTY_NAME:
+				req.setAttribute("errorMessage", "Le champ computer ne doit pas Ãªtre vide");
+				req.setAttribute("computer", computerDto);
+				this.getServletContext().getRequestDispatcher(POST_ADD_COMPUTER).forward(req, resp);
+				logger.debug("Le champs d'édition du nom du computer est vide");
+				break;
+			default:
+				logger.warn("Erreur lors de la validation du formulaire d'édition du computeur "+computerName);
+			}
+		}
 	}
 
 }

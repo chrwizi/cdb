@@ -47,6 +47,7 @@ public class EditComputerSevlet extends HttpServlet {
 	// edit computer validator
 	private IFormEditComputerValidator validator = new FormEditComputerValidator();
 	//
+	private long DEFAULT_ID=0L;
 	Logger logger=LoggerFactory.getLogger(this.getClass());
 
 	@Override
@@ -80,8 +81,8 @@ public class EditComputerSevlet extends HttpServlet {
 		String computerName = (String) req.getParameter("computerName");
 		String introducedDate = (String) req.getParameter("introducedDate");
 		String discontinueddDate = (String) req.getParameter("discontinuedDate");
-		Long idCompany = (!(req.getParameter("idCompany")==null)&&req.getParameter("idCompany").equals("")) ? Long.valueOf(req.getParameter("idCompany")) : 1L;
-
+		Long idCompany = (!(req.getParameter("idCompany")==null)&&req.getParameter("idCompany").equals("")) ? Long.valueOf(req.getParameter("idCompany")) : DEFAULT_ID;
+		
 		Optional<Company> company = companyService.findById(idCompany);
 		ComputerDto computerDto = new ComputerDto(0L, computerName, introducedDate, discontinueddDate,
 				(company.isPresent() ? company.get().getName() : null),
@@ -107,10 +108,10 @@ public class EditComputerSevlet extends HttpServlet {
 				req.setAttribute("errorMessage", "Le champ computer ne doit pas Ãªtre vide");
 				req.setAttribute("computer", computerDto);
 				this.getServletContext().getRequestDispatcher(GET_VIEW).forward(req, resp);
-				logger.debug("Le champs d'Ã©dition du nom du computer est vide");
+				logger.debug("Le champs d'édition du nom du computer est vide");
 				break;
 			default:
-				logger.warn("Erreur lors de la validation du formulaire d'Ã©dition du computeur "+computerName);
+				logger.warn("Erreur lors de la validation du formulaire d'édition du computeur "+computerName);
 			}
 		}
 	}
