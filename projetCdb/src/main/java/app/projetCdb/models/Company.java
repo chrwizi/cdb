@@ -15,7 +15,7 @@ public class Company {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer("[ id: "+this.getId()+" name:").append(getName());
+		StringBuffer buffer = new StringBuffer("[ company  name:").append(getName());
 		buffer.append("]");
 		return buffer.toString();
 	}

@@ -25,7 +25,7 @@ public class DbAccess implements IDbAccess {
 	private static String PASSWORD_PROPERTIE_NAME = "db_password";
 	// hiraki properties
 	private HikariDataSource hikariDataSource;
-	private static int NB_POOL = 10;
+	private static int NB_POOL = 5;
 	private static final long TIME_OUT = 10000L;
 	// logger
 	private Logger logger = LoggerFactory.getLogger(DbAccess.class);
@@ -48,7 +48,7 @@ public class DbAccess implements IDbAccess {
 			logger.error("[file configuration of database  not found ]");  
 			e.printStackTrace();
 		} catch (IOException e) {
-			logger.error("[file configuration of database  not found ]");
+			logger.error("[IOException form file configuration]");
 			e.printStackTrace();
 		}
 	}
@@ -86,11 +86,18 @@ public class DbAccess implements IDbAccess {
 	} 
 
 	@Override
-	public Connection getConnection() throws SQLException {
+	public Connection getConnection(){
 		if (hikariDataSource == null) {
 			setUpHikari();
 		}
-		return hikariDataSource.getConnection();
+		Connection connection = null;
+		try {
+			connection = hikariDataSource.getConnection();
+		} catch (SQLException e) {
+			logger.debug("echec de connexion à la base de données");
+		}
+		logger.debug("connexion établie avec la base de données");
+		return  connection;
 	}
 
 	public void initPool() {

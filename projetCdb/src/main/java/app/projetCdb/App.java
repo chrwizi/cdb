@@ -3,6 +3,7 @@ package app.projetCdb;
  * cdbProject 
  */
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,8 +31,9 @@ public class App {
 	private final static int CREATE_COMPUTER = 3;
 	private final static int UPDATE_COMPUTER = 4;
 	private final static int DELETE_COMPUTER = 5;
-	private final static int SHOW_COMPUTER_DETAILS = 6;
-	private final static int EXIT = 7;
+	private final static int DELETE_COMPANY = 6;
+	private final static int SHOW_COMPUTER_DETAILS = 7;
+	private final static int EXIT = 8;
 
 	public static void main(String[] args) {
 		// objects to interact with database
@@ -55,7 +57,7 @@ public class App {
 			// show user selection menu
 			showMenu();
 			userChoice = scanner.nextInt();
-			while (userChoice < 1 || userChoice > 7) {
+			while (userChoice < 1 || userChoice > 8) {
 				System.out.print("précisez votre choix >");
 				userChoice = scanner.nextInt();
 			}
@@ -80,6 +82,9 @@ public class App {
 			case SHOW_COMPUTER_DETAILS:
 				showComputerDetailsHandler();
 				break;
+			case DELETE_COMPANY:
+				deleteCompanyHandler();
+				break;
 			case EXIT:
 				fin = true;
 				break;
@@ -90,6 +95,7 @@ public class App {
 		}
 		scanner.close();
 	}
+
 
 	/**
 	 * show the selection menu in console
@@ -105,8 +111,9 @@ public class App {
 		System.out.println("3- Create a computer");
 		System.out.println("4- Update a computer");
 		System.out.println("5- Delete a computer");
-		System.out.println("6- show computer details");
-		System.out.println("7- Exit");
+		System.out.println("6- Delete a company");
+		System.out.println("7- show computer details");
+		System.out.println("8- Exit");
 		System.out.println("Votre choix :");
 	}
 
@@ -136,6 +143,28 @@ public class App {
 				+ selectedComputer.getIntroduced() + " date de retrait: " + selectedComputer.getDiscontinued() + "]");
 
 	}
+	
+	
+	private static void deleteCompanyHandler() {
+		// TODO Auto-generated method stub
+		ICompanyServices companyServices=new CompanyService();
+		List<Company> companies=companyServices.getAll();
+		if(!companies.isEmpty()) {
+			System.out.println("Veuillez choisir le numéro de la companie à supprimer ");
+			printCompaniesWithIndex(companies, true);
+			Scanner scanner = new Scanner(System.in);
+			System.out.println("choisir un numéro entre 0 et " + (companies.size() - 1) + " >");
+			int index=scanner.nextInt();
+			Company company=companies.get(index);
+			try {
+				companyServices.delete(company.getId());
+			} catch (SQLException e) {
+				
+				e.printStackTrace();
+			}
+		}
+	}
+
 
 	/**
 	 * print list of all companies in database

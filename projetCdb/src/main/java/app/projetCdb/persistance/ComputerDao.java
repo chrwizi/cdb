@@ -21,20 +21,21 @@ public class ComputerDao {
 	private CompanyDao companyDao;
 	/* Name table */
 	private final static String TABLE = "computer";
+
 	/* fields table */
 	private final static String FIELD_1 = "id";
 	private final static String FIELD_2 = "name";
 	private final static String FIELD_3 = "introduced";
 	private final static String FIELD_4 = "discontinued";
-	private final static String FIELD_5 = "company_id";
+	private final static String FOREIGN_KEY_COMPANY_ID = "company_id";
 
 	/* Queries */
 	private final static String CREATE_QUERY = "INSERT INTO " + TABLE + "(" + FIELD_2 + "," + FIELD_3 + "," + FIELD_4
-			+ "," + FIELD_5 + ") " + "VALUES (?,?,?,?)";
+			+ "," + FOREIGN_KEY_COMPANY_ID + ") " + "VALUES (?,?,?,?)";
 	private final static String DELETE_QUERY = "DELETE FROM " + TABLE + " WHERE " + FIELD_1 + " =?";
 
 	private final static String UPDATE_QUERY = "UPDATE " + TABLE + " SET " + FIELD_2 + "=?, " + FIELD_3 + "=?, "
-			+ FIELD_4 + "=?," + "," + FIELD_5 + "=?, " + " WHERE " + FIELD_1 + "=?)";
+			+ FIELD_4 + "=?," + "," + FOREIGN_KEY_COMPANY_ID + "=?, " + " WHERE " + FIELD_1 + "=?)";
 
 	private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + " WHERE " + FIELD_1 + " = ? ";
 	private final static String GET_PAGE_QUERY = "SELECT * FROM " + TABLE + " LIMIT ?,? ";
@@ -46,6 +47,14 @@ public class ComputerDao {
 	public ComputerDao(IDbAccess access) {
 		this.access = access;
 		companyDao = new CompanyDao(access);
+	}
+
+	public static String getTable() {
+		return TABLE;
+	}
+
+	public static String getForignKeyCompanyId() {
+		return FOREIGN_KEY_COMPANY_ID;
 	}
 
 	/**
@@ -106,7 +115,7 @@ public class ComputerDao {
 			// execute statement
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if (resultSet.first()) {
-				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FIELD_5));
+				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FOREIGN_KEY_COMPANY_ID));
 				Company company = null;
 				if (optionalCompany.isPresent()) {
 					company = optionalCompany.get();
@@ -183,7 +192,7 @@ public class ComputerDao {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(query);
 			while (resultSet.next()) {
-				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FIELD_5));
+				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FOREIGN_KEY_COMPANY_ID));
 				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
 						(resultSet.getTimestamp(FIELD_3) != null)
 								? (LocalDate) resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate()
@@ -208,11 +217,15 @@ public class ComputerDao {
 			preparedStatement.setInt(2, offset);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
-				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FIELD_5));
+				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FOREIGN_KEY_COMPANY_ID));
 				Company company = null;
 				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						(resultSet.getTimestamp(FIELD_3)!=null)?(LocalDate) resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate():null,
-						(resultSet.getTimestamp(FIELD_4)!=null)?(LocalDate) resultSet.getTimestamp(FIELD_4).toLocalDateTime().toLocalDate():null,
+						(resultSet.getTimestamp(FIELD_3) != null)
+								? (LocalDate) resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate()
+								: null,
+						(resultSet.getTimestamp(FIELD_4) != null)
+								? (LocalDate) resultSet.getTimestamp(FIELD_4).toLocalDateTime().toLocalDate()
+								: null,
 						optionalCompany.isPresent() ? optionalCompany.get() : company));
 			}
 		} catch (SQLException e) {
@@ -230,7 +243,7 @@ public class ComputerDao {
 			preparedStatement.setInt(3, offset);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
-				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FIELD_5));
+				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FOREIGN_KEY_COMPANY_ID));
 				Company company = null;
 				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
 						(LocalDate) resultSet.getObject(FIELD_3), (LocalDate) resultSet.getObject(FIELD_4),
