@@ -43,7 +43,7 @@ public class CompanyDao {
 		this.dbAccess = DbAccess.getInstance();
 	}
 
-	/** 
+	/**
 	 * 
 	 * @param compagny company to add in companies table
 	 * @return
@@ -79,11 +79,14 @@ public class CompanyDao {
 		updatePStatement.setString(1, company.getName());
 		updatePStatement.setLong(2, company.getId());
 		updatePStatement.executeUpdate();
-		connection.close(); 
+		connection.close();
 	}
 
 	public Optional<Company> findById(Long id) {
 		Optional<Company> optional = Optional.empty();
+		if (id == null) {
+			return optional;
+		}
 		Connection connection = null;
 		try {
 			connection = dbAccess.getConnection();
@@ -113,14 +116,18 @@ public class CompanyDao {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static boolean isIdPresent(Long id, IDbAccess access) throws SQLException {
+	public  boolean isIdPresent(Long id, IDbAccess access) throws SQLException {
 		access = DbAccess.getInstance();
-		Connection connection = access.getConnection();
-		String query = "SELECT * FROM " + TABLE + "WHERE " + FIELD_1 + "=" + id;
-		Statement statement = connection.createStatement();
-		ResultSet results = statement.executeQuery(query);
-		connection.close();
-		return results.first() ? true : false;
+		ResultSet results = null;
+		try (Connection connection = access.getConnection()) {
+			String query = "SELECT * FROM " + TABLE + "WHERE " + FIELD_1 + "=" + id;
+			Statement statement = connection.createStatement();
+			results = statement.executeQuery(query);
+			connection.close();
+		} catch (Exception e) {
+			logger.debug("erreur sql dans le ispresent");
+		}
+		return (results!=null)?(results.first() ? true : false):false;
 	}
 
 	/**
@@ -143,7 +150,7 @@ public class CompanyDao {
 				logger.debug("entre 2 stmnt");
 				deleteCompanyPStatement.executeUpdate();
 				connection.commit();
-				logger.debug("suppression d'une companie effectuée" );
+				logger.debug("suppression d'une companie effectuée");
 			} catch (SQLException e) {
 				connection.rollback();
 				logger.debug("transaction de supression de companie annulée");
@@ -161,12 +168,16 @@ public class CompanyDao {
 	 */
 	public List<Company> findAll() throws SQLException {
 		String query = "SELECT * FROM " + TABLE;
-		Connection connection = dbAccess.getConnection();
-		Statement statement = connection.createStatement();
-		ResultSet resultSet = statement.executeQuery(query);
 		ArrayList<Company> listOfCompanies = new ArrayList<Company>();
-		while (resultSet.next()) {
-			listOfCompanies.add(new Company(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2)));
+		try (Connection connection = dbAccess.getConnection()) {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(query);
+
+			while (resultSet.next()) {
+				listOfCompanies.add(new Company(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2)));
+			}
+		} catch (SQLException e) {
+			logger.debug("erreur dans le findAll");
 		}
 		return listOfCompanies;
 	}

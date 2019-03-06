@@ -106,8 +106,11 @@ public class ComputerDao {
 	 * @return
 	 * @throws SQLException
 	 */
-	public Optional<Computer> findById(long id) throws SQLException {
+	public Optional<Computer> findById(Long id) throws SQLException {
 		Optional<Computer> optional = Optional.empty();
+		if(id==null) {
+			return optional;
+		}
 		try (Connection connection = access.getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY,
 					Statement.RETURN_GENERATED_KEYS);

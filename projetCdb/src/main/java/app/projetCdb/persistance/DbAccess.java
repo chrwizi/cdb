@@ -25,7 +25,7 @@ public class DbAccess implements IDbAccess {
 	private static String PASSWORD_PROPERTIE_NAME = "db_password";
 	// hiraki properties
 	private HikariDataSource hikariDataSource;
-	private static int NB_POOL = 5;
+	private static int NB_POOL = 2;
 	private static final long TIME_OUT = 10000L;
 	// logger
 	private Logger logger = LoggerFactory.getLogger(DbAccess.class);
@@ -90,13 +90,16 @@ public class DbAccess implements IDbAccess {
 		if (hikariDataSource == null) {
 			setUpHikari();
 		}
+		
 		Connection connection = null;
+		
 		try {
 			connection = hikariDataSource.getConnection();
+			logger.debug("connexion établie avec la base de données");
 		} catch (SQLException e) {
 			logger.debug("echec de connexion à la base de données");
 		}
-		logger.debug("connexion établie avec la base de données");
+		
 		return  connection;
 	}
 
