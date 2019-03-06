@@ -15,21 +15,27 @@ import app.projetCdb.services.IComputerService;
 public class DeleteServlet extends HttpServlet {
 	// services
 	private IComputerService computerService = new ComputerServices();
-
 	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		final String view =req.getContextPath()+"/dashboard";
 		if (req.getParameter("selection") != null) {
-			String computersToDelete[] = req.getParameter("selection").split(",");
-			long idTab[] = new long[computersToDelete.length];
-			for (int i = 0; i < idTab.length; i++) {
-				idTab[i] = Long.valueOf(computersToDelete[i]);
-			}
-			computerService.delete(idTab);
+			long computersIdTab[] = convertToLong(req.getParameter("selection").split(","));
+			computerService.delete(computersIdTab);
 		}
 		resp.sendRedirect(view);
 	}
 
+	private static long[] convertToLong(String[] strId) {
+		long[] tab=null;
+		if(strId!=null) {
+			tab=new long[strId.length];
+			for(int i=0;i<tab.length;i++) {
+				tab[i]=Long.valueOf(strId[i]);
+			}
+		}
+		return tab;
+	}
+	
 }

@@ -80,9 +80,9 @@ public class EditComputerSevlet extends HttpServlet {
 		String introducedDate = (String) req.getParameter("introducedDate");
 		String discontinueddDate = (String) req.getParameter("discontinuedDate");
 		Long idCompany = (!(req.getParameter("idCompany")==null)&&req.getParameter("idCompany").equals("")) ? Long.valueOf(req.getParameter("idCompany")) : DEFAULT_ID;
-		
 		Optional<Company> company = companyService.findById(idCompany);
-		ComputerDto computerDto = new ComputerDto(0L, computerName, introducedDate, discontinueddDate,
+		//prepare Dto
+		ComputerDto computerDto = new ComputerDto(DEFAULT_ID, computerName, introducedDate, discontinueddDate,
 				(company.isPresent() ? company.get().getName() : null),
 				company.isPresent() ? company.get().getId() : null);
 		try {
@@ -90,7 +90,7 @@ public class EditComputerSevlet extends HttpServlet {
 			validator.isValidEditForm(computerName, introducedDate, discontinueddDate, idCompany);
 			// data mapping
 			Computer editingComputer = mapper.mapDto(computerDto);
-			computerService.updateComputer(editingComputer);
+			computerService.updateComputer(editingComputer);  
 			req.setAttribute("computer", computerDto);
 			// redirect request
 			this.getServletContext().getRequestDispatcher(GET_VIEW).forward(req, resp);
@@ -106,7 +106,7 @@ public class EditComputerSevlet extends HttpServlet {
 				req.setAttribute("errorMessage", "Le champ computer ne doit pas Ãªtre vide");
 				req.setAttribute("computer", computerDto);
 				this.getServletContext().getRequestDispatcher(GET_VIEW).forward(req, resp);
-				logger.debug("Le champs d'ï¿½dition du nom du computer est vide");
+				logger.debug("Le champs d'édition du nom du computer est vide");
 				break;
 			default:
 				logger.warn("Erreur lors de la validation du formulaire d'ï¿½dition du computeur "+computerName);
