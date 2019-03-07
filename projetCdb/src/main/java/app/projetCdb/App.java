@@ -14,6 +14,10 @@ import java.util.ListIterator;
 import java.util.Optional;
 import java.util.Scanner;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import app.projetCdb.configurations.CdbSpringConfiguration;
 import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.CompanyDao;
@@ -21,6 +25,7 @@ import app.projetCdb.persistance.ComputerDao;
 import app.projetCdb.persistance.DbAccess;
 import app.projetCdb.services.ICompanyServices;
 import app.projetCdb.services.IComputerService;
+import app.projetCdb.tmpServices.AsService;
 import app.projetCdb.services.CompanyService;
 import app.projetCdb.services.ComputerServices;
 
@@ -51,6 +56,11 @@ public class App {
 	 */
 	private static void showCdbUi(CompanyDao companyDao, ComputerDao computerDao) {
 		boolean fin = false;
+		ApplicationContext context=new AnnotationConfigApplicationContext(CdbSpringConfiguration.class);
+		AsService userHello=(AsService) context.getBean("asService");
+		System.out.println(userHello.useServiceHello());
+		
+	/*	
 		int userChoice = 0;
 		Scanner scanner = new Scanner(System.in);
 		while (!fin) {
@@ -93,7 +103,8 @@ public class App {
 				break;
 			}
 		}
-		scanner.close();
+		scanner.close();*/
+		
 	}
 
 
