@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import app.projetCdb.exceptions.ValidatorFormException;
 import app.projetCdb.models.Company;
@@ -36,14 +39,20 @@ public class EditComputerSevlet extends HttpServlet {
 	// views
 	private static final String GET_VIEW = "/WEB-INF/editComputer.jsp";
 	private static final String REDIRECT_COMPUTER_NOT_FOUND = "/WEB-INF/500.jsp";
+	
 	// services
-	private IComputerService computerService = new ComputerServices();
-	private ICompanyServices companyService = new CompanyService();
+	@Autowired @Qualifier("computerServices")
+	private IComputerService computerService ;
+	@Autowired @Qualifier("companyService")
+	private ICompanyServices companyService ;
+	
+	
 	// mappers
 	private IMapperComputerDto mapper = new MapperComputer();
 	private IMapperCompanyDto mapperCompany = new MapperCompanyDto();
 	// edit computer validator
 	private IFormEditComputerValidator validator = new FormEditComputerValidator();
+	
 	//
 	private long DEFAULT_ID=0L;
 	Logger logger=LoggerFactory.getLogger(this.getClass());
@@ -106,12 +115,18 @@ public class EditComputerSevlet extends HttpServlet {
 				req.setAttribute("errorMessage", "Le champ computer ne doit pas Ãªtre vide");
 				req.setAttribute("computer", computerDto);
 				this.getServletContext().getRequestDispatcher(GET_VIEW).forward(req, resp);
-				logger.debug("Le champs d'édition du nom du computer est vide");
+				logger.debug("Le champs d'ï¿½dition du nom du computer est vide");
 				break;
 			default:
 				logger.warn("Erreur lors de la validation du formulaire d'ï¿½dition du computeur "+computerName);
 			}
 		}
+	}
+	
+	@Override
+	public void init() throws ServletException {
+		super.init();
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 	}
 
 }

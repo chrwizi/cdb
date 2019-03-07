@@ -5,18 +5,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import app.projetCdb.models.Company;
 import app.projetCdb.persistance.CompanyDao;
 import app.projetCdb.persistance.DbAccess;
 
+@Service("companyService")
 public class CompanyService implements ICompanyServices {
+	@Autowired
 	private CompanyDao CompanyDao;
 
 	public CompanyService(CompanyDao companyDao) {
 		CompanyDao = companyDao;
 	}
+
 	public CompanyService() {
-		CompanyDao =new CompanyDao(DbAccess.getInstance());
+		CompanyDao = new CompanyDao(DbAccess.getInstance());
 	}
 
 	public CompanyDao getCompanyDao() {
@@ -28,7 +34,7 @@ public class CompanyService implements ICompanyServices {
 	}
 
 	@Override
-	public List<Company> getAll(){
+	public List<Company> getAll() {
 		List<Company> companies = new ArrayList<>();
 		try {
 			companies = CompanyDao.findAll();
@@ -37,8 +43,7 @@ public class CompanyService implements ICompanyServices {
 		}
 		return companies;
 	}
-	
-  
+
 	@Override
 	public void delete(Long id) throws SQLException {
 		CompanyDao.delete(id);
@@ -48,8 +53,5 @@ public class CompanyService implements ICompanyServices {
 	public Optional<Company> findById(Long id) {
 		return CompanyDao.findById(id);
 	}
-	
-
-
 
 }

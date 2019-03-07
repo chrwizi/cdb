@@ -12,13 +12,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
 
-public class ComputerDao {
-	private IDbAccess access = DbAccess.getInstance();
+@Repository
+public class ComputerDao {	
+	@Autowired
+	private IDbAccess access ;
+	@Autowired
 	private CompanyDao companyDao;
+	
 	/* Name table */
 	private final static String TABLE = "computer";
 
@@ -43,11 +51,23 @@ public class ComputerDao {
 			+ " LIKE ?  LIMIT ?,?";
 	private final static String SEARCH_COUNT_QUERY = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE + " WHERE "
 			+ FIELD_2 + " LIKE ?";
+	
+
+	
+	
+	public ComputerDao() {
+		this.access=DbAccess.getInstance();
+	}
 
 	public ComputerDao(IDbAccess access) {
 		this.access = access;
-		companyDao = new CompanyDao(access);
 	}
+
+	
+	
+	
+
+
 
 	public static String getTable() {
 		return TABLE;

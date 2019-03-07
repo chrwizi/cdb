@@ -9,12 +9,14 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import app.projetCdb.exceptions.DbAccessPropertyNotFoundException;
 
+@Service("dbAccess")
 public class DbAccess implements IDbAccess {
 	// default database configuration file
 	private String DEFAULT_DATABASE_CONFIGURATION_FILE = "database/database.properties";
@@ -36,7 +38,7 @@ public class DbAccess implements IDbAccess {
 	 * @throws DbAccessPropertyNotFoundException 
 	 *  
 	 */
-	private DbAccess(){
+	public DbAccess(){
 		try (FileInputStream input = new FileInputStream(DEFAULT_DATABASE_CONFIGURATION_FILE)) {
 			databaseProperties.load(input);
 			if((databaseProperties.getProperty(URL_PROPERTIE_NAME))==null) logger.debug("Property "+URL_PROPERTIE_NAME+" not found");

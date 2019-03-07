@@ -17,13 +17,15 @@
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
 			<a class="navbar-brand" href="/projetCdb/"> Application -
-				Computer Database </a>
+				Computer Database </a> 
+				<a class="navbar-brand" href="/projetCdb/testSpring">
+				Test Spring </a>
 		</div>
 	</header>
 
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${nbComputers}computers found</h1>
+			<h1 id="homeTitle">${nbComputers}computersfound</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="/projetCdb/" method="POST"
@@ -79,9 +81,8 @@
 					<tbody id="results">
 						<c:forEach items="${computers}" var="computer">
 							<tr>
-								<td class="editMode">
-									<input type="checkbox" name="cb" class="cb" value="${computer.id}">
-								</td>
+								<td class="editMode"><input type="checkbox" name="cb"
+									class="cb" value="${computer.id}"></td>
 								<td><a
 									href="/projetCdb/editComputer?idComputer=<c:out value="${computer.id}"/>">${computer.name}</a></td>
 								<td>${computer.introduced}</td>

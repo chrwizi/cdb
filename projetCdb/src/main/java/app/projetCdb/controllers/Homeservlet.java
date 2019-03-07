@@ -12,6 +12,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+
 import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.ComputerDao;
 import app.projetCdb.persistance.ComputersPage;
@@ -28,7 +32,8 @@ public class Homeservlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private static final String DASHBOARD_VIEW = "/WEB-INF/dashboard.jsp";
-	private IComputerService computerService = new ComputerServices();
+	@Autowired @Qualifier("computerServices")
+	private IComputerService computerService ;
 	private IMapperComputerDto mapper = new MapperComputer();
  
 	@Override
@@ -73,7 +78,11 @@ public class Homeservlet extends HttpServlet {
 		this.getServletContext().getRequestDispatcher(DASHBOARD_VIEW).forward(req, resp);
 	}
 	
-	
+	@Override
+	public void init() throws ServletException {
+		super.init();
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+	}
 	
 	
 

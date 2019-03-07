@@ -25,7 +25,7 @@ import app.projetCdb.persistance.ComputerDao;
 import app.projetCdb.persistance.DbAccess;
 import app.projetCdb.services.ICompanyServices;
 import app.projetCdb.services.IComputerService;
-import app.projetCdb.tmpServices.AsService;
+import app.projetCdb.tmpServices.IAsService;
 import app.projetCdb.services.CompanyService;
 import app.projetCdb.services.ComputerServices;
 
@@ -57,7 +57,7 @@ public class App {
 	private static void showCdbUi(CompanyDao companyDao, ComputerDao computerDao) {
 		boolean fin = false;
 		ApplicationContext context=new AnnotationConfigApplicationContext(CdbSpringConfiguration.class);
-		AsService userHello=(AsService) context.getBean("asService");
+		IAsService userHello=(IAsService) context.getBean("asService");
 		System.out.println(userHello.useServiceHello());
 		
 	/*	

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@ComponentScan(basePackages="app.projetCdb.tmpServices")
+@ComponentScan(basePackages= {"app.projetCdb.tmpServices","app.projetCdb.controllers","app.projetCdb.persistance"})
 public class CdbSpringConfiguration {
 	private static final Logger logger=LoggerFactory.getLogger(CdbSpringConfiguration.class);
 	
