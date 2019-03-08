@@ -15,7 +15,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import app.projetCdb.tmpServices.IAsService;
 
-@Component("mycomp")
+
 @WebServlet(name = "spring", urlPatterns = "/testSpring")
 public class TestSpringServlet extends HttpServlet {
 	@Autowired 

@@ -22,10 +22,10 @@ import app.projetCdb.models.Computer;
 
 @Repository
 public class ComputerDao {	
-	@Autowired
-	private IDbAccess access ;
-	@Autowired
-	private CompanyDao companyDao;
+	//@Autowired
+	private IDbAccess access=DbAccess.getInstance();
+	//@Autowired
+	private CompanyDao companyDao=new CompanyDao();
 	
 	/* Name table */
 	private final static String TABLE = "computer";

@@ -14,12 +14,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class CdbWebConfig  implements WebApplicationInitializer{
 
 	@Override
-	public void onStartup(ServletContext servletContext) throws ServletException {
-//			AnnotationConfigApplicationContext context= new AnnotationConfigApplicationContext();
-//			context.register(CdbSpringConfiguration.class);
-//			ContextLoaderListener contextLoaderListener = new ContextLoaderListener(context);
-//			servletContext.addListener(contextLoaderListener);
-//			
+	public void onStartup(ServletContext servletContext) throws ServletException {	
 		      AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
 		      rootContext.register(CdbSpringConfiguration.class);
 		      servletContext.addListener(new ContextLoaderListener(rootContext));

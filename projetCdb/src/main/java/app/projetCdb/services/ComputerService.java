@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Service;
 
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
@@ -19,13 +21,14 @@ import app.projetCdb.persistance.IPageSelect;
  * @author chris_moyikoulou
  *
  */
-@Service("computerServices")
-public class ComputerServices implements IComputerService {
+@Service("computerService")
+public class ComputerService implements IComputerService {
+
 	private ComputerDao computerDao;
 	private IPageSelect pageComputers;
 	private int defaultNbComputersByPage = 30;
-
-	public ComputerServices(ComputerDao computerDao) throws SQLException {
+	
+	public ComputerService(@Autowired  ComputerDao computerDao) throws SQLException {
 		this.computerDao = computerDao;
 		int nbComputersInDatabase = computerDao.count();
 		pageComputers = new ComputersPage(0,
@@ -35,19 +38,7 @@ public class ComputerServices implements IComputerService {
 
 	}
 
-	public ComputerServices() {
-		this.computerDao = new ComputerDao(DbAccess.getInstance());
-		int nbComputersInDatabase = 0;
-		try {
-			nbComputersInDatabase = computerDao.count();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		pageComputers = new ComputersPage(0,
-				(Integer.valueOf(nbComputersInDatabase) < defaultNbComputersByPage ? nbComputersInDatabase
-						: defaultNbComputersByPage));
-		pageComputers.setMaxResult(nbComputersInDatabase);
-	}
+
 
 	public IPageSelect getPageComputers() {
 		return pageComputers;

@@ -16,7 +16,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import app.projetCdb.exceptions.DbAccessPropertyNotFoundException;
 
-@Service("dbAccess")
+//@Service("dbAccess")
 public class DbAccess implements IDbAccess {
 	// default database configuration file
 	private String DEFAULT_DATABASE_CONFIGURATION_FILE = "database/database.properties";

@@ -9,11 +9,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
 import java.util.Scanner;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -27,7 +29,7 @@ import app.projetCdb.services.ICompanyServices;
 import app.projetCdb.services.IComputerService;
 import app.projetCdb.tmpServices.IAsService;
 import app.projetCdb.services.CompanyService;
-import app.projetCdb.services.ComputerServices;
+import app.projetCdb.services.ComputerService;
 
 public class App {
 	/* Menu selections */
@@ -41,26 +43,19 @@ public class App {
 	private final static int EXIT = 8;
 
 	public static void main(String[] args) {
-		// objects to interact with database
-		CompanyDao companyDao = new CompanyDao(DbAccess.getInstance());
-		ComputerDao computerDao = new ComputerDao(DbAccess.getInstance());
-		// show user interface
-		showCdbUi(companyDao, computerDao);
-
+		ApplicationContext context=new AnnotationConfigApplicationContext(CdbSpringConfiguration.class);
+		IComputerService computerService=(IComputerService) context.getBean("computerService");
+		ICompanyServices companyServices=(ICompanyServices) context.getBean("companyService");
+		showCdbUi(computerService,companyServices);
 	}
 
 	/**
 	 * 
-	 * @param companyDao
-	 * @param computerDao
+	 * @param companyServices 
+	 * @param computerService 
 	 */
-	private static void showCdbUi(CompanyDao companyDao, ComputerDao computerDao) {
+	private static void showCdbUi(IComputerService computerService, ICompanyServices companyServices) {
 		boolean fin = false;
-		ApplicationContext context=new AnnotationConfigApplicationContext(CdbSpringConfiguration.class);
-		IAsService userHello=(IAsService) context.getBean("asService");
-		System.out.println(userHello.useServiceHello());
-		
-	/*	
 		int userChoice = 0;
 		Scanner scanner = new Scanner(System.in);
 		while (!fin) {
@@ -74,36 +69,35 @@ public class App {
 			System.out.println(" votre choix est : " + userChoice);
 			switch (userChoice) {
 			case LIST_COMPUTERS:
-				listComputersHandler();
+				listComputersHandler(computerService);
 				break;
 			case LIST_COMPANIES:
-				listCompaniesHandler(companyDao);
+				listCompaniesHandler(companyServices);
 				break;
-			case CREATE_COMPUTER:
-				createComputerHandler(companyDao);
+			case CREATE_COMPUTER: 
+				createComputerHandler(computerService,companyServices);
 				break;
 			case UPDATE_COMPUTER:
 				// Uncompleted feature
 				System.out.println("fonctionnalité non implémenté totalement");
 				break;
 			case DELETE_COMPUTER:
-				deleteComputerHandler();
+				deleteComputerHandler(computerService);
 				break;
 			case SHOW_COMPUTER_DETAILS:
-				showComputerDetailsHandler();
+				showComputerDetailsHandler(computerService);
 				break;
 			case DELETE_COMPANY:
-				deleteCompanyHandler();
+				deleteCompanyHandler(companyServices);
 				break;
 			case EXIT:
 				fin = true;
 				break;
 			default:
-
 				break;
 			}
 		}
-		scanner.close();*/
+		scanner.close();
 		
 	}
 
@@ -133,10 +127,9 @@ public class App {
 	 * 
 	 * @param computerDao
 	 */
-	private static void showComputerDetailsHandler() {
-		IComputerService listComputersService =new ComputerServices();
-		List<Computer> computers;
-
+	
+	private static void showComputerDetailsHandler(@Autowired IComputerService listComputersService) {
+		List<Computer> computers=new ArrayList<Computer>();
 		// get list of computers
 		computers = listComputersService.getAll();
 		System.out.println("Veuillez choisir le numéro de l'ordinateur ");
@@ -156,9 +149,7 @@ public class App {
 	}
 	
 	
-	private static void deleteCompanyHandler() {
-		// TODO Auto-generated method stub
-		ICompanyServices companyServices=new CompanyService();
+	private static void deleteCompanyHandler(@Autowired ICompanyServices companyServices) {
 		List<Company> companies=companyServices.getAll();
 		if(!companies.isEmpty()) {
 			System.out.println("Veuillez choisir le numéro de la companie à supprimer ");
@@ -182,8 +173,7 @@ public class App {
 	 * 
 	 * @param dao: object given access to companies table in database
 	 */
-	public static void listCompaniesHandler(CompanyDao dao) {
-		ICompanyServices lisctCompaniesService = new CompanyService(dao);
+	public static void listCompaniesHandler(@Autowired ICompanyServices lisctCompaniesService) {
 		List<Company> companies = lisctCompaniesService.getAll();
 		printCompaniesWithIndex(companies, false);
 
@@ -194,8 +184,7 @@ public class App {
 	 * 
 	 * @param dao : object given access to computers table in database
 	 */
-	public static void listComputersHandler() {
-		IComputerService listComputersService =new ComputerServices();
+	public static void listComputersHandler(@Autowired IComputerService listComputersService) {
 		List<Computer> computers;
 		computers = listComputersService.getAll();
 		printComputerList(computers, false);
@@ -245,9 +234,7 @@ public class App {
 	 * @param companyDao
 	 * @throws ParseException
 	 */
-	public static void createComputerHandler(CompanyDao companyDao) {
-		ICompanyServices listCompaniesService = new CompanyService(companyDao);
-		IComputerService computerService =new ComputerServices();
+	public static void createComputerHandler(@Autowired IComputerService computerService,@Autowired ICompanyServices listCompaniesService) {
 		Scanner scanner = new Scanner(System.in);
 		List<Company> companies;
 		try {
@@ -286,9 +273,8 @@ public class App {
 	 * 
 	 * @param computerDao
 	 */
-	public static void deleteComputerHandler() {
-		IComputerService listComputersService = new ComputerServices();
-		List<Computer> computers;
+	public static void deleteComputerHandler(@Autowired IComputerService listComputersService) {
+		List<Computer> computers=new ArrayList<Computer>();
 		// get list of computers in database
 		computers = listComputersService.getAll();
 		System.out.println("Veuillez sélectionner le numéro de l'ordinateur à supprimer");

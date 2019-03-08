@@ -14,10 +14,9 @@ import app.projetCdb.persistance.DbAccess;
 
 @Service("companyService")
 public class CompanyService implements ICompanyServices {
-	@Autowired
 	private CompanyDao CompanyDao;
 
-	public CompanyService(CompanyDao companyDao) {
+	public CompanyService(@Autowired CompanyDao companyDao) {
 		CompanyDao = companyDao;
 	}
 

@@ -1,11 +1,15 @@
 package app.projetCdb.persistance;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class ComputersPage implements IPageSelect {
 	
 	private int nbPages;
 	private int maxResult;
 	private int currentPage; 
 	private int offset;
+	
 	
 	@Override
 	public int getCursor() {

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import app.projetCdb.exceptions.ValidatorFormException;
 import app.projetCdb.models.Company;
@@ -23,7 +24,7 @@ import app.projetCdb.persistance.dto.IMapperComputerDto;
 import app.projetCdb.persistance.dto.MapperCompanyDto;
 import app.projetCdb.persistance.dto.MapperComputer;
 import app.projetCdb.services.CompanyService;
-import app.projetCdb.services.ComputerServices;
+import app.projetCdb.services.ComputerService;
 import app.projetCdb.services.ICompanyServices;
 import app.projetCdb.services.IComputerService;
 import app.projetCdb.services.validators.FormEditComputerValidator;
@@ -32,8 +33,10 @@ import app.projetCdb.services.validators.IFormEditComputerValidator;
 @WebServlet(name = "add", urlPatterns = "/addComputer")
 public class AddComputerServlet extends HttpServlet {
 	// services
-	private IComputerService computerService = new ComputerServices();
-	private ICompanyServices companyService = new CompanyService();
+	@Autowired
+	private IComputerService computerService ;
+	@Autowired
+	private ICompanyServices companyService ;
 	// mapping objects
 	private IMapperComputerDto mapper = new MapperComputer();
 	private IMapperCompanyDto mapperCompany = new MapperCompanyDto();

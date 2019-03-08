@@ -27,7 +27,7 @@ import app.projetCdb.persistance.dto.IMapperComputerDto;
 import app.projetCdb.persistance.dto.MapperCompanyDto;
 import app.projetCdb.persistance.dto.MapperComputer;
 import app.projetCdb.services.CompanyService;
-import app.projetCdb.services.ComputerServices;
+import app.projetCdb.services.ComputerService;
 import app.projetCdb.services.ICompanyServices;
 import app.projetCdb.services.IComputerService;
 import app.projetCdb.services.validators.FormEditComputerValidator;
@@ -41,10 +41,10 @@ public class EditComputerSevlet extends HttpServlet {
 	private static final String REDIRECT_COMPUTER_NOT_FOUND = "/WEB-INF/500.jsp";
 	
 	// services
-	@Autowired @Qualifier("computerServices")
+	@Autowired @Qualifier("computerService")
 	private IComputerService computerService ;
 	@Autowired @Qualifier("companyService")
-	private ICompanyServices companyService ;
+	private ICompanyServices companyService;
 	
 	
 	// mappers

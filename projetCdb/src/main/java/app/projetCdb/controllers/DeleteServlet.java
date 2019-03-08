@@ -8,13 +8,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import app.projetCdb.services.ComputerServices;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import app.projetCdb.services.ComputerService;
 import app.projetCdb.services.IComputerService;
 
 @WebServlet(name = "delete", urlPatterns = "/delete")
 public class DeleteServlet extends HttpServlet {
 	// services
-	private IComputerService computerService = new ComputerServices();
+	@Autowired
+	private IComputerService computerService ;
 	private static final long serialVersionUID = 1L;
 
 	@Override

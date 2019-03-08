@@ -20,8 +20,7 @@ import app.projetCdb.models.Company;
 @Repository
 public class CompanyDao {
 	// access to database
-	@Autowired
-	private IDbAccess dbAccess;
+	private IDbAccess dbAccess=DbAccess.getInstance();
 	
 	
 	/* Name of table */

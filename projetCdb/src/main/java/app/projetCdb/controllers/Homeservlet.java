@@ -25,15 +25,16 @@ import app.projetCdb.persistance.dto.ComputerDto;
 import app.projetCdb.persistance.dto.IMapperComputerDto;
 import app.projetCdb.persistance.dto.MapperComputer;
 import app.projetCdb.services.IComputerService;
-import app.projetCdb.services.ComputerServices;
+import app.projetCdb.services.ComputerService;
 
 @WebServlet(name = "cdb", urlPatterns = "/")
 public class Homeservlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private static final String DASHBOARD_VIEW = "/WEB-INF/dashboard.jsp";
-	@Autowired @Qualifier("computerServices")
-	private IComputerService computerService ;
+	
+	@Autowired 
+	private IComputerService computerService;
 	private IMapperComputerDto mapper = new MapperComputer();
  
 	@Override
