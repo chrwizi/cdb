@@ -41,20 +41,20 @@ public class Homeservlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String selectedPage=request.getParameter("selectedPage");
-		Optional<List<Computer>> optionalComputers =Optional.empty();
+		List<Computer> computers =new ArrayList<Computer>();
 		
 		try {
-			optionalComputers = computerService.getPage((selectedPage==null?1:Integer.parseInt(selectedPage)));
+			computers = computerService.getPage((selectedPage==null?1:Integer.parseInt(selectedPage)));
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
-		ArrayList<ComputerDto> computers = (ArrayList<ComputerDto>) mapper.mapListComputer(optionalComputers.get());
+		ArrayList<ComputerDto> computersDto = (ArrayList<ComputerDto>) mapper.mapListComputer(computers);
 		request.setAttribute("nbPages", computerService.getNbPages());
-		request.setAttribute("computers", computers);
-		request.setAttribute("nbComputers", computers.size()); 
+		request.setAttribute("computers", computersDto);
+		request.setAttribute("nbComputers", computersDto.size()); 
 		this.getServletContext().getRequestDispatcher(DASHBOARD_VIEW).forward(request, response);
 	}
 
@@ -62,20 +62,20 @@ public class Homeservlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String search=(String)req.getParameter("search");
 		String selectedPage=req.getParameter("selectedPage");
-		Optional<List<Computer>> optionalComputers = Optional.empty();
+		List<Computer> computers = new ArrayList<Computer>();
 		
 		try {
-			optionalComputers = computerService.getPage((selectedPage==null?1:Integer.parseInt(selectedPage)),search);
+			computers = computerService.getPage((selectedPage==null?1:Integer.parseInt(selectedPage)),search);
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
-		ArrayList<ComputerDto> computers = (ArrayList<ComputerDto>) mapper.mapListComputer(optionalComputers.get());
+		ArrayList<ComputerDto> computersDto = (ArrayList<ComputerDto>) mapper.mapListComputer(computers);
 		req.setAttribute("nbPages", computerService.getNbPages());
-		req.setAttribute("computers", computers);
-		req.setAttribute("nbComputers", computers.size());
+		req.setAttribute("computers", computersDto);
+		req.setAttribute("nbComputers", computersDto.size());
 		this.getServletContext().getRequestDispatcher(DASHBOARD_VIEW).forward(req, resp);
 	}
 	

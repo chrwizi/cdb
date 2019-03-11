@@ -12,14 +12,19 @@
 	media="screen">
 <link href="static/css/font-awesome.css" rel="stylesheet" media="screen">
 <link href="static/css/main.css" rel="stylesheet" media="screen">
+<link rel="stylesheet"
+	href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+	integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+	crossorigin="anonymous">
+
+
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
 			<a class="navbar-brand" href="/projetCdb/"> Application -
-				Computer Database </a> 
-				<a class="navbar-brand" href="/projetCdb/testSpring">
-				Test Spring </a>
+				Computer Database </a> <a class="navbar-brand"
+				href="/projetCdb/testSpring"> Test Spring </a>
 		</div>
 	</header>
 
@@ -66,12 +71,22 @@
 										class="fa fa-trash-o fa-lg"></i>
 								</a>
 							</span></th>
-							<th>Computer name</th>
+							<th>Computer name
+								<div class="pull-right">
+									<a> <i class="fas fa-sort-up align-top "></i></a> <a><i
+										class="fas fa-sort-down align-bottom "></i></a>
+								</div>
+							</th>
 							<th>Introduced date</th>
 							<!-- Table header for Discontinued Date -->
 							<th>Discontinued date</th>
 							<!-- Table header for Company -->
-							<th>Company</th>
+							<th>Company
+								<div class="pull-right">
+									<a> <i class="fas fa-sort-up align-top "></i></a> <a><i
+										class="fas fa-sort-down align-bottom "></i></a>
+								</div>
+							</th>
 
 						</tr>
 					</thead>

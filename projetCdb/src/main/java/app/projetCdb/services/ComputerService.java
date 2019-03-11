@@ -5,30 +5,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Service;
 
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.ComputerDao;
 import app.projetCdb.persistance.ComputersPage;
-import app.projetCdb.persistance.DbAccess;
 import app.projetCdb.persistance.IPageSelect;
 
 /**
  * 
  * @author chris_moyikoulou
  *
- */
+ */ 
 @Service("computerService")
 public class ComputerService implements IComputerService {
 
 	private ComputerDao computerDao;
+	//@Autowired
 	private IPageSelect pageComputers;
 	private int defaultNbComputersByPage = 30;
-	
-	public ComputerService(@Autowired  ComputerDao computerDao) throws SQLException {
+	//
+	Logger logger=LoggerFactory.getLogger(getClass());
+
+	public ComputerService(@Autowired ComputerDao computerDao) throws SQLException {
 		this.computerDao = computerDao;
 		int nbComputersInDatabase = computerDao.count();
 		pageComputers = new ComputersPage(0,
@@ -36,24 +39,6 @@ public class ComputerService implements IComputerService {
 						: defaultNbComputersByPage));
 		pageComputers.setMaxResult(nbComputersInDatabase);
 
-	}
-
-
-
-	public IPageSelect getPageComputers() {
-		return pageComputers;
-	}
-
-	public void setPageComputers(IPageSelect pageComputers) {
-		this.pageComputers = pageComputers;
-	}
-
-	public ComputerDao getComputerDao() {
-		return computerDao;
-	}
-
-	public void setComputerDao(ComputerDao computerDao) {
-		this.computerDao = computerDao;
 	}
 
 	@Override
@@ -71,8 +56,8 @@ public class ComputerService implements IComputerService {
 	}
 
 	@Override
-	public Optional<List<Computer>> getAll(IPageSelect page) {
-		Optional<List<Computer>> computers = Optional.empty();
+	public List<Computer> getAll(IPageSelect page) {
+		List<Computer> computers = new ArrayList<Computer>();
 		try {
 			computers = computerDao.findAll(page.getCurrentPage(), page.getOffset());
 		} catch (SQLException e) {
@@ -80,6 +65,30 @@ public class ComputerService implements IComputerService {
 		}
 		return computers;
 	}
+	
+	@Override
+	public List<Computer> sortByComputerName(boolean asc){
+		List<Computer> sortedComputers=new ArrayList<Computer>();
+		try {
+			sortedComputers=computerDao.sortByName(asc);
+		} catch (SQLException e) {
+			logger.debug("erreur lors du sort by name ");
+		}
+		return sortedComputers;
+	}
+
+	@Override
+	public List<Computer> sortByCompanyName(boolean asc){
+		List<Computer> sortedComputers=new ArrayList<Computer>();
+		try {
+			sortedComputers=computerDao.sortByName(asc);
+		} catch (SQLException e) {
+			logger.debug("erreur lors du sort by company");
+		}
+		return sortedComputers;
+	}
+	
+	
 
 	@Override
 	public Optional<Computer> finById(Long id) throws SQLException {
@@ -123,16 +132,16 @@ public class ComputerService implements IComputerService {
 			e.printStackTrace();
 		}
 	}
-
+ 
 	@Override
 	public int count() throws SQLException {
 		return computerDao.count();
 	}
 
 	@Override
-	public Optional<List<Computer>> getPage(int num) throws SQLException {
+	public List<Computer>getPage(int num) throws SQLException {
 		pageComputers.setCurrentPage(num);
-		Optional<List<Computer>> computers = Optional.empty();
+		List<Computer> computers = new ArrayList<Computer>();
 		try {
 			computers = computerDao.findAll(pageComputers.getCursor(), pageComputers.getOffset());
 		} catch (SQLException e) {
@@ -144,9 +153,9 @@ public class ComputerService implements IComputerService {
 	}
 
 	@Override
-	public Optional<List<Computer>> getPage(int num, String computerName) throws SQLException {
+	public List<Computer> getPage(int num, String computerName) throws SQLException {
 		pageComputers.setCurrentPage(num);
-		Optional<List<Computer>> computers = Optional.empty();
+		List<Computer> computers =new ArrayList<Computer>();
 		try {
 			computers = computerDao.search(pageComputers.getCursor(), pageComputers.getOffset(), computerName);
 		} catch (SQLException e) {
@@ -159,6 +168,22 @@ public class ComputerService implements IComputerService {
 	@Override
 	public int getNbPages() {
 		return pageComputers.getNbPages();
+	}
+
+	public IPageSelect getPageComputers() {
+		return pageComputers;
+	}
+
+	public void setPageComputers(IPageSelect pageComputers) {
+		this.pageComputers = pageComputers;
+	}
+
+	public ComputerDao getComputerDao() {
+		return computerDao;
+	}
+
+	public void setComputerDao(ComputerDao computerDao) {
+		this.computerDao = computerDao;
 	}
 
 }

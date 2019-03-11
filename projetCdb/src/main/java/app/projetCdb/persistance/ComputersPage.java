@@ -2,7 +2,7 @@ package app.projetCdb.persistance;
 
 import org.springframework.stereotype.Service;
 
-@Service
+//@Service("computersPage")
 public class ComputersPage implements IPageSelect {
 	
 	private int nbPages;

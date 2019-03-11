@@ -52,6 +52,8 @@ public class ComputerDao {
 	private final static String SEARCH_COUNT_QUERY = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE + " WHERE "
 			+ FIELD_2 + " LIKE ?";
 	
+	private final static String QUERY_SORT_BY_NAME_ASC = "SELECT * FROM " + TABLE+" ORDER BY "+FIELD_2+" ASC"; 
+	private final static String QUERY_SORT_BY_NAME_DESC = "SELECT * FROM " + TABLE+" ORDER BY "+FIELD_2+" DESC"; ; 
 
 	
 	
@@ -62,12 +64,6 @@ public class ComputerDao {
 	public ComputerDao(IDbAccess access) {
 		this.access = access;
 	}
-
-	
-	
-	
-
-
 
 	public static String getTable() {
 		return TABLE;
@@ -230,8 +226,55 @@ public class ComputerDao {
 		}
 		return computers;
 	}
+	
+	public List<Computer> sortByName(boolean asc) throws SQLException {
+		String query =asc?QUERY_SORT_BY_NAME_ASC:QUERY_SORT_BY_NAME_DESC;
+		ArrayList<Computer> computers = new ArrayList<Computer>();
+		try (Connection connection = access.getConnection()) {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(query);
+			while (resultSet.next()) {
+				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FOREIGN_KEY_COMPANY_ID));
+				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
+						(resultSet.getTimestamp(FIELD_3) != null)
+								? (LocalDate) resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate()
+								: null,
+						(resultSet.getTimestamp(FIELD_4) != null)
+								? (LocalDate) resultSet.getTimestamp(FIELD_4).toLocalDateTime().toLocalDate()
+								: null,
+						optionalCompany.isPresent() ? optionalCompany.get() : null));
+			}
+		} catch (SQLException e) {
+			throw e;
+		}
+		return computers;
+	}
+	
+	public List<Computer> sortBycompany(boolean asc) throws SQLException {
+		//TODO change request
+		String query =asc?QUERY_SORT_BY_NAME_ASC:QUERY_SORT_BY_NAME_DESC;
+		ArrayList<Computer> computers = new ArrayList<Computer>();
+		try (Connection connection = access.getConnection()) {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(query);
+			while (resultSet.next()) {
+				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FOREIGN_KEY_COMPANY_ID));
+				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
+						(resultSet.getTimestamp(FIELD_3) != null)
+								? (LocalDate) resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate()
+								: null,
+						(resultSet.getTimestamp(FIELD_4) != null)
+								? (LocalDate) resultSet.getTimestamp(FIELD_4).toLocalDateTime().toLocalDate()
+								: null,
+						optionalCompany.isPresent() ? optionalCompany.get() : null));
+			}
+		} catch (SQLException e) {
+			throw e;
+		}
+		return computers;
+	}
 
-	public Optional<List<Computer>> findAll(int sizePage, int offset) throws SQLException {
+	public List<Computer> findAll(int sizePage, int offset) throws SQLException {
 		ArrayList<Computer> computers = new ArrayList<Computer>();
 
 		try (Connection connection = access.getConnection()) {
@@ -254,10 +297,11 @@ public class ComputerDao {
 		} catch (SQLException e) {
 			throw e;
 		}
-		return (computers.isEmpty()) ? Optional.empty() : Optional.of((computers));
+		
+		return computers;
 	}
 
-	public Optional<List<Computer>> search(int sizePage, int offset, String computerName) throws SQLException {
+	public List<Computer> search(int sizePage, int offset, String computerName) throws SQLException {
 		ArrayList<Computer> computers = new ArrayList<Computer>();
 		try (Connection connection = access.getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_COMPUTER_QUERY);
@@ -275,7 +319,7 @@ public class ComputerDao {
 		} catch (SQLException e) {
 			throw e;
 		}
-		return (computers.isEmpty()) ? Optional.empty() : Optional.of((computers));
+		return computers;
 	}
 
 	public int count() throws SQLException {

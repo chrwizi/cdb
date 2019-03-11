@@ -78,10 +78,10 @@ public class ComputerDaoTest {
 	
 	@AfterClass
 	public static void tearDown() {
-		// clean database
-		for (Company company : companies) {
-			// companyDao.delete(company.getId());
-		}
+//		// clean database
+//		for (Company company : companies) {
+//			// companyDao.delete(company.getId());
+//		}
 	}
 	
 	

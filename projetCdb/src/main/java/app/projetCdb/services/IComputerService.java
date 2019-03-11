@@ -8,15 +8,30 @@ import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.IPageSelect;
 
 public interface IComputerService {
-	public List<Computer> getAll();
-	public  Optional<List<Computer>> getAll(IPageSelect page);
-	public Optional<Computer> finById(Long id) throws SQLException;
+	Optional<Computer> finById(Long id) throws SQLException;
+
+	List<Computer> getAll();
+
+	List<Computer> getAll(IPageSelect page);
+
+	List<Computer> sortByCompanyName(boolean asc);
+
+	List<Computer> sortByComputerName(boolean asc);
+
+	List<Computer> getPage(int num, String computerNa) throws SQLException;
+
+	List<Computer> getPage(int num) throws SQLException;
+
 	void createComputer(Computer computer);
+
 	public void updateComputer(Computer computer);
+
 	void delete(Long id);
+
 	public int count() throws SQLException;
-	public Optional<List<Computer>> getPage(int num) throws SQLException;
+
 	int getNbPages();
-	Optional<List<Computer>> getPage(int num, String computerNa) throws SQLException;
+
 	void delete(long[] idTab);
+
 }

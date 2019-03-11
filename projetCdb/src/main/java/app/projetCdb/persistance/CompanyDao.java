@@ -20,9 +20,8 @@ import app.projetCdb.models.Company;
 @Repository
 public class CompanyDao {
 	// access to database
-	private IDbAccess dbAccess=DbAccess.getInstance();
-	
-	
+	private IDbAccess dbAccess = DbAccess.getInstance();
+
 	/* Name of table */
 	private final static String TABLE = "company";
 	private final static String COMPUTER_TABLE = ComputerDao.getTable();
@@ -37,7 +36,9 @@ public class CompanyDao {
 	private final static String DELETE_ASSOCIATED_COMPUTERS = "DELETE  FROM " + COMPUTER_TABLE + " WHERE "
 			+ COMPANY_ID_IN_COMPUTER_TABLE + " =?";
 	private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + " WHERE " + FIELD_1 + "=?";
-	//
+//	private final static String QUERY_SORT_BY_NAME_ASC = "SELECT * FROM " + TABLE + " ORDER BY " + FIELD_2 + " ASC";
+//	private final static String QUERY_SORT_BY_NAME_DESC = "SELECT * FROM " + TABLE + " ORDER BY " + FIELD_2 + " DESC";
+//	//
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public CompanyDao(IDbAccess dbAccess) {
@@ -121,7 +122,7 @@ public class CompanyDao {
 	 * @return
 	 * @throws SQLException
 	 */
-	public  boolean isIdPresent(Long id, IDbAccess access) throws SQLException {
+	public boolean isIdPresent(Long id, IDbAccess access) throws SQLException {
 		access = DbAccess.getInstance();
 		ResultSet results = null;
 		try (Connection connection = access.getConnection()) {
@@ -132,7 +133,7 @@ public class CompanyDao {
 		} catch (Exception e) {
 			logger.debug("erreur sql dans le ispresent");
 		}
-		return (results!=null)?(results.first() ? true : false):false;
+		return (results != null) ? (results.first() ? true : false) : false;
 	}
 
 	/**
@@ -186,5 +187,7 @@ public class CompanyDao {
 		}
 		return listOfCompanies;
 	}
+	
+
 
 }
