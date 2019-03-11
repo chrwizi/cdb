@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -21,12 +23,12 @@ import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
 
 @Repository
-public class ComputerDao {	
-	//@Autowired
-	private IDbAccess access=DbAccess.getInstance();
-	//@Autowired
-	private CompanyDao companyDao=new CompanyDao();
-	
+public class ComputerDao {
+	// @Autowired
+	private IDbAccess access = DbAccess.getInstance();
+	// @Autowired
+	private CompanyDao companyDao = new CompanyDao();
+
 	/* Name table */
 	private final static String TABLE = "computer";
 
@@ -51,14 +53,16 @@ public class ComputerDao {
 			+ " LIKE ?  LIMIT ?,?";
 	private final static String SEARCH_COUNT_QUERY = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE + " WHERE "
 			+ FIELD_2 + " LIKE ?";
-	
-	private final static String QUERY_SORT_BY_NAME_ASC = "SELECT * FROM " + TABLE+" ORDER BY "+FIELD_2+" ASC"; 
-	private final static String QUERY_SORT_BY_NAME_DESC = "SELECT * FROM " + TABLE+" ORDER BY "+FIELD_2+" DESC"; ; 
 
-	
-	
+	private final static String QUERY_SORT_BY_NAME_ASC = "SELECT * FROM " + TABLE + " ORDER BY " + FIELD_2
+			+ " ASC LIMIT ?,? ";
+	private final static String QUERY_SORT_BY_NAME_DESC = "SELECT * FROM " + TABLE + " ORDER BY " + FIELD_2
+			+ " DESC LIMIT ?,? ";
+
+	private Logger logger = LoggerFactory.getLogger(ComputerDao.class);
+
 	public ComputerDao() {
-		this.access=DbAccess.getInstance();
+		this.access = DbAccess.getInstance();
 	}
 
 	public ComputerDao(IDbAccess access) {
@@ -124,7 +128,7 @@ public class ComputerDao {
 	 */
 	public Optional<Computer> findById(Long id) throws SQLException {
 		Optional<Computer> optional = Optional.empty();
-		if(id==null) {
+		if (id == null) {
 			return optional;
 		}
 		try (Connection connection = access.getConnection()) {
@@ -226,33 +230,10 @@ public class ComputerDao {
 		}
 		return computers;
 	}
-	
-	public List<Computer> sortByName(boolean asc) throws SQLException {
-		String query =asc?QUERY_SORT_BY_NAME_ASC:QUERY_SORT_BY_NAME_DESC;
-		ArrayList<Computer> computers = new ArrayList<Computer>();
-		try (Connection connection = access.getConnection()) {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(query);
-			while (resultSet.next()) {
-				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FOREIGN_KEY_COMPANY_ID));
-				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						(resultSet.getTimestamp(FIELD_3) != null)
-								? (LocalDate) resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate()
-								: null,
-						(resultSet.getTimestamp(FIELD_4) != null)
-								? (LocalDate) resultSet.getTimestamp(FIELD_4).toLocalDateTime().toLocalDate()
-								: null,
-						optionalCompany.isPresent() ? optionalCompany.get() : null));
-			}
-		} catch (SQLException e) {
-			throw e;
-		}
-		return computers;
-	}
-	
+
 	public List<Computer> sortBycompany(boolean asc) throws SQLException {
-		//TODO change request
-		String query =asc?QUERY_SORT_BY_NAME_ASC:QUERY_SORT_BY_NAME_DESC;
+		// TODO change request
+		String query = asc ? QUERY_SORT_BY_NAME_ASC : QUERY_SORT_BY_NAME_DESC;
 		ArrayList<Computer> computers = new ArrayList<Computer>();
 		try (Connection connection = access.getConnection()) {
 			Statement statement = connection.createStatement();
@@ -297,7 +278,38 @@ public class ComputerDao {
 		} catch (SQLException e) {
 			throw e;
 		}
-		
+
+		return computers;
+	}
+
+	public List<Computer> sortByName(boolean asc, int sizePage, int offset) throws SQLException {
+		logger.debug("in Sort by name");
+		String query = asc ? QUERY_SORT_BY_NAME_ASC : QUERY_SORT_BY_NAME_DESC;
+		ArrayList<Computer> computers = new ArrayList<Computer>();
+		try (Connection connection = access.getConnection()) {
+
+			PreparedStatement sortByNamePStatment = connection.prepareStatement(query);
+			sortByNamePStatment.setInt(1, sizePage);
+			sortByNamePStatment.setInt(2, offset);
+			ResultSet resultSet = sortByNamePStatment.executeQuery();
+			System.out.println("sortbyName asc: "+asc);
+			while (resultSet.next()) {
+				
+				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FOREIGN_KEY_COMPANY_ID));
+				Company company = null;
+				logger.debug("sorted " + resultSet.getString(FIELD_2));
+				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
+						(resultSet.getTimestamp(FIELD_3) != null)
+								? (LocalDate) resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate()
+								: null,
+						(resultSet.getTimestamp(FIELD_4) != null)
+								? (LocalDate) resultSet.getTimestamp(FIELD_4).toLocalDateTime().toLocalDate()
+								: null,
+						optionalCompany.isPresent() ? optionalCompany.get() : company));
+			}
+		} catch (SQLException e) {
+			throw e;
+		}
 		return computers;
 	}
 

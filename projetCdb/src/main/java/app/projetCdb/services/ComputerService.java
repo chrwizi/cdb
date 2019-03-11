@@ -3,7 +3,7 @@ package app.projetCdb.services;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Optional; 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.ComputerDao;
-import app.projetCdb.persistance.ComputersPage;
-import app.projetCdb.persistance.IPageSelect;
 
 /**
  * 
@@ -38,8 +36,9 @@ public class ComputerService implements IComputerService {
 				(Integer.valueOf(nbComputersInDatabase) < defaultNbComputersByPage ? nbComputersInDatabase
 						: defaultNbComputersByPage));
 		pageComputers.setMaxResult(nbComputersInDatabase);
-
 	}
+	
+	
 
 	@Override
 	/**
@@ -66,22 +65,28 @@ public class ComputerService implements IComputerService {
 		return computers;
 	}
 	
+	 
+
+	
 	@Override
-	public List<Computer> sortByComputerName(boolean asc){
-		List<Computer> sortedComputers=new ArrayList<Computer>();
+	public List<Computer>getPageSortedByName(int num,boolean asc) throws SQLException {
+		pageComputers.setCurrentPage(num);
+		List<Computer> computers = new ArrayList<Computer>();
 		try {
-			sortedComputers=computerDao.sortByName(asc);
+			computers = computerDao.sortByName(asc,pageComputers.getCursor(), pageComputers.getOffset());
 		} catch (SQLException e) {
-			logger.debug("erreur lors du sort by name ");
+			e.printStackTrace();
 		}
-		return sortedComputers;
+		pageComputers.setMaxResult(computerDao.count());
+		return computers;
 	}
+
 
 	@Override
 	public List<Computer> sortByCompanyName(boolean asc){
 		List<Computer> sortedComputers=new ArrayList<Computer>();
 		try {
-			sortedComputers=computerDao.sortByName(asc);
+			sortedComputers=computerDao.sortByName(asc,0,0);
 		} catch (SQLException e) {
 			logger.debug("erreur lors du sort by company");
 		}
@@ -152,6 +157,7 @@ public class ComputerService implements IComputerService {
 		return computers;
 	}
 
+	
 	@Override
 	public List<Computer> getPage(int num, String computerName) throws SQLException {
 		pageComputers.setCurrentPage(num);
@@ -165,6 +171,8 @@ public class ComputerService implements IComputerService {
 		return computers;
 	}
 
+	
+	
 	@Override
 	public int getNbPages() {
 		return pageComputers.getNbPages();
@@ -185,5 +193,9 @@ public class ComputerService implements IComputerService {
 	public void setComputerDao(ComputerDao computerDao) {
 		this.computerDao = computerDao;
 	}
+
+
+
+
 
 }

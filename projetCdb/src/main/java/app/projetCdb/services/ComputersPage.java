@@ -1,4 +1,4 @@
-package app.projetCdb.persistance;
+package app.projetCdb.services;
 
 import org.springframework.stereotype.Service;
 

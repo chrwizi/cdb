@@ -31,6 +31,9 @@
 			<resource>
 				<directory>database</directory>
 			</resource>
+			<resource>
+				<directory>ressources</directory>
+			</resource>
 		</resources>
 	</build>
 	<dependencies>

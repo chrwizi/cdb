@@ -30,7 +30,7 @@
 
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${nbComputers}computersfound</h1>
+			<h1 id="homeTitle">${nbComputers} computers found</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="/projetCdb/" method="POST"
@@ -73,8 +73,12 @@
 							</span></th>
 							<th>Computer name
 								<div class="pull-right">
-									<a> <i class="fas fa-sort-up align-top "></i></a> <a><i
-										class="fas fa-sort-down align-bottom "></i></a>
+									<a href="/projetCdb/sortComputers?sortName=true&asc=true&selectedPage=${numPage}"> 
+										<i class="fas fa-sort-up align-top "></i>
+									</a>
+									 <a href="/projetCdb/sortComputers?sortName=true&asc=false">
+									 	<i class="fas fa-sort-down align-bottom "></i>
+									 </a>
 								</div>
 							</th>
 							<th>Introduced date</th>

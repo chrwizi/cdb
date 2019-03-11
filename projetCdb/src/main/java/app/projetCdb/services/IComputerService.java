@@ -5,18 +5,17 @@ import java.util.List;
 import java.util.Optional;
 
 import app.projetCdb.models.Computer;
-import app.projetCdb.persistance.IPageSelect;
 
 public interface IComputerService {
 	Optional<Computer> finById(Long id) throws SQLException;
+
+	List<Computer> getPageSortedByName(int num, boolean asc) throws SQLException;
 
 	List<Computer> getAll();
 
 	List<Computer> getAll(IPageSelect page);
 
 	List<Computer> sortByCompanyName(boolean asc);
-
-	List<Computer> sortByComputerName(boolean asc);
 
 	List<Computer> getPage(int num, String computerNa) throws SQLException;
 
