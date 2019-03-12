@@ -16,8 +16,6 @@
 	href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
 	integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
 	crossorigin="anonymous">
-
-
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
@@ -30,7 +28,7 @@
 
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${nbComputers} computers found</h1>
+			<h1 id="homeTitle">${nbComputers}computersfound</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="/projetCdb/" method="POST"
@@ -73,13 +71,21 @@
 							</span></th>
 							<th>Computer name
 								<div class="pull-right">
-									<a href="/projetCdb/sortComputers?sortName=true&asc=true&selectedPage=${numPage}"> 
+									<a
+										href="/projetCdb?sortName=true&asc=true&selectedPage=${numPage}">
+										<i class="fas fa-sort-up align-top "></i>
+									</a> <a
+										href="/projetCdb?sortName=true&asc=false&selectedPage=${numPage}">
+										<i class="fas fa-sort-down align-bottom "></i>
+									</a>
+								</div> <!-- 								<div class="pull-right">
+									<a href="/projetCdb/sortComputers?sortName=true&asc=true"> 
 										<i class="fas fa-sort-up align-top "></i>
 									</a>
 									 <a href="/projetCdb/sortComputers?sortName=true&asc=false">
 									 	<i class="fas fa-sort-down align-bottom "></i>
 									 </a>
-								</div>
+								</div> -->
 							</th>
 							<th>Introduced date</th>
 							<!-- Table header for Discontinued Date -->
@@ -122,7 +128,16 @@
 						aria-hidden="true">&laquo;</span>
 				</a></li>
 				<c:forEach var="numPage" begin="1" end="${nbPages}">
-					<li><a href="/projetCdb/cdb?selectedPage=${numPage}">${numPage}</a></li>
+					<c:choose>
+						<c:when test="${sortPage==true}">
+							<li><a href="/projetCdb/cdb?asc=${asc}&sortPage=true&selectedPage=${numPage}">${numPage}</a></li>
+						</c:when>
+						<c:when test="${sortPage==false}">
+							<li><a href="/projetCdb/cdb?selectedPage=${numPage}">${numPage}</a></li>
+						</c:when>
+					</c:choose>
+
+
 				</c:forEach>
 				<li><a href="#" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 				</a></li>

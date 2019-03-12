@@ -43,7 +43,7 @@ public class SortServlet extends HttpServlet {
 		
 		try {
 			
-			computers=computerService.getPageSortedByName(selectedPage==null?1:Integer.parseInt(selectedPage),sortOrder);
+			computers=computerService.getPageSortedByName(selectedPage==null?0:Integer.parseInt(selectedPage),sortOrder);
 			
 		} catch (NumberFormatException e) {
 			e.printStackTrace();

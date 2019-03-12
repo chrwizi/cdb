@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import app.projetCdb.models.Computer;
@@ -36,23 +38,40 @@ public class Homeservlet extends HttpServlet {
 	@Autowired
 	private IComputerService computerService;
 	private IMapperComputerDto mapper = new MapperComputer();
-
+	private boolean sortTable=false;
+	private boolean ascSort=false;
+	
+ 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String selectedPage = request.getParameter("selectedPage");
-		String sortPage = request.getParameter("sortPage");
-		String asc = request.getParameter("asc");
-
+		String sortPage = request.getParameter("sortPage");	
+		
+		ascSort=(request.getParameter("asc")!=null?Boolean.parseBoolean(request.getParameter("asc")):ascSort);
+		sortTable=(request.getParameter("sortName")!=null?Boolean.parseBoolean(request.getParameter("sortName")):sortTable);
+		int numPage=(selectedPage==null?1:Integer.parseInt(selectedPage));
 		List<Computer> computers = new ArrayList<Computer>();
+		
 
-		try {
-			computers = computerService.getPage((selectedPage == null ? 1 : Integer.parseInt(selectedPage)));
+		try {			 
+			if(sortTable) {
+				request.setAttribute("sortPage", true);
+				request.setAttribute("asc",ascSort);
+				computers=computerService.getPageSortedByName(numPage,ascSort); 				
+			}
+			else {
+				computers = computerService.getPage(numPage);
+				request.setAttribute("sortPage", false);
+			}
 			ArrayList<ComputerDto> computersDto = (ArrayList<ComputerDto>) mapper.mapListComputer(computers);
+			request.setAttribute("numPage", numPage);
 			request.setAttribute("nbPages", computerService.getNbPages());
 			request.setAttribute("computers", computersDto);
 			request.setAttribute("nbComputers", computersDto.size());
+			
 			this.getServletContext().getRequestDispatcher(DASHBOARD_VIEW).forward(request, response);
+			
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
