@@ -8,6 +8,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<H1>${message}</H1>
+	<H1>Controller ok !</H1>
 </body>
 </html>

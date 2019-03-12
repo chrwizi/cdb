@@ -22,19 +22,28 @@
 				<version>2.2</version>
 				<configuration>
 					<port>9000</port>
-					<path>/projetCdb</path>
+ 					<path>/projetCdb</path> 
 					<contextReloadable>true</contextReloadable>
 				</configuration>
 			</plugin>
 		</plugins>
+		
+							<!--     Resources   -->
 		<resources>
 			<resource>
 				<directory>database</directory>
 			</resource>
+<!-- 			
 			<resource>
 				<directory>ressources</directory>
 			</resource>
+			
+			 -->
 		</resources>
+		
+		
+		
+		
 	</build>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
@@ -109,26 +118,26 @@
 			<version>3.3.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>5.1.5.RELEASE</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
+		https://mvnrepository.com/artifact/org.springframework/spring-core
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>5.1.5.RELEASE</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-beans -->
+		https://mvnrepository.com/artifact/org.springframework/spring-beans
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
 			<version>5.1.5.RELEASE</version>
 		</dependency>
-
+ -->
 
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
 		<dependency>

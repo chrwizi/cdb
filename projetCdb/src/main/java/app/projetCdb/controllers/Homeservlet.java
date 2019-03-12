@@ -16,7 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.web.servlet.ModelAndView;
 
 import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.ComputerDao;
@@ -29,7 +36,11 @@ import app.projetCdb.services.IPageSelect;
 import app.projetCdb.services.ComputerService;
 import app.projetCdb.services.ComputersPage;
 
-@WebServlet(name = "cdb", urlPatterns = "/")
+
+
+//@WebServlet(name = "cdb", urlPatterns = "/")
+@Controller
+@RequestMapping("/")
 public class Homeservlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -42,44 +53,68 @@ public class Homeservlet extends HttpServlet {
 	private boolean ascSort=false;
 	
  
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String selectedPage = request.getParameter("selectedPage");
-		String sortPage = request.getParameter("sortPage");	
+	@GetMapping("")
+	@ResponseBody
+	protected String doGet(@RequestParam(name="selectedPage") String selectedPage,
+							@RequestParam(name="sortPage") boolean sortPage, 
+							@RequestParam("asc") String ascSort,
+							@RequestParam("sortName") String sortByName,
+						Model model){
+		 
+		 
+	//	String selectedPage = ("selectedPage");
+		//String sortPage = request.getParameter("sortPage");
 		
-		ascSort=(request.getParameter("asc")!=null?Boolean.parseBoolean(request.getParameter("asc")):ascSort);
-		sortTable=(request.getParameter("sortName")!=null?Boolean.parseBoolean(request.getParameter("sortName")):sortTable);
+	/*	
+	ascSort=(request.getParameter("asc")!=null?Boolean.parseBoolean(request.getParameter("asc")):ascSort);
+	sortTable=(request.getParameter("sortName")!=null?Boolean.parseBoolean(request.getParameter("sortName")):sortTable);
+		
+		String asc = request.getParameter("asc");
+		String sortByName=request.getParameter("sortName");
+	*/	
 		int numPage=(selectedPage==null?1:Integer.parseInt(selectedPage));
+
 		List<Computer> computers = new ArrayList<Computer>();
-		
 
 		try {			 
 			if(sortTable) {
-				request.setAttribute("sortPage", true);
-				request.setAttribute("asc",ascSort);
-				computers=computerService.getPageSortedByName(numPage,ascSort); 				
+				boolean sort=Boolean.parseBoolean(sortByName);
+				
+				
+				//request.setAttribute("sortPage", true);
+				///request.setAttribute("asc",ascSort);
+				
+				computers=computerService.getPageSortedByName(numPage,Boolean.parseBoolean(ascSort)); 
+				
+				
+				
 			}
 			else {
 				computers = computerService.getPage(numPage);
-				request.setAttribute("sortPage", false);
+				model.addAttribute("sortPage", false);
 			}
 			ArrayList<ComputerDto> computersDto = (ArrayList<ComputerDto>) mapper.mapListComputer(computers);
-			request.setAttribute("numPage", numPage);
-			request.setAttribute("nbPages", computerService.getNbPages());
-			request.setAttribute("computers", computersDto);
-			request.setAttribute("nbComputers", computersDto.size());
 			
-			this.getServletContext().getRequestDispatcher(DASHBOARD_VIEW).forward(request, response);
+			
+			model.addAttribute("numPage", numPage);
+			model.addAttribute("nbPages", computerService.getNbPages());
+			model.addAttribute("computers", computersDto);
+			model.addAttribute("nbComputers", computersDto.size());
+			
+			//this.getServletContext().getRequestDispatcher(DASHBOARD_VIEW).forward(request, response);
 			
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
+		
+		return "dashboard";
 	}
 
+	
+	/*
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String search = (String) req.getParameter("search");
@@ -100,11 +135,14 @@ public class Homeservlet extends HttpServlet {
 		req.setAttribute("nbComputers", computersDto.size());
 		this.getServletContext().getRequestDispatcher(DASHBOARD_VIEW).forward(req, resp);
 	}
-
-	@Override
-	public void init() throws ServletException {
-		super.init();
-		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-	}
+	*/
+	
+//
+//	
+//	@Override
+//	public void init() throws ServletException {
+//		super.init();
+//		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+//	}
 
 }
