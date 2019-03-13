@@ -292,9 +292,9 @@ public class ComputerDao {
 			sortByNamePStatment.setInt(1, sizePage);
 			sortByNamePStatment.setInt(2, offset);
 			ResultSet resultSet = sortByNamePStatment.executeQuery();
-			System.out.println("sortbyName asc: "+asc);
+			System.out.println("sortbyName asc: " + asc);
 			while (resultSet.next()) {
-				
+
 				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FOREIGN_KEY_COMPANY_ID));
 				Company company = null;
 				logger.debug("sorted " + resultSet.getString(FIELD_2));
@@ -321,16 +321,23 @@ public class ComputerDao {
 			preparedStatement.setInt(2, sizePage);
 			preparedStatement.setInt(3, offset);
 			ResultSet resultSet = preparedStatement.executeQuery();
+
 			while (resultSet.next()) {
 				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FOREIGN_KEY_COMPANY_ID));
 				Company company = null;
 				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						(LocalDate) resultSet.getObject(FIELD_3), (LocalDate) resultSet.getObject(FIELD_4),
+						(resultSet.getTimestamp(FIELD_3) != null)
+								? (LocalDate) resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate()
+								: null,
+						(resultSet.getTimestamp(FIELD_4) != null)
+								? (LocalDate) resultSet.getTimestamp(FIELD_4).toLocalDateTime().toLocalDate()
+								: null,
 						optionalCompany.isPresent() ? optionalCompany.get() : company));
 			}
 		} catch (SQLException e) {
 			throw e;
 		}
+
 		return computers;
 	}
 

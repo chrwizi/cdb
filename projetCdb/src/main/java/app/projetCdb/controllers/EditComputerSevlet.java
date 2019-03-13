@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import app.projetCdb.exceptions.ValidatorFormException;
@@ -34,6 +36,9 @@ import app.projetCdb.services.validators.FormEditComputerValidator;
 import app.projetCdb.services.validators.IFormEditComputerValidator;
 
 @WebServlet(name = "edit", urlPatterns = "/editComputer")
+
+//@Controller
+//@RequestMapping("/editComputer")
 public class EditComputerSevlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	// views
@@ -58,21 +63,30 @@ public class EditComputerSevlet extends HttpServlet {
 	Logger logger=LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(
+			HttpServletRequest req, HttpServletResponse resp
+			) throws ServletException, IOException {
+		
+		
 		Long idComputer = Long.valueOf(req.getParameter("idComputer"));
 		// parse error to handle
 		Optional<Computer> optionalComputer = Optional.empty();
+		
 		try {
 			optionalComputer = computerService.finById(idComputer);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		
 		if (!optionalComputer.isPresent()) {
 			// there is no computer corresponding with Id
 			String errorMessage = "Aucun ordinateur trouvé";
 			req.setAttribute("errorMessage", errorMessage);
 			this.getServletContext().getRequestDispatcher(REDIRECT_COMPUTER_NOT_FOUND).forward(req, resp);
-		} else {
+		} 
+		
+		else {
 			List<Company> companies = companyService.getAll();
 			ComputerDto computerDto = mapper.mapComputer(optionalComputer.get());
 			List<CompanyDto> companiesDto = mapperCompany.mapListCompany(companies);
@@ -80,6 +94,8 @@ public class EditComputerSevlet extends HttpServlet {
 			req.setAttribute("computer", computerDto);
 			this.getServletContext().getRequestDispatcher(GET_VIEW).forward(req, resp);
 		}
+		
+		
 	}
 
 	@Override
