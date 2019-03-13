@@ -45,7 +45,7 @@ public class ComputerDao {
 	private final static String DELETE_QUERY = "DELETE FROM " + TABLE + " WHERE " + FIELD_1 + " =?";
 
 	private final static String UPDATE_QUERY = "UPDATE " + TABLE + " SET " + FIELD_2 + "=?, " + FIELD_3 + "=?, "
-			+ FIELD_4 + "=?," + "," + FOREIGN_KEY_COMPANY_ID + "=?, " + " WHERE " + FIELD_1 + "=?)";
+			+ FIELD_4 + "=?, " + FOREIGN_KEY_COMPANY_ID + "=? " + " WHERE " + FIELD_1 + "=?";
 
 	private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + " WHERE " + FIELD_1 + " = ? ";
 	private final static String GET_PAGE_QUERY = "SELECT * FROM " + TABLE + " LIMIT ?,? ";
@@ -143,11 +143,20 @@ public class ComputerDao {
 				if (optionalCompany.isPresent()) {
 					company = optionalCompany.get();
 				}
-				LocalDate introduced = (LocalDate) resultSet.getObject(FIELD_3);
-				LocalDate discontinued = (LocalDate) resultSet.getObject(FIELD_4);
+				// LocalDate introduced = (LocalDate) resultSet.getObject(FIELD_3);
+				// LocalDate discontinued = (LocalDate) resultSet.getObject(FIELD_4);
 
-				LocalDate introDate = (introduced != null) ? introduced : null;
-				LocalDate discont = (discontinued != null) ? discontinued : null;
+				// LocalDate introDate = (introduced != null) ? introduced : null;
+				// LocalDate discont = (discontinued != null) ? discontinued : null;
+
+				LocalDate introDate = (resultSet.getTimestamp(FIELD_3) != null
+						? resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate()
+						: null);
+
+				LocalDate discont = (resultSet.getTimestamp(FIELD_4) != null
+						? resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate()
+						: null);
+
 				optional = Optional.of(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2), introDate,
 						discont, company));
 			}
@@ -173,7 +182,8 @@ public class ComputerDao {
 			preparedStatement.setString(1, computer.getName());
 			preparedStatement.setObject(2, computer.getIntroduced());
 			preparedStatement.setObject(3, computer.getDiscontinued());
-			preparedStatement.setLong(4, computer.getId());
+			preparedStatement.setLong(4, computer.getCompany() != null ? computer.getCompany().getId() : 0);
+			preparedStatement.setLong(5, computer.getId());
 			// execute
 			preparedStatement.executeUpdate();
 			// get updated computer id

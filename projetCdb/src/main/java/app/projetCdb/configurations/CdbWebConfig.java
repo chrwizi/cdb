@@ -21,8 +21,6 @@ public class CdbWebConfig implements WebApplicationInitializer, WebMvcConfigurer
 		AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
 		rootContext.register(CdbSpringConfiguration.class);
 		servletContext.addListener(new ContextLoaderListener(rootContext));
-		// ServletRegistration.Dynamic servlet= servletContext.addServlet("dispatcher",
-		// new Dispatcher(rootContext));
 		ServletRegistration.Dynamic servlet = servletContext.addServlet("dispatcher",
 				new DispatcherServlet(rootContext));
 		servlet.setLoadOnStartup(1);
