@@ -22,9 +22,9 @@ public class DbAccess implements IDbAccess {
 	private String DEFAULT_DATABASE_CONFIGURATION_FILE = "database/database.properties";
 	private static Properties databaseProperties = new Properties();
 	// properties from configuration file
-	private static String URL_PROPERTIE_NAME = "db_url";
-	private static String USERNAME_PROPERTIE_NAME = "db_username";
-	private static String PASSWORD_PROPERTIE_NAME = "db_password";
+	private static String URL_PROPERTIE_NAME = "datasource.url";
+	private static String USERNAME_PROPERTIE_NAME = "datasource.username";
+	private static String PASSWORD_PROPERTIE_NAME = "datasource.password";
 	// hiraki properties
 	private HikariDataSource hikariDataSource;
 	private static int NB_POOL = 2;
