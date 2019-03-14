@@ -15,6 +15,7 @@ import org.springframework.web.servlet.view.JstlView;
 @Configuration
 @ComponentScan(basePackages = { "app.projetCdb.tmpServices", "app.projetCdb.controllers", "app.projetCdb.persistance",
 		"app.projetCdb.services" })
+@Import(value= {DataSourceConfig.class})
 public class CdbSpringConfiguration implements WebMvcConfigurer {
 
 	private static final Logger logger = LoggerFactory.getLogger(CdbSpringConfiguration.class);

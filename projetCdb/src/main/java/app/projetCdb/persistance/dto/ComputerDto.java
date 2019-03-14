@@ -5,7 +5,7 @@ public class ComputerDto {
 	private String name;
 	private String introduced;
 	private String discontinued;
-	private String commpany;
+	private String company;
 	private Long companyId;
 
 	public ComputerDto(Long id, String name, String introduced, String discontinued, String company, Long companyId) {
@@ -13,7 +13,7 @@ public class ComputerDto {
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
-		this.commpany = company;
+		this.company = company;
 		this.companyId = companyId;
 	}
 
@@ -50,11 +50,11 @@ public class ComputerDto {
 	}
 
 	public String getCompany() {
-		return commpany;
+		return company;
 	}
 
 	public void setCompany(String compagny) {
-		this.commpany = compagny;
+		this.company = compagny;
 	}
 
 	public Long getCompanyId() {

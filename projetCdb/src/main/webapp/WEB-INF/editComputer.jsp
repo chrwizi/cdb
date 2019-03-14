@@ -28,13 +28,15 @@
 					<h1>Edit Computer</h1>
 
 					<form action="editComputer" method="POST">
-						<input type="hidden" value="${computer.id}" id="${computer.id}" name="idComputer" />
+						<input type="hidden" value="${computer.id}" id="${computer.id}"
+							name="idComputer" />
 						<!-- TODO: Change this value with the computer id -->
 						<fieldset>
 							<div class="form-group">
 								<label for="computerName">Computer name</label> <input
 									type="text" class="form-control" id="computerName"
-									name="computerName" value="${computer.name}" required="required">
+									name="computerName" value="${computer.name}"
+									required="required">
 							</div>
 							<div class="form-group">
 								<label for="introduced">Introduced date</label> <input
@@ -51,17 +53,17 @@
 							<div class="form-group">
 								<label for="companyId">Company</label> <select name="idCompany"
 									class="form-control" id="idCompany">
+
 									<c:forEach items="${companies}" var="company">
 										<c:choose>
-											<c:when test="${computer.companyId==company.id}">
-												<option value="${company.id}" selected="selected">${company.name}</option>
-											</c:when>
 											<c:when test="${computer.companyId!=company.id}">
-												<option  value="${company.id}">${company.name}</option>
+												<option value="${company.id}">${company.name}</option>
 											</c:when>
+											<c:otherwise>
+												<option value="${computer.companyId}" selected="selected">${computer.company}</option>
+											</c:otherwise>
 										</c:choose>
-									</c:forEach>
-									<option value=" " selected="selected">${company.name}</option>
+									</c:forEach> 
 								</select>
 							</div>
 

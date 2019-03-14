@@ -1,34 +1,37 @@
 package app.projetCdb.controllers;
 
-import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.view.RedirectView;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import app.projetCdb.services.ComputerService;
 import app.projetCdb.services.IComputerService;
 
-@WebServlet(name = "delete", urlPatterns = "/delete")
-public class DeleteServlet extends HttpServlet {
-	// services
-	@Autowired
-	private IComputerService computerService ;
-	private static final long serialVersionUID = 1L;
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		final String view =req.getContextPath()+"/dashboard";
-		if (req.getParameter("selection") != null) {
-			long computersIdTab[] = convertToLong(req.getParameter("selection").split(","));
+
+@Controller
+@RequestMapping("/delete")
+public class DeleteServlet{
+	private  IComputerService computerService ;
+	
+	
+
+	public DeleteServlet(IComputerService computerService) {
+		this.computerService = computerService;
+	}
+
+	@PostMapping
+	protected RedirectView doPost(@RequestParam(name="selection",required=true)String selection)  {
+		String[] strSelectedIdTab=selection.split(",");
+		if (strSelectedIdTab != null) {
+			long computersIdTab[] = convertToLong(strSelectedIdTab);
 			computerService.delete(computersIdTab);
 		}
-		resp.sendRedirect(view);
+		return new RedirectView("/projetCdb");
 	}
+	
 
 	private static long[] convertToLong(String[] strId) {
 		long[] tab=null;

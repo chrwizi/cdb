@@ -25,6 +25,7 @@ public class Homeservlet {
 
 	@Autowired
 	private IComputerService computerService;
+	
 	private IMapperComputerDto mapper = new MapperComputer();
 	
 	private boolean sortTable = false;
@@ -81,6 +82,8 @@ public class Homeservlet {
 		return "dashboard";
 	}
 
+	
+	
 	@RequestMapping("sort")
 	public String sort(Model model) {
 
@@ -109,12 +112,5 @@ public class Homeservlet {
 		return view;
 	}
 
-//
-//	
-//	@Override
-//	public void init() throws ServletException {
-//		super.init();
-//		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-//	}
 
 }
