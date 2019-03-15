@@ -31,6 +31,7 @@ import app.projetCdb.services.validators.IFormEditComputerValidator;
 @Controller
 @RequestMapping("/addComputer")
 public class AddComputerServlet {
+	// services
 	private IComputerService computerService;
 	private ICompanyServices companyService;
 
@@ -43,7 +44,7 @@ public class AddComputerServlet {
 	IFormEditComputerValidator validator = new FormEditComputerValidator();
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public AddComputerServlet(IComputerService computerService, ICompanyServices companyService) {
+	public AddComputerServlet(IComputerService computerService, ICompanyServices companyService) { 
 		this.computerService = computerService;
 		this.companyService = companyService;
 	}

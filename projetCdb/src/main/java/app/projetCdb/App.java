@@ -4,15 +4,12 @@ package app.projetCdb;
  */
 
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Optional;
 import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +19,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import app.projetCdb.configurations.CdbSpringConfiguration;
 import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
-import app.projetCdb.persistance.CompanyDao;
-import app.projetCdb.persistance.ComputerDao;
-import app.projetCdb.persistance.DbAccess;
 import app.projetCdb.services.ICompanyServices;
 import app.projetCdb.services.IComputerService;
-import app.projetCdb.tmpServices.IAsService;
-import app.projetCdb.services.CompanyService;
-import app.projetCdb.services.ComputerService;
-
+ 
 public class App {
 	/* Menu selections */
 	private final static int LIST_COMPUTERS = 1;

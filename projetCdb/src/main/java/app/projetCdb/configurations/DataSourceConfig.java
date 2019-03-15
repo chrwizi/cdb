@@ -1,16 +1,17 @@
 package app.projetCdb.configurations;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.sql.DataSource;
+
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.zaxxer.hikari.HikariDataSource;
 
-@Configuration
+@Configuration 
 public class DataSourceConfig {
 	@Bean
-	private HikariDataSource dataSource(@Autowired CdbDataSourceProperties properties) {
-		return (HikariDataSource) DataSourceBuilder.create().type(HikariDataSource.class).url(properties.getUrl())
+	public DataSource dataSource(CdbDataSourceProperties properties) {
+		return DataSourceBuilder.create().url(properties.getUrl())
 				.username(properties.getUsername()).password(properties.getPassword()).build();
 	}
-}
+} 
+ 

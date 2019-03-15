@@ -1,19 +1,36 @@
 package app.projetCdb.configurations;
 
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
-@Configuration
-@ConfigurationProperties(prefix = "datasource")
-@PropertySource("database/database.properties")
-public class CdbDataSourceProperties extends DataSourceProperties {
+@Component
+//@ConfigurationProperties(prefix = "datasource")
+@PropertySource("database/application.properties")
+public class CdbDataSourceProperties{
+	
 
+	@Value("${datasource.url}")
 	private String url;
+			;
+	@Value("${datasource.username}")
 	private String username;
+	//private String username="admincdb";
+	@Value("${datasource.password}")
 	private String password;
+  
+	
+	public CdbDataSourceProperties() {
+		
+		
+		System.out.println("\n\n");
+		System.out.println(url);
+		System.out.println(username);
+		System.out.println(password);
+	}
 
+	
 	public String getUrl() {
 		return url;
 	}

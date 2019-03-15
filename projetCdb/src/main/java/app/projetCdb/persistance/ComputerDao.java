@@ -1,17 +1,17 @@
 package app.projetCdb.persistance;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
+
+import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +24,12 @@ import app.projetCdb.models.Computer;
 
 @Repository
 public class ComputerDao {
-	// @Autowired
-	private IDbAccess access = DbAccess.getInstance();
-	// @Autowired
-	private CompanyDao companyDao = new CompanyDao();
+	
+	private DataSource datasource; 
+	//private IDbAccess access = DbAccess.getInstance();
+	
+	@Autowired
+	private CompanyDao companyDao ;
 
 	/* Name table */
 	private final static String TABLE = "computer";
@@ -61,12 +63,8 @@ public class ComputerDao {
 
 	private Logger logger = LoggerFactory.getLogger(ComputerDao.class);
 
-	public ComputerDao() {
-		this.access = DbAccess.getInstance();
-	}
-
-	public ComputerDao(IDbAccess access) {
-		this.access = access;
+	public ComputerDao(DataSource datasource) {
+		this.datasource =datasource;
 	}
 
 	public static String getTable() {
@@ -86,7 +84,7 @@ public class ComputerDao {
 	 *                                    don't exit in Companies table
 	 */
 	public OptionalLong add(Computer computer) throws SQLException, IDCompanyNotFoundException {
-		Connection connection = access.getConnection();
+		Connection connection = datasource.getConnection();
 		// prepare statement
 		PreparedStatement preparedstatement = connection.prepareStatement(CREATE_QUERY,
 				Statement.RETURN_GENERATED_KEYS);
@@ -112,12 +110,20 @@ public class ComputerDao {
 	 * @return
 	 * @throws SQLException
 	 */
-	public boolean isIdPresent(Long id) throws SQLException {
-		Connection connection = access.getConnection();
-		String query = "SELECT * FROM " + TABLE + "WHERE " + FIELD_1 + "=" + id;
-		Statement statement = connection.createStatement();
-		ResultSet results = statement.executeQuery(query);
-		return results.first() ? true : false;
+	public boolean isIdPresent(Long id) {
+		boolean find=false;
+		
+		try(Connection connection = datasource.getConnection()){
+			String query = "SELECT * FROM " + TABLE + "WHERE " + FIELD_1 + "=" + id;
+			Statement statement = connection.createStatement();
+			ResultSet results = statement.executeQuery(query);
+			find=results.first();
+		}
+		catch (SQLException e) {
+			logger.debug("Erreur isPresent");
+		}
+ 
+		return  find;
 	}
 
 	/**
@@ -131,7 +137,7 @@ public class ComputerDao {
 		if (id == null) {
 			return optional;
 		}
-		try (Connection connection = access.getConnection()) {
+		try (Connection connection = datasource.getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY,
 					Statement.RETURN_GENERATED_KEYS);
 			preparedStatement.setLong(1, id);
@@ -175,7 +181,7 @@ public class ComputerDao {
 	 */
 	public OptionalLong update(Computer computer) throws SQLException {
 		OptionalLong optionalId = OptionalLong.empty();
-		try (Connection connection = access.getConnection()) {
+		try (Connection connection = datasource.getConnection()) {
 			// prepare statement
 			PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_QUERY,
 					Statement.RETURN_GENERATED_KEYS);
@@ -203,7 +209,7 @@ public class ComputerDao {
 	 * @throws SQLException if connection to database failure
 	 */
 	public void delete(Long id) throws SQLException {
-		try (Connection connection = access.getConnection()) {
+		try (Connection connection = datasource.getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(DELETE_QUERY,
 					Statement.RETURN_GENERATED_KEYS);
 			preparedStatement.setLong(1, id);
@@ -221,7 +227,7 @@ public class ComputerDao {
 	public List<Computer> findAll() throws SQLException {
 		String query = "SELECT * FROM " + TABLE;
 		ArrayList<Computer> computers = new ArrayList<Computer>();
-		try (Connection connection = access.getConnection()) {
+		try (Connection connection = datasource.getConnection()) {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(query);
 			while (resultSet.next()) {
@@ -245,7 +251,7 @@ public class ComputerDao {
 		// TODO change request
 		String query = asc ? QUERY_SORT_BY_NAME_ASC : QUERY_SORT_BY_NAME_DESC;
 		ArrayList<Computer> computers = new ArrayList<Computer>();
-		try (Connection connection = access.getConnection()) {
+		try (Connection connection = datasource.getConnection()) {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(query);
 			while (resultSet.next()) {
@@ -268,7 +274,7 @@ public class ComputerDao {
 	public List<Computer> findAll(int sizePage, int offset) throws SQLException {
 		ArrayList<Computer> computers = new ArrayList<Computer>();
 
-		try (Connection connection = access.getConnection()) {
+		try (Connection connection = datasource.getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(GET_PAGE_QUERY);
 			preparedStatement.setInt(1, sizePage);
 			preparedStatement.setInt(2, offset);
@@ -296,7 +302,7 @@ public class ComputerDao {
 		logger.debug("in Sort by name");
 		String query = asc ? QUERY_SORT_BY_NAME_ASC : QUERY_SORT_BY_NAME_DESC;
 		ArrayList<Computer> computers = new ArrayList<Computer>();
-		try (Connection connection = access.getConnection()) {
+		try (Connection connection = datasource.getConnection()) {
 
 			PreparedStatement sortByNamePStatment = connection.prepareStatement(query);
 			sortByNamePStatment.setInt(1, sizePage);
@@ -325,7 +331,7 @@ public class ComputerDao {
 
 	public List<Computer> search(int sizePage, int offset, String computerName) throws SQLException {
 		ArrayList<Computer> computers = new ArrayList<Computer>();
-		try (Connection connection = access.getConnection()) {
+		try (Connection connection = datasource.getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_COMPUTER_QUERY);
 			preparedStatement.setString(1, "%" + computerName + "%");
 			preparedStatement.setInt(2, sizePage);
@@ -355,7 +361,7 @@ public class ComputerDao {
 		String query = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE;
 		ResultSet resultSet;
 		int counter = 0;
-		try (Connection connection = access.getConnection()) {
+		try (Connection connection = datasource.getConnection()) {
 			Statement statement = connection.createStatement();
 			resultSet = statement.executeQuery(query);
 			counter = (resultSet.first() ? resultSet.getInt("count") : 0);
@@ -368,7 +374,7 @@ public class ComputerDao {
 	public int seachcount(String name) throws SQLException {
 		ResultSet resultSet;
 		int counter = 0;
-		try (Connection connection = access.getConnection()) {
+		try (Connection connection = datasource.getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_COUNT_QUERY);
 			preparedStatement.setString(1, "%" + name + "%");
 			resultSet = preparedStatement.executeQuery();

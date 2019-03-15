@@ -36,9 +36,11 @@
 		<!-- Resources -->
 		<resources>
 			<resource>
-				<directory>database</directory>
+				<directory>/database</directory>
 			</resource>
-			<!-- <resource> <directory>ressources</directory> </resource> -->
+			<resource>
+				<directory>src/main/ressources</directory>
+			</resource>
 		</resources>
 
 
@@ -134,21 +136,6 @@
 
 
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
-		</dependency>
 	</dependencies>
 
 
