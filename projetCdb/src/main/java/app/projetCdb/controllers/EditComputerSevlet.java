@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -30,8 +29,6 @@ import app.projetCdb.services.IComputerService;
 import app.projetCdb.services.validators.FormEditComputerValidator;
 import app.projetCdb.services.validators.IFormEditComputerValidator;
 
-
-
 @Controller
 @RequestMapping("/editComputer")
 public class EditComputerSevlet {
@@ -42,13 +39,13 @@ public class EditComputerSevlet {
 	// services
 	private IComputerService computerService;
 	private ICompanyServices companyService;
-	
+
 	@RequestMapping("delete")
-	 public String delete() {
-		
-		 return null;
-	 }
-	
+	public String delete() {
+
+		return null;
+	}
+
 	public EditComputerSevlet(IComputerService computerService, ICompanyServices companyService) {
 		this.computerService = computerService;
 		this.companyService = companyService;
@@ -84,9 +81,9 @@ public class EditComputerSevlet {
 		}
 		List<Company> companies = companyService.getAll();
 		ComputerDto computerDto = mapper.mapComputer(optionalComputer.get());
-		
+
 		System.out.println(computerDto);
-		
+
 		List<CompanyDto> companiesDto = mapperCompany.mapListCompany(companies);
 		model.addAttribute("companies", companiesDto);
 		model.addAttribute("computer", computerDto);
@@ -103,7 +100,7 @@ public class EditComputerSevlet {
 		// TODO validation technique
 		Long idCompany = Long.parseLong(strIdCompany);
 		Long idComputer = Long.parseLong(strIdComputer);
-		
+
 		Optional<Company> company = companyService.findById(idCompany);
 		ComputerDto computerDto = new ComputerDto(idComputer, computerName, introducedDate, discontinuedDate,
 				(company.isPresent() ? company.get().getName() : null),
@@ -133,12 +130,9 @@ public class EditComputerSevlet {
 			default:
 				logger.warn("Erreur lors de la validation du formulaire d'�dition du computeur " + computerName);
 			}
-		} 
+		}
 
 		return new RedirectView("/projetCdb");
-	} 
-
+	}
 
 }
-
-

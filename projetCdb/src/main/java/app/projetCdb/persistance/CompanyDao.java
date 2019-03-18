@@ -21,7 +21,7 @@ import org.springframework.stereotype.Repository;
 
 import app.projetCdb.models.Company;
 
-@Repository
+@Repository("companyDao")
 public class CompanyDao {
 	// access to database
 	private IDbAccess dbAccess;
@@ -117,10 +117,8 @@ public class CompanyDao {
 		if (id == null) {
 			return optional;
 		}
-		KeyHolder keyholder = new GeneratedKeyHolder();
-		logger.debug("\n\n>>>>before tpt");
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dbAccess.getDatasource());
-		logger.debug("\n\n>>>>after tpt");
+		
 		try {
 			optional = Optional.of(jdbcTemplate.queryForObject(FIND_BY_ID_QUERY, this.companyMapper, id));
 		} catch (DataAccessException e) {
