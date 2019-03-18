@@ -12,7 +12,6 @@ import java.util.OptionalLong;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -105,7 +104,7 @@ public class CompanyDao {
 	 */
 	public void update(Company company) throws SQLException {
 		JdbcTemplate template = new JdbcTemplate(dbAccess.getDatasource());
-		
+
 		try {
 			template.update(UPDATE_QUERY, company.getName(), company.getId());
 		} catch (DataAccessException e) {
@@ -119,16 +118,17 @@ public class CompanyDao {
 			return optional;
 		}
 		KeyHolder keyholder = new GeneratedKeyHolder();
+		logger.debug("\n\n>>>>before tpt");
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dbAccess.getDatasource());
-		
+		logger.debug("\n\n>>>>after tpt");
 		try {
-			optional=Optional.of(jdbcTemplate.queryForObject(FIND_BY_ID_QUERY, this.companyMapper,id));
+			optional = Optional.of(jdbcTemplate.queryForObject(FIND_BY_ID_QUERY, this.companyMapper, id));
 		} catch (DataAccessException e) {
 			logger.debug("erreur find company by Id");
 		}
 		return optional;
 	}
-		
+
 	/**
 	 * 
 	 * @param id
@@ -187,18 +187,15 @@ public class CompanyDao {
 	 */
 	public List<Company> findAll() throws SQLException {
 		String query = "SELECT * FROM " + TABLE;
-		ArrayList<Company> listOfCompanies = new ArrayList<Company>();
-		try (Connection connection = dbAccess.getConnection()) {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(query);
-
-			while (resultSet.next()) {
-				listOfCompanies.add(new Company(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2)));
-			}
-		} catch (SQLException e) {
-			logger.debug("erreur dans le findAll");
+		ArrayList<Company> companies = new ArrayList<Company>();
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dbAccess.getDatasource());
+		try {
+				companies=(ArrayList<Company>) jdbcTemplate.query(query, this.companyMapper);
 		}
-		return listOfCompanies;
+		catch (DataAccessException e) {
+			logger.debug("erreur find All companies");
+		}
+		return companies;
 	}
 
 }

@@ -106,10 +106,15 @@ public class DbAccess implements IDbAccess {
 		
 		return  connection;
 	}
+	
+	
 
 	@Override
 	public DataSource getDatasource() {
-		return hikariDataSource;
+		if (hikariDataSource == null) {
+			setUpHikari();
+		}
+		return  hikariDataSource;
 	}
 	
 	public void initPool() {
