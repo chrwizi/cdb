@@ -25,8 +25,9 @@ import app.projetCdb.models.Computer;
 @Repository
 public class ComputerDao {
 	
-	private DataSource datasource; 
-	//private IDbAccess access = DbAccess.getInstance();
+	//private DataSource datasource;  
+	private IDbAccess datasource ;
+	//= DbAccess.getInstance();
 	
 	@Autowired
 	private CompanyDao companyDao ;
@@ -63,7 +64,7 @@ public class ComputerDao {
 
 	private Logger logger = LoggerFactory.getLogger(ComputerDao.class);
 
-	public ComputerDao(DataSource datasource) {
+	public ComputerDao(IDbAccess datasource) {
 		this.datasource =datasource;
 	}
 

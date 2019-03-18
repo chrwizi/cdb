@@ -13,6 +13,11 @@ import java.util.OptionalLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import app.projetCdb.models.Company;
@@ -20,7 +25,7 @@ import app.projetCdb.models.Company;
 @Repository
 public class CompanyDao {
 	// access to database
-	private IDbAccess dbAccess = DbAccess.getInstance();
+	private IDbAccess dbAccess;
 
 	/* Name of table */
 	private final static String TABLE = "company";
@@ -45,9 +50,9 @@ public class CompanyDao {
 		this.dbAccess = dbAccess;
 	}
 
-	public CompanyDao() {
-		this.dbAccess = DbAccess.getInstance();
-	}
+	// company mapper from database
+	private RowMapper<Company> companyMapper = (resultSet, rowNum) -> new Company(resultSet.getLong(FIELD_1),
+			resultSet.getString(FIELD_2));
 
 	/**
 	 * 
@@ -55,7 +60,7 @@ public class CompanyDao {
 	 * @return
 	 * @throws SQLException if connection database failure
 	 */
-	public OptionalLong Add(Company company) {
+	public OptionalLong AddTmp(Company company) {
 		OptionalLong optionalId = OptionalLong.empty();
 		Connection connection;
 		PreparedStatement addPStatement;
@@ -74,18 +79,38 @@ public class CompanyDao {
 		return optionalId;
 	}
 
+	public OptionalLong Add(Company company) {
+		OptionalLong optionalId = OptionalLong.empty();
+
+		KeyHolder keyholder = new GeneratedKeyHolder();
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dbAccess.getDatasource());
+		try {
+			jdbcTemplate.update(connection -> {
+				PreparedStatement addPStatement = connection.prepareStatement(CREATE_QUERY,
+						Statement.RETURN_GENERATED_KEYS);
+				addPStatement.setString(1, company.getName());
+				return addPStatement;
+			}, keyholder);
+		} catch (DataAccessException e) {
+			logger.debug("erreur jdbc template");
+		}
+		optionalId = OptionalLong.of((long) keyholder.getKey());
+		return optionalId;
+	}
+
 	/**
 	 * 
 	 * @param company update compagny int table
 	 * @throws SQLException if connection to database faillure
 	 */
 	public void update(Company company) throws SQLException {
-		Connection connection = dbAccess.getConnection();
-		PreparedStatement updatePStatement = connection.prepareStatement(UPDATE_QUERY);
-		updatePStatement.setString(1, company.getName());
-		updatePStatement.setLong(2, company.getId());
-		updatePStatement.executeUpdate();
-		connection.close();
+		JdbcTemplate template = new JdbcTemplate(dbAccess.getDatasource());
+		
+		try {
+			template.update(UPDATE_QUERY, company.getName(), company.getId());
+		} catch (DataAccessException e) {
+			logger.debug("erreur update company ");
+		}
 	}
 
 	public Optional<Company> findById(Long id) {
@@ -93,29 +118,17 @@ public class CompanyDao {
 		if (id == null) {
 			return optional;
 		}
-		Connection connection = null;
+		KeyHolder keyholder = new GeneratedKeyHolder();
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dbAccess.getDatasource());
+		
 		try {
-			connection = dbAccess.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY);
-			preparedStatement.setLong(1, id);
-			// execute statement
-			ResultSet resultSet = preparedStatement.executeQuery();
-			if (resultSet.first()) {
-				optional = Optional.of(new Company(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2)));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (connection != null)
-					connection.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			optional=Optional.of(jdbcTemplate.queryForObject(FIND_BY_ID_QUERY, this.companyMapper,id));
+		} catch (DataAccessException e) {
+			logger.debug("erreur find company by Id");
 		}
 		return optional;
 	}
-
+		
 	/**
 	 * 
 	 * @param id
@@ -187,7 +200,5 @@ public class CompanyDao {
 		}
 		return listOfCompanies;
 	}
-	
-
 
 }

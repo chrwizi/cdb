@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 //@ConfigurationProperties(prefix = "datasource")
-@PropertySource("database/application.properties")
+@PropertySource("classpath:application.properties")
 public class CdbDataSourceProperties{
 	
 

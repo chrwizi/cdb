@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,10 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import app.projetCdb.exceptions.DbAccessPropertyNotFoundException;
 
-//@Service("dbAccess")
+@Service("dbAccess")
 public class DbAccess implements IDbAccess {
 	// default database configuration file
-	private String DEFAULT_DATABASE_CONFIGURATION_FILE = "database/database.properties";
+	private String DEFAULT_DATABASE_CONFIGURATION_FILE = "database/application.properties";
 	private static Properties databaseProperties = new Properties();
 	// properties from configuration file
 	private static String URL_PROPERTIE_NAME = "datasource.url";
@@ -59,7 +61,7 @@ public class DbAccess implements IDbAccess {
 	 * 
 	 * @param dbProperties
 	 */
-	private DbAccess(Properties dbProperties) {
+	public DbAccess(Properties dbProperties) {
 		databaseProperties = dbProperties;
 	}
 
@@ -105,6 +107,11 @@ public class DbAccess implements IDbAccess {
 		return  connection;
 	}
 
+	@Override
+	public DataSource getDatasource() {
+		return hikariDataSource;
+	}
+	
 	public void initPool() {
 		setUpHikari();
 	}
