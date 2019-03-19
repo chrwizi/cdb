@@ -2,13 +2,14 @@ package app.projetCdb.persistance;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
+
+import javax.persistence.EntityManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,8 @@ import app.projetCdb.models.Company;
 public class CompanyDao {
 	// access to database
 	private IDbAccess dbAccess;
-	JdbcTemplate jdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
+	private EntityManager entityManager;
 
 	/* Name of table */
 	private final static String TABLE = "company";

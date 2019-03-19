@@ -2,17 +2,32 @@ package app.projetCdb.models;
 
 import java.time.LocalDate;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class Computer {
+	@Id()
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name="id")
 	private Long id;
 	private String name	;
 	private LocalDate introduced;
 	private LocalDate discontinued	;
+	@Column(name="company_id")
 	private Company company;
 	
 	
 	
-	public Computer(Long id, String name, LocalDate introduced, LocalDate discontinued, Company company) {
+	public Computer() {
 		super();
+	}
+
+
+	public Computer(Long id, String name, LocalDate introduced, LocalDate discontinued, Company company) {
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
@@ -24,6 +39,7 @@ public class Computer {
 	public Long getId() {
 		return id;
 	}
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
