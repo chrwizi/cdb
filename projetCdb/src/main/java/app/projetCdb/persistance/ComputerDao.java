@@ -27,22 +27,18 @@ import app.projetCdb.models.Computer;
 @Repository("computerDao")
 public class ComputerDao {
 
-	// private DataSource datasource;
+	// database access
 	private IDbAccess datasource;
 	JdbcTemplate jdbcTemplate;
-
 	private CompanyDao companyDao;
-
 	/* Name table */
 	private final static String TABLE = "computer";
-
-	/* fields table */
+	/* table fields  */
 	private final static String FIELD_1 = "id";
 	private final static String FIELD_2 = "name";
 	private final static String FIELD_3 = "introduced";
 	private final static String FIELD_4 = "discontinued";
 	private final static String FOREIGN_KEY_COMPANY_ID = "company_id";
-
 	/* Queries */
 	private final static String CREATE_QUERY = "INSERT INTO " + TABLE + "(" + FIELD_2 + "," + FIELD_3 + "," + FIELD_4
 			+ "," + FOREIGN_KEY_COMPANY_ID + ") " + "VALUES (?,?,?,?)";
@@ -50,34 +46,25 @@ public class ComputerDao {
 
 	private final static String UPDATE_QUERY = "UPDATE " + TABLE + " SET " + FIELD_2 + "=?, " + FIELD_3 + "=?, "
 			+ FIELD_4 + "=?, " + FOREIGN_KEY_COMPANY_ID + "=? " + " WHERE " + FIELD_1 + "=?";
-
 	private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + " WHERE " + FIELD_1 + " = ? ";
 	private final static String GET_PAGE_QUERY = "SELECT * FROM " + TABLE + " LIMIT ?,? ";
 	private final static String SEARCH_COMPUTER_QUERY = "SELECT * FROM " + TABLE + "  WHERE " + FIELD_2
 			+ " LIKE ?  LIMIT ?,?";
 	private final static String SEARCH_COUNT_QUERY = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE + " WHERE "
 			+ FIELD_2 + " LIKE ?";
-
 	private final static String QUERY_SORT_BY_NAME_ASC = "SELECT * FROM " + TABLE + " ORDER BY " + FIELD_2
 			+ " ASC LIMIT ?,? ";
 	private final static String QUERY_SORT_BY_NAME_DESC = "SELECT * FROM " + TABLE + " ORDER BY " + FIELD_2
 			+ " DESC LIMIT ?,? ";
 	private final String COUNT_QUERY = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE;
-
+	//
+	
 	private Logger logger = LoggerFactory.getLogger(ComputerDao.class);
 
 	public ComputerDao(IDbAccess datasource, CompanyDao companyDao) {
 		this.datasource = datasource;
 		this.companyDao = companyDao;
 		jdbcTemplate = new JdbcTemplate(datasource.getDatasource());
-	}
-
-	public static String getTable() {
-		return TABLE;
-	}
-
-	public static String getForignKeyCompanyId() {
-		return FOREIGN_KEY_COMPANY_ID;
 	}
 
 	private RowMapper<Computer> computerMaper = new RowMapper<Computer>() {
@@ -95,6 +82,15 @@ public class ComputerDao {
 			return computer;
 		}
 	};
+	
+	
+	public static String getTable() {
+		return TABLE;
+	}
+
+	public static String getForignKeyCompanyId() {
+		return FOREIGN_KEY_COMPANY_ID;
+	}
 
 	/**
 	 * Add computer given in parameter in computers table
@@ -115,7 +111,6 @@ public class ComputerDao {
 			jdbcTemplate.update(connection -> {
 				PreparedStatement preparedstatement = connection.prepareStatement(CREATE_QUERY,
 						Statement.RETURN_GENERATED_KEYS);
-				// set statement parameters
 				preparedstatement.setString(1, computer.getName());
 				preparedstatement.setObject(2, (computer.getIntroduced()));
 				preparedstatement.setObject(3, computer.getDiscontinued());
@@ -204,9 +199,7 @@ public class ComputerDao {
 		if (id != null) {
 
 			try {
-
 				jdbcTemplate.update(DELETE_QUERY, id);
-
 			} catch (DataAccessException e) {
 				logger.debug("erreur sur delete computeur : " + e.getMessage());
 			}

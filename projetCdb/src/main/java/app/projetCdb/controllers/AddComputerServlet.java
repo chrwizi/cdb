@@ -65,7 +65,7 @@ public class AddComputerServlet {
 			@RequestParam(name = "idCompany", required = true) String strIdCompany, RedirectAttributes attributes) {
 		
 		Long idCompany = strIdCompany != null ? Long.valueOf(strIdCompany) : DEFAULT_ID;
-		Optional<Company> company = companyService.findById(idCompany);
+		Optional<Company> company = companyService.findById(idCompany); 
 		
 		ComputerDto computerDto = new ComputerDto(DEFAULT_ID, computerName, introducedDate, discontinuedDate,
 				(company.isPresent() ? company.get().getName() : null),

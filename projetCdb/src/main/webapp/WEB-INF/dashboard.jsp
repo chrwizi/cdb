@@ -28,7 +28,7 @@
 
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${nbComputers}computersfound</h1>
+			<h1 id="homeTitle">${nbComputers} computers found => hello :<spring:message code="label.hello"/> </h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="/projetCdb/search" method="POST"
