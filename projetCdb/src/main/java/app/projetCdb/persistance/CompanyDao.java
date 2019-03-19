@@ -25,6 +25,7 @@ import app.projetCdb.models.Company;
 public class CompanyDao {
 	// access to database
 	private IDbAccess dbAccess;
+	JdbcTemplate jdbcTemplate;
 
 	/* Name of table */
 	private final static String TABLE = "company";
@@ -40,13 +41,13 @@ public class CompanyDao {
 	private final static String DELETE_ASSOCIATED_COMPUTERS = "DELETE  FROM " + COMPUTER_TABLE + " WHERE "
 			+ COMPANY_ID_IN_COMPUTER_TABLE + " =?";
 	private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + " WHERE " + FIELD_1 + "=?";
-//	private final static String QUERY_SORT_BY_NAME_ASC = "SELECT * FROM " + TABLE + " ORDER BY " + FIELD_2 + " ASC";
-//	private final static String QUERY_SORT_BY_NAME_DESC = "SELECT * FROM " + TABLE + " ORDER BY " + FIELD_2 + " DESC";
-//	//
+
+	
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public CompanyDao(IDbAccess dbAccess) {
 		this.dbAccess = dbAccess;
+		jdbcTemplate = new JdbcTemplate(dbAccess.getDatasource());
 	}
 
 	// company mapper from database
@@ -59,41 +60,23 @@ public class CompanyDao {
 	 * @return
 	 * @throws SQLException if connection database failure
 	 */
-	public OptionalLong AddTmp(Company company) {
-		OptionalLong optionalId = OptionalLong.empty();
-		Connection connection;
-		PreparedStatement addPStatement;
-		try {
-			connection = dbAccess.getConnection();
-			addPStatement = connection.prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS);
-			addPStatement.setString(1, company.getName());
-			addPStatement.executeUpdate();
-			ResultSet keyResult = addPStatement.getGeneratedKeys();
-			if (keyResult.first())
-				optionalId = OptionalLong.of(keyResult.getLong(1));
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return optionalId;
-	}
-
 	public OptionalLong Add(Company company) {
 		OptionalLong optionalId = OptionalLong.empty();
 
-		KeyHolder keyholder = new GeneratedKeyHolder();
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(dbAccess.getDatasource());
 		try {
+			KeyHolder keyholder = new GeneratedKeyHolder();
 			jdbcTemplate.update(connection -> {
 				PreparedStatement addPStatement = connection.prepareStatement(CREATE_QUERY,
 						Statement.RETURN_GENERATED_KEYS);
 				addPStatement.setString(1, company.getName());
 				return addPStatement;
 			}, keyholder);
+
+			optionalId = OptionalLong.of((long) keyholder.getKey());
 		} catch (DataAccessException e) {
 			logger.debug("erreur jdbc template");
 		}
-		optionalId = OptionalLong.of((long) keyholder.getKey());
+
 		return optionalId;
 	}
 
@@ -103,10 +86,8 @@ public class CompanyDao {
 	 * @throws SQLException if connection to database faillure
 	 */
 	public void update(Company company) throws SQLException {
-		JdbcTemplate template = new JdbcTemplate(dbAccess.getDatasource());
-
 		try {
-			template.update(UPDATE_QUERY, company.getName(), company.getId());
+			jdbcTemplate.update(UPDATE_QUERY, company.getName(), company.getId());
 		} catch (DataAccessException e) {
 			logger.debug("erreur update company ");
 		}
@@ -114,37 +95,18 @@ public class CompanyDao {
 
 	public Optional<Company> findById(Long id) {
 		Optional<Company> optional = Optional.empty();
+
 		if (id == null) {
 			return optional;
 		}
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(dbAccess.getDatasource());
-		
+
 		try {
 			optional = Optional.of(jdbcTemplate.queryForObject(FIND_BY_ID_QUERY, this.companyMapper, id));
 		} catch (DataAccessException e) {
 			logger.debug("erreur find company by Id");
 		}
-		return optional;
-	}
 
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 * @throws SQLException
-	 */
-	public boolean isIdPresent(Long id, IDbAccess access) throws SQLException {
-		access = DbAccess.getInstance();
-		ResultSet results = null;
-		try (Connection connection = access.getConnection()) {
-			String query = "SELECT * FROM " + TABLE + "WHERE " + FIELD_1 + "=" + id;
-			Statement statement = connection.createStatement();
-			results = statement.executeQuery(query);
-			connection.close();
-		} catch (Exception e) {
-			logger.debug("erreur sql dans le ispresent");
-		}
-		return (results != null) ? (results.first() ? true : false) : false;
+		return optional;
 	}
 
 	/**
@@ -186,11 +148,10 @@ public class CompanyDao {
 	public List<Company> findAll() throws SQLException {
 		String query = "SELECT * FROM " + TABLE;
 		ArrayList<Company> companies = new ArrayList<Company>();
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(dbAccess.getDatasource());
+
 		try {
-				companies=(ArrayList<Company>) jdbcTemplate.query(query, this.companyMapper);
-		}
-		catch (DataAccessException e) {
+			companies = (ArrayList<Company>) jdbcTemplate.query(query, this.companyMapper);
+		} catch (DataAccessException e) {
 			logger.debug("erreur find All companies");
 		}
 		return companies;

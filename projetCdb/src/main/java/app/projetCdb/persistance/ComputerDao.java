@@ -62,12 +62,13 @@ public class ComputerDao {
 			+ " ASC LIMIT ?,? ";
 	private final static String QUERY_SORT_BY_NAME_DESC = "SELECT * FROM " + TABLE + " ORDER BY " + FIELD_2
 			+ " DESC LIMIT ?,? ";
+	private final String COUNT_QUERY = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE;
 
 	private Logger logger = LoggerFactory.getLogger(ComputerDao.class);
 
-	public ComputerDao(IDbAccess datasource,CompanyDao companyDao) {
+	public ComputerDao(IDbAccess datasource, CompanyDao companyDao) {
 		this.datasource = datasource;
-		this.companyDao=companyDao;
+		this.companyDao = companyDao;
 		jdbcTemplate = new JdbcTemplate(datasource.getDatasource());
 	}
 
@@ -200,13 +201,16 @@ public class ComputerDao {
 	 * @throws SQLException if connection to database failure
 	 */
 	public void delete(Long id) throws SQLException {
-		try (Connection connection = datasource.getConnection()) {
-			PreparedStatement preparedStatement = connection.prepareStatement(DELETE_QUERY,
-					Statement.RETURN_GENERATED_KEYS);
-			preparedStatement.setLong(1, id);
-			preparedStatement.executeUpdate();
-		} catch (SQLException e) {
-			throw e;
+		if (id != null) {
+
+			try {
+
+				jdbcTemplate.update(DELETE_QUERY, id);
+
+			} catch (DataAccessException e) {
+				logger.debug("erreur sur delete computeur : " + e.getMessage());
+			}
+
 		}
 	}
 
@@ -218,45 +222,25 @@ public class ComputerDao {
 	public List<Computer> findAll() throws SQLException {
 		String query = "SELECT * FROM " + TABLE;
 		ArrayList<Computer> computers = new ArrayList<Computer>();
-		
+
 		try {
-			computers=(ArrayList<Computer>) jdbcTemplate.query(query,this.computerMaper);
+			computers = (ArrayList<Computer>) jdbcTemplate.query(query, this.computerMaper);
 		} catch (DataAccessException e) {
-			logger.debug("erreur sur find all computers : "+e.getMessage());
+			logger.debug("erreur sur find all computers : " + e.getMessage());
 		}
-		
+
 		return computers;
 	}
 
 	public List<Computer> sortBycompany(boolean asc) throws SQLException {
-		// TODO change request
 		String query = asc ? QUERY_SORT_BY_NAME_ASC : QUERY_SORT_BY_NAME_DESC;
 		ArrayList<Computer> computers = new ArrayList<Computer>();
-		
+
 		try {
-				
-			//computers=jdbcTemplate.query()
+			computers = (ArrayList<Computer>) jdbcTemplate.query(query, this.computerMaper);
+
 		} catch (DataAccessException e) {
-			logger.debug("erreur sur sort company : "+e.getMessage());
-		}
-		
-		try (Connection connection = datasource.getConnection()) {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(query);
-			
-			while (resultSet.next()) {
-				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FOREIGN_KEY_COMPANY_ID));
-				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						(resultSet.getTimestamp(FIELD_3) != null)
-								? (LocalDate) resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate()
-								: null,
-						(resultSet.getTimestamp(FIELD_4) != null)
-								? (LocalDate) resultSet.getTimestamp(FIELD_4).toLocalDateTime().toLocalDate()
-								: null,
-						optionalCompany.isPresent() ? optionalCompany.get() : null));
-			}
-		} catch (SQLException e) {
-			throw e;
+			logger.debug("erreur sur sort company : " + e.getMessage());
 		}
 		
 		return computers;
@@ -265,114 +249,62 @@ public class ComputerDao {
 	public List<Computer> findAll(int sizePage, int offset) throws SQLException {
 		ArrayList<Computer> computers = new ArrayList<Computer>();
 
-		try (Connection connection = datasource.getConnection()) {
-			PreparedStatement preparedStatement = connection.prepareStatement(GET_PAGE_QUERY);
-			preparedStatement.setInt(1, sizePage);
-			preparedStatement.setInt(2, offset);
-			ResultSet resultSet = preparedStatement.executeQuery();
-			while (resultSet.next()) {
-				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FOREIGN_KEY_COMPANY_ID));
-				Company company = null;
-				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						(resultSet.getTimestamp(FIELD_3) != null)
-								? (LocalDate) resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate()
-								: null,
-						(resultSet.getTimestamp(FIELD_4) != null)
-								? (LocalDate) resultSet.getTimestamp(FIELD_4).toLocalDateTime().toLocalDate()
-								: null,
-						optionalCompany.isPresent() ? optionalCompany.get() : company));
-			}
-		} catch (SQLException e) {
-			throw e;
+		try {
+			computers = (ArrayList<Computer>) jdbcTemplate.query(GET_PAGE_QUERY, computerMaper, sizePage, offset);
+		} catch (DataAccessException e) {
+			logger.debug("Erreur sur find all computer : " + e.getMessage());
 		}
-
+		
 		return computers;
 	}
 
 	public List<Computer> sortByName(boolean asc, int sizePage, int offset) throws SQLException {
-		logger.debug("in Sort by name");
 		String query = asc ? QUERY_SORT_BY_NAME_ASC : QUERY_SORT_BY_NAME_DESC;
 		ArrayList<Computer> computers = new ArrayList<Computer>();
-		try (Connection connection = datasource.getConnection()) {
 
-			PreparedStatement sortByNamePStatment = connection.prepareStatement(query);
-			sortByNamePStatment.setInt(1, sizePage);
-			sortByNamePStatment.setInt(2, offset);
-			ResultSet resultSet = sortByNamePStatment.executeQuery();
-			System.out.println("sortbyName asc: " + asc);
-			while (resultSet.next()) {
-
-				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FOREIGN_KEY_COMPANY_ID));
-				Company company = null;
-				logger.debug("sorted " + resultSet.getString(FIELD_2));
-				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						(resultSet.getTimestamp(FIELD_3) != null)
-								? (LocalDate) resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate()
-								: null,
-						(resultSet.getTimestamp(FIELD_4) != null)
-								? (LocalDate) resultSet.getTimestamp(FIELD_4).toLocalDateTime().toLocalDate()
-								: null,
-						optionalCompany.isPresent() ? optionalCompany.get() : company));
-			}
-		} catch (SQLException e) {
-			throw e;
+		try {
+			computers = (ArrayList<Computer>) jdbcTemplate.query(query, computerMaper, sizePage, offset);
+		} catch (DataAccessException e) {
+			logger.debug("Erreu sur Sort By name :" + e.getMessage());
 		}
+
 		return computers;
 	}
 
 	public List<Computer> search(int sizePage, int offset, String computerName) throws SQLException {
 		ArrayList<Computer> computers = new ArrayList<Computer>();
-		try (Connection connection = datasource.getConnection()) {
-			PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_COMPUTER_QUERY);
-			preparedStatement.setString(1, "%" + computerName + "%");
-			preparedStatement.setInt(2, sizePage);
-			preparedStatement.setInt(3, offset);
-			ResultSet resultSet = preparedStatement.executeQuery();
-
-			while (resultSet.next()) {
-				Optional<Company> optionalCompany = companyDao.findById(resultSet.getLong(FOREIGN_KEY_COMPANY_ID));
-				Company company = null;
-				computers.add(new Computer(resultSet.getLong(FIELD_1), resultSet.getString(FIELD_2),
-						(resultSet.getTimestamp(FIELD_3) != null)
-								? (LocalDate) resultSet.getTimestamp(FIELD_3).toLocalDateTime().toLocalDate()
-								: null,
-						(resultSet.getTimestamp(FIELD_4) != null)
-								? (LocalDate) resultSet.getTimestamp(FIELD_4).toLocalDateTime().toLocalDate()
-								: null,
-						optionalCompany.isPresent() ? optionalCompany.get() : company));
-			}
-		} catch (SQLException e) {
-			throw e;
+		
+		try {
+			computers = (ArrayList<Computer>) jdbcTemplate.query(SEARCH_COMPUTER_QUERY, this.computerMaper,
+					"%".concat(computerName).concat("%"), sizePage, offset);
+		} catch (DataAccessException e) {
+			logger.debug("Erreur sur search computer : " + e.getMessage());
 		}
-
+		
 		return computers;
 	}
 
 	public int count() throws SQLException {
-		String query = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE;
-		ResultSet resultSet;
-		int counter = 0;
-		try (Connection connection = datasource.getConnection()) {
-			Statement statement = connection.createStatement();
-			resultSet = statement.executeQuery(query);
-			counter = (resultSet.first() ? resultSet.getInt("count") : 0);
-		} catch (SQLException e) {
-			throw e;
+		Integer counter = 0;
+		
+		try {
+			counter=jdbcTemplate.queryForObject(COUNT_QUERY,Integer.class);
+		} catch (DataAccessException e) {
+			logger.debug("Erreur dans count computers : "+e.getMessage());
 		}
+
 		return counter;
 	}
 
-	public int seachcount(String name) throws SQLException {
-		ResultSet resultSet;
-		int counter = 0;
-		try (Connection connection = datasource.getConnection()) {
-			PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_COUNT_QUERY);
-			preparedStatement.setString(1, "%" + name + "%");
-			resultSet = preparedStatement.executeQuery();
-			counter = (resultSet.first() ? resultSet.getInt("count") : 0);
-		} catch (SQLException e) {
-			throw e;
+	public int seachcount(String computerName) throws SQLException {
+		Integer counter = 0;
+		
+		try {
+			counter=jdbcTemplate.queryForObject(SEARCH_COUNT_QUERY,Integer.class,"%".concat(computerName+"%"));
+		} catch (DataAccessException e) {
+			logger.debug("Erreur sur search count :"+e.getMessage());
 		}
+						
 		return counter;
 	}
 
