@@ -44,7 +44,7 @@ public class AddComputerServlet {
 	IFormEditComputerValidator validator = new FormEditComputerValidator();
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public AddComputerServlet(IComputerService computerService, ICompanyServices companyService) { 
+	public AddComputerServlet(IComputerService computerService, ICompanyServices companyService) {
 		this.computerService = computerService;
 		this.companyService = companyService;
 	}
@@ -63,37 +63,32 @@ public class AddComputerServlet {
 			@RequestParam(name = "introducedDate") String introducedDate,
 			@RequestParam(name = "discontinuedDate") String discontinuedDate,
 			@RequestParam(name = "idCompany", required = true) String strIdCompany, RedirectAttributes attributes) {
-		
+
 		Long idCompany = strIdCompany != null ? Long.valueOf(strIdCompany) : DEFAULT_ID;
-		Optional<Company> company = companyService.findById(idCompany); 
-		
+		Optional<Company> company = companyService.findById(idCompany);
+
 		ComputerDto computerDto = new ComputerDto(DEFAULT_ID, computerName, introducedDate, discontinuedDate,
 				(company.isPresent() ? company.get().getName() : null),
 				company.isPresent() ? company.get().getId() : null);
-		
+
 		Computer newComputer = mapper.mapDto(computerDto);
 
 		try {
 			validator.isValidEditForm(computerName, introducedDate, discontinuedDate, idCompany);
 			computerService.createComputer(newComputer);
-		//	attributes.addAttribute("computer", computerDto);
 		} catch (ValidatorFormException e) {
 			switch (e.getInvalidityCause()) {
 			case INCONSITENT_DATES:
-			//	attributes.addAttribute("errorMessage", "les dates de sont incohérentes id vaut ");
-				//attributes.addAttribute("computer", computerDto);
 				logger.debug("Les dates non conformes ");
 				break;
 			case EMPTY_NAME:
-				//attributes.addAttribute("errorMessage", "Le champ computer ne doit pas être vide");
-				//attributes.addAttribute("computer", computerDto);
 				logger.debug("Le champs d'�dition du nom du computer est vide");
 				break;
 			default:
 				logger.warn("Erreur lors de la validation du formulaire d'�dition du computeur " + computerName);
 			}
 		}
-		
+
 		return new RedirectView("/projetCdb");
 	}
 

@@ -1,8 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+
 <!DOCTYPE html>
-<html>
+<html> 
 <head>
 <title>Computer Database JSP</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,7 +30,7 @@
 
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${nbComputers} computers found => hello :<spring:message code="label.hello"/> </h1>
+			<h1 id="homeTitle">${nbComputers} <spring:message code="label.foundMessage"/> </h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="/projetCdb/search" method="POST"
@@ -42,9 +44,9 @@
 				</div>
 				<div class="pull-right">
 					<a class="btn btn-success" id="addComputer"
-						href="/projetCdb/addComputer">Add Computer</a> <a
+						href="/projetCdb/addComputer"><spring:message code="label.addComputer"/></a> <a
 						class="btn btn-default" id="editComputer" href="#"
-						onclick="$.fn.toggleEditMode();">Edit</a>
+						onclick="$.fn.toggleEditMode();"><spring:message code="label.editComputer"/></a>
 				</div>
 			</div>
 		</div>
@@ -69,7 +71,7 @@
 										class="fa fa-trash-o fa-lg"></i>
 								</a>
 							</span></th>
-							<th>Computer name
+							<th><spring:message code="label.fieldName"/>
 								<div class="pull-right">
 									<a
 										href="/projetCdb?sortName=true&asc=true&selectedPage=${numPage}">
@@ -87,11 +89,11 @@
 									 </a>
 								</div> -->
 							</th>
-							<th>Introduced date</th>
+							<th><spring:message code="label.fieldIntroducedDate"/> </th>
 							<!-- Table header for Discontinued Date -->
-							<th>Discontinued date</th>
+							<th><spring:message code="label.fieldiscontinuedDate"/></th> 
 							<!-- Table header for Company -->
-							<th>Company
+							<th><spring:message code="label.fieldCompany"/> 
 								<div class="pull-right">
 									<a> <i class="fas fa-sort-up align-top "></i></a> <a><i
 										class="fas fa-sort-down align-bottom "></i></a>

@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import app.projetCdb.configurations.CdbSpringConfiguration;
+import app.projetCdb.configurations.SpringConfiguration;
 import app.projetCdb.models.Company;
 import app.projetCdb.models.Computer;
 import app.projetCdb.services.ICompanyServices;
@@ -34,7 +34,7 @@ public class App {
 	private final static int EXIT = 8;
 
 	public static void main(String[] args) {
-		ApplicationContext context=new AnnotationConfigApplicationContext(CdbSpringConfiguration.class);
+		ApplicationContext context=new AnnotationConfigApplicationContext(SpringConfiguration.class);
 		IComputerService computerService=(IComputerService) context.getBean("computerService");
 		ICompanyServices companyServices=(ICompanyServices) context.getBean("companyService");
 		showCdbUi(computerService,companyServices);

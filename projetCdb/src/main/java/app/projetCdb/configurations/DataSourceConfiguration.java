@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration 
-public class DataSourceConfig {
+public class DataSourceConfiguration {
 	@Bean
 	public DataSource dataSource(CdbDataSourceProperties properties) {
 		return DataSourceBuilder.create().url(properties.getUrl())
