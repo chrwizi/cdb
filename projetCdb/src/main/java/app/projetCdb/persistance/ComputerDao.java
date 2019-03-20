@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
 
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -28,7 +30,7 @@ import app.projetCdb.models.Computer;
 public class ComputerDao {
 
 	// database access
-	private IDbAccess datasource;
+	private DataSource datasource;
 	JdbcTemplate jdbcTemplate;
 	private CompanyDao companyDao;
 	/* Name table */
@@ -61,10 +63,10 @@ public class ComputerDao {
 	
 	private Logger logger = LoggerFactory.getLogger(ComputerDao.class);
 
-	public ComputerDao(IDbAccess datasource, CompanyDao companyDao) {
+	public ComputerDao(DataSource datasource, CompanyDao companyDao) {
 		this.datasource = datasource;
 		this.companyDao = companyDao;
-		jdbcTemplate = new JdbcTemplate(datasource.getDatasource());
+		jdbcTemplate = new JdbcTemplate(datasource);
 	}
 
 	private RowMapper<Computer> computerMaper = new RowMapper<Computer>() {

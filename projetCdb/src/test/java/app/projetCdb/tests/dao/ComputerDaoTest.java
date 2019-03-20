@@ -19,6 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import app.projetCdb.models.Computer;
 import app.projetCdb.persistance.CompanyDao;
@@ -52,8 +53,8 @@ public class ComputerDaoTest {
 
 			dbAccess = DbAccess.getInstance(testDatabaseProperties);
 
-			computerDao = new ComputerDao(dbAccess);
-			companyDao = new CompanyDao(dbAccess);
+//			computerDao = new ComputerDao(dbAccess);
+//			companyDao = new CompanyDao(dbAccess);
 			// create new companies in database
 			companies = new ArrayList<Company>();
 			companies.add(new Company("Dell"));

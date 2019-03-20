@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.OptionalLong;
 
 import javax.persistence.EntityManager;
+import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ import app.projetCdb.models.Company;
 @Repository("companyDao")
 public class CompanyDao {
 	// access to database
-	private IDbAccess dbAccess;
+	private DataSource datasource;
 	private JdbcTemplate jdbcTemplate;
 	private EntityManager entityManager;
 
@@ -47,9 +48,9 @@ public class CompanyDao {
 	
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public CompanyDao(IDbAccess dbAccess) {
-		this.dbAccess = dbAccess;
-		jdbcTemplate = new JdbcTemplate(dbAccess.getDatasource());
+	public CompanyDao(DataSource dbAccess) {
+		this.datasource = dbAccess;
+		jdbcTemplate = new JdbcTemplate(dbAccess);
 	}
 
 	// company mapper from database
@@ -117,7 +118,7 @@ public class CompanyDao {
 	 * @throws SQLException if connection to database failure
 	 */
 	public void delete(Long id) {
-		try (Connection connection = dbAccess.getConnection()) {
+		try (Connection connection = datasource.getConnection()) {
 			// prepare statements
 			PreparedStatement deleteCompanyPStatement = connection.prepareStatement(DELETE_COMPANY_QUERY);
 			PreparedStatement deleteComputersPStatement = connection.prepareStatement(DELETE_ASSOCIATED_COMPUTERS);

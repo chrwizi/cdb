@@ -19,11 +19,7 @@ public class CompanyService implements ICompanyServices {
 	public CompanyService(@Autowired CompanyDao companyDao) {
 		CompanyDao = companyDao;
 	}
-
-	public CompanyService() {
-		CompanyDao = new CompanyDao(DbAccess.getInstance());
-	}
-
+ 
 	public CompanyDao getCompanyDao() {
 		return CompanyDao;
 	}

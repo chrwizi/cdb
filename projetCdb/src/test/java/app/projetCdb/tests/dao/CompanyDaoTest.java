@@ -16,8 +16,6 @@ public class CompanyDaoTest {
 	@BeforeClass
 	public void setUp() {
 		dbAccess=DbAccess.getInstance();
-		companyDao=new CompanyDao(dbAccess);
-		computerDao=new ComputerDao(dbAccess);
 	}
 	
 	
