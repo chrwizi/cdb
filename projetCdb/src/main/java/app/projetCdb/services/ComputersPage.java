@@ -1,7 +1,5 @@
 package app.projetCdb.services;
 
-import org.springframework.stereotype.Service;
-
 //@Service("computersPage")
 public class ComputersPage implements IPageSelect {
 	
@@ -24,7 +22,7 @@ public class ComputersPage implements IPageSelect {
 
 	@Override
 	public int getNbPages() {
-		return maxResult/offset;
+		return (offset!=0)?maxResult/offset:1;
 	}
 	
 	@Override

@@ -33,30 +33,10 @@ public class Homeservlet {
 
 	@GetMapping("")
 	public String doGet(Model model) {
-
-		// String selectedPage = ("selectedPage");
-		// String sortPage = request.getParameter("sortPage");
-
-		/*
-		 * ascSort=(request.getParameter("asc")!=null?Boolean.parseBoolean(request.
-		 * getParameter("asc")):ascSort);
-		 * sortTable=(request.getParameter("sortName")!=null?Boolean.parseBoolean(
-		 * request.getParameter("sortName")):sortTable);
-		 * 
-		 * String asc = request.getParameter("asc"); String
-		 * sortByName=request.getParameter("sortName");
-		 */
-		// int numPage=(selectedPage==null?1:Integer.parseInt(selectedPage));
-
 		List<Computer> computers = new ArrayList<Computer>();
 
 		try {
 			if (sortTable) {
-				// boolean sort=Boolean.parseBoolean(sortByName);
-
-				// request.setAttribute("sortPage", true);
-				/// request.setAttribute("asc",ascSort);
-
 				computers = computerService.getPageSortedByName(1, true);
 
 			} else {
@@ -69,9 +49,6 @@ public class Homeservlet {
 			model.addAttribute("nbPages", computerService.getNbPages());
 			model.addAttribute("computers", computersDto);
 			model.addAttribute("nbComputers", computersDto.size());
-
-			// this.getServletContext().getRequestDispatcher(DASHBOARD_VIEW).forward(request,
-			// response);
 
 		} catch (NumberFormatException e) {
 			e.printStackTrace();

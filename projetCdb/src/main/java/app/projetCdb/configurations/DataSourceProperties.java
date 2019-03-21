@@ -1,27 +1,22 @@
 package app.projetCdb.configurations;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-//@PropertySource(value= {"classpath:resources/application.properties"})
-//public class DataSourceProperties implements WebMvcConfigurer {
+@PropertySource(value = { "classpath:application.properties" })
 public class DataSourceProperties {
 	//@Value("${datasource.url}")
-	private String url = "jdbc:mysql://localhost:3306/computer-database-db?zeroDateTimeBehavior=convertToNull&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+	private String url="jdbc:mysql://localhost:3306/computer-database-db?zeroDateTimeBehavior=convertToNull&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 	//@Value("${datasource.username}")
-	private String username = "admincdb";
+	private String username="admincdb";
 	//@Value("${datasource.password}")
-	private String password;
-	//@Value("${datasource.driver}")
-	private String driver = "com.mysql.jdbc.Driver";
-	
-	
+	private String password="qwerty1234";
+	@Value("${datasource.driver}")
+	private String driver;
 
-	/*
-	 * @Bean public static PropertySourcesPlaceholderConfigurer
-	 * propertySourcesPlaceholderConfigurer() { return new
-	 * PropertySourcesPlaceholderConfigurer(); }
-	 */
+
 	public String getDriver() {
 		return driver;
 	}

@@ -147,12 +147,12 @@ public class ComputerService implements IComputerService {
 	public List<Computer>getPage(int num) throws SQLException {
 		pageComputers.setCurrentPage(num);
 		List<Computer> computers = new ArrayList<Computer>();
+		
 		try {
-			computers = computerDao.findAll(pageComputers.getCursor(), pageComputers.getOffset());
+			computers = computerDao.findAll( pageComputers.getOffset(),pageComputers.getCursor());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		// update number max of result
 		pageComputers.setMaxResult(computerDao.count());
 		return computers;
 	}
@@ -163,7 +163,7 @@ public class ComputerService implements IComputerService {
 		pageComputers.setCurrentPage(num);
 		List<Computer> computers =new ArrayList<Computer>();
 		try {
-			computers = computerDao.search(pageComputers.getCursor(), pageComputers.getOffset(), computerName);
+			computers = computerDao.search(pageComputers.getOffset(),pageComputers.getCursor(), computerName);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

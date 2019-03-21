@@ -11,8 +11,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.sql.DataSource;
 
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -20,6 +27,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
@@ -31,11 +39,16 @@ public class ComputerDao {
 
 	// database access
 	private DataSource datasource;
-	JdbcTemplate jdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
+	private LocalSessionFactoryBean sessionFactory;
+	private CriteriaBuilder criteriaBuilder;
+	private Root<Computer> root ;
+
 	private CompanyDao companyDao;
+
 	/* Name table */
 	private final static String TABLE = "computer";
-	/* table fields  */
+	/* table fields */
 	private final static String FIELD_1 = "id";
 	private final static String FIELD_2 = "name";
 	private final static String FIELD_3 = "introduced";
@@ -60,12 +73,13 @@ public class ComputerDao {
 			+ " DESC LIMIT ?,? ";
 	private final String COUNT_QUERY = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE;
 	//
-	
+
 	private Logger logger = LoggerFactory.getLogger(ComputerDao.class);
 
-	public ComputerDao(DataSource datasource, CompanyDao companyDao) {
-		this.datasource = datasource;
+	public ComputerDao(DataSource datasource, LocalSessionFactoryBean sessionFactory, CompanyDao companyDao) {
+		this.sessionFactory = sessionFactory;
 		this.companyDao = companyDao;
+		this.datasource = datasource;
 		jdbcTemplate = new JdbcTemplate(datasource);
 	}
 
@@ -84,8 +98,7 @@ public class ComputerDao {
 			return computer;
 		}
 	};
-	
-	
+
 	public static String getTable() {
 		return TABLE;
 	}
@@ -215,15 +228,19 @@ public class ComputerDao {
 	 * @throws SQLException
 	 */
 	public List<Computer> findAll() throws SQLException {
-		String query = "SELECT * FROM " + TABLE;
-		ArrayList<Computer> computers = new ArrayList<Computer>();
+		List<Computer> computers = new ArrayList<Computer>();
 
-		try {
-			computers = (ArrayList<Computer>) jdbcTemplate.query(query, this.computerMaper);
-		} catch (DataAccessException e) {
+		try (Session session = sessionFactory.getObject().openSession()) {
+
+			criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaQuery<Computer> findAllCriteria = criteriaBuilder.createQuery(Computer.class);
+			 root = findAllCriteria.from(Computer.class);
+			findAllCriteria.select(root);
+			computers = session.createQuery(findAllCriteria).getResultList();
+
+		} catch (HibernateException e) {
 			logger.debug("erreur sur find all computers : " + e.getMessage());
 		}
-
 		return computers;
 	}
 
@@ -237,19 +254,24 @@ public class ComputerDao {
 		} catch (DataAccessException e) {
 			logger.debug("erreur sur sort company : " + e.getMessage());
 		}
-		
+
 		return computers;
 	}
 
 	public List<Computer> findAll(int sizePage, int offset) throws SQLException {
-		ArrayList<Computer> computers = new ArrayList<Computer>();
+		List<Computer> computers = new ArrayList<Computer>();
 
-		try {
-			computers = (ArrayList<Computer>) jdbcTemplate.query(GET_PAGE_QUERY, computerMaper, sizePage, offset);
-		} catch (DataAccessException e) {
-			logger.debug("Erreur sur find all computer : " + e.getMessage());
+		try (Session session = sessionFactory.getObject().openSession()) {
+			criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaQuery<Computer> findAllCriteria = criteriaBuilder.createQuery(Computer.class);
+			 root = findAllCriteria.from(Computer.class);
+			findAllCriteria.select(root);
+
+			computers = session.createQuery(findAllCriteria).setFirstResult(offset).setMaxResults(sizePage)
+					.getResultList();
+		} catch (HibernateException e) {
+			logger.debug("Erreur sur find All computers : " + e.getMessage());
 		}
-		
 		return computers;
 	}
 
@@ -267,25 +289,48 @@ public class ComputerDao {
 	}
 
 	public List<Computer> search(int sizePage, int offset, String computerName) throws SQLException {
-		ArrayList<Computer> computers = new ArrayList<Computer>();
-		
-		try {
-			computers = (ArrayList<Computer>) jdbcTemplate.query(SEARCH_COMPUTER_QUERY, this.computerMaper,
-					"%".concat(computerName).concat("%"), sizePage, offset);
-		} catch (DataAccessException e) {
+		List<Computer> computers = new ArrayList<Computer>();
+
+		try (Session session = sessionFactory.getObject().openSession()) {
+
+			criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaQuery<Computer> searchCriteria = criteriaBuilder.createQuery(Computer.class);
+			 root = searchCriteria.from(Computer.class);
+			searchCriteria.select(root)
+					.where(criteriaBuilder.like(root.get(FIELD_2), "%".concat(computerName).concat("%")));
+			computers = session.createQuery(searchCriteria).setFirstResult(offset).setMaxResults(sizePage)
+					.getResultList();
+		} catch (HibernateException e) {
 			logger.debug("Erreur sur search computer : " + e.getMessage());
 		}
-		
+
 		return computers;
 	}
 
+	
+	public int countTmp() throws SQLException {
+		Long counter = 0L;
+		try (Session session = sessionFactory.getObject().openSession()) {
+			criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaQuery<Long> countCriteria=criteriaBuilder.createQuery(Long.class);
+			root=countCriteria.from(Computer.class);
+			countCriteria.select(criteriaBuilder.count(root));
+			Query<Long> query=session.createQuery(countCriteria);
+		}
+		catch (HibernateException e) {
+			logger.debug("Erreur dans count computers : " + e.getMessage());
+		}
+		return 0;
+	}
+
+
 	public int count() throws SQLException {
 		Integer counter = 0;
-		
+
 		try {
-			counter=jdbcTemplate.queryForObject(COUNT_QUERY,Integer.class);
+			counter = jdbcTemplate.queryForObject(COUNT_QUERY, Integer.class);
 		} catch (DataAccessException e) {
-			logger.debug("Erreur dans count computers : "+e.getMessage());
+			logger.debug("Erreur dans count computers : " + e.getMessage());
 		}
 
 		return counter;
@@ -293,13 +338,13 @@ public class ComputerDao {
 
 	public int seachcount(String computerName) throws SQLException {
 		Integer counter = 0;
-		
+
 		try {
-			counter=jdbcTemplate.queryForObject(SEARCH_COUNT_QUERY,Integer.class,"%".concat(computerName+"%"));
+			counter = jdbcTemplate.queryForObject(SEARCH_COUNT_QUERY, Integer.class, "%".concat(computerName + "%"));
 		} catch (DataAccessException e) {
-			logger.debug("Erreur sur search count :"+e.getMessage());
+			logger.debug("Erreur sur search count :" + e.getMessage());
 		}
-						
+
 		return counter;
 	}
 

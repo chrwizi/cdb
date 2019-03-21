@@ -9,9 +9,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
 
-import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.sql.DataSource;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -19,6 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 
 import app.projetCdb.models.Company;
@@ -28,7 +34,8 @@ public class CompanyDao {
 	// access to database
 	private DataSource datasource;
 	private JdbcTemplate jdbcTemplate;
-	private EntityManager entityManager;
+	private LocalSessionFactoryBean sessionFactory;
+	private CriteriaBuilder criteriaBuilder;
 
 	/* Name of table */
 	private final static String TABLE = "company";
@@ -43,14 +50,14 @@ public class CompanyDao {
 	private final static String DELETE_COMPANY_QUERY = "DELETE FROM " + TABLE + " WHERE " + FIELD_1 + "=?";
 	private final static String DELETE_ASSOCIATED_COMPUTERS = "DELETE  FROM " + COMPUTER_TABLE + " WHERE "
 			+ COMPANY_ID_IN_COMPUTER_TABLE + " =?";
-	private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + " WHERE " + FIELD_1 + "=?";
+	//private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + " WHERE " + FIELD_1 + "=?";
 
-	
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public CompanyDao(DataSource dbAccess) {
+	public CompanyDao(DataSource dbAccess, LocalSessionFactoryBean sessionFactory) {
 		this.datasource = dbAccess;
-		jdbcTemplate = new JdbcTemplate(dbAccess);
+		this.sessionFactory = sessionFactory;
+		this.jdbcTemplate = new JdbcTemplate(dbAccess);
 	}
 
 	// company mapper from database
@@ -98,18 +105,47 @@ public class CompanyDao {
 
 	public Optional<Company> findById(Long id) {
 		Optional<Company> optional = Optional.empty();
-
 		if (id == null) {
 			return optional;
 		}
 
-		try {
-			optional = Optional.of(jdbcTemplate.queryForObject(FIND_BY_ID_QUERY, this.companyMapper, id));
-		} catch (DataAccessException e) {
-			logger.debug("erreur find company by Id");
+		try (Session session = sessionFactory.getObject().openSession()) {
+
+			criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaQuery<Company> findCriteria = criteriaBuilder.createQuery(Company.class);
+			Root<Company> root = findCriteria.from(Company.class);
+			findCriteria.select(root).where(criteriaBuilder.equal(root.get(FIELD_1), id));
+			Query<Company> query = session.createQuery(findCriteria);
+			optional = query.uniqueResultOptional();
+
+		} catch (HibernateException e) {
+			logger.debug("erreur find company by Id : " + e.getMessage());
+		}
+		return optional;
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public List<Company> findAll() throws SQLException {
+		List<Company> companies = new ArrayList<Company>();
+
+		try (Session session = sessionFactory.getObject().openSession()) {
+
+			criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaQuery<Company> findAllCriteria = criteriaBuilder.createQuery(Company.class);
+			Root<Company> rootCompany = findAllCriteria.from(Company.class);
+			findAllCriteria.select(rootCompany);
+			Query<Company> query = session.createQuery(findAllCriteria);
+			companies = query.getResultList();
+
+		} catch (HibernateException e) {
+			logger.debug("Erreur sur find All companies : " + e.getMessage());
 		}
 
-		return optional;
+		return companies;
 	}
 
 	/**
@@ -141,23 +177,6 @@ public class CompanyDao {
 		} catch (SQLException e) {
 			logger.debug("échec de connexion à la base de données ");
 		}
-	}
-
-	/**
-	 * 
-	 * @return
-	 * @throws SQLException
-	 */
-	public List<Company> findAll() throws SQLException {
-		String query = "SELECT * FROM " + TABLE;
-		ArrayList<Company> companies = new ArrayList<Company>();
-
-		try {
-			companies = (ArrayList<Company>) jdbcTemplate.query(query, this.companyMapper);
-		} catch (DataAccessException e) {
-			logger.debug("erreur find All companies");
-		}
-		return companies;
 	}
 
 }
