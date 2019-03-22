@@ -93,7 +93,7 @@ public class CompanyDao {
 	/**
 	 * 
 	 * @param company update compagny int table
-	 * @throws SQLException if connection to database faillure
+	 * @throws SQLException if connection to database failure
 	 */
 	public void update(Company company) throws SQLException {
 		try {

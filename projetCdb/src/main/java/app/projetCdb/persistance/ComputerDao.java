@@ -1,6 +1,5 @@
 package app.projetCdb.persistance;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,12 +12,13 @@ import java.util.OptionalLong;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Root;
 import javax.sql.DataSource;
 
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +29,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import app.projetCdb.exceptions.IDCompanyNotFoundException;
 import app.projetCdb.models.Company;
@@ -42,7 +43,7 @@ public class ComputerDao {
 	private JdbcTemplate jdbcTemplate;
 	private LocalSessionFactoryBean sessionFactory;
 	private CriteriaBuilder criteriaBuilder;
-	private Root<Computer> root ;
+	private Root<Computer> root;
 
 	private CompanyDao companyDao;
 
@@ -107,6 +108,9 @@ public class ComputerDao {
 		return FOREIGN_KEY_COMPANY_ID;
 	}
 
+	
+	
+	
 	/**
 	 * Add computer given in parameter in computers table
 	 * 
@@ -115,7 +119,43 @@ public class ComputerDao {
 	 * @throws IDCompanyNotFoundException if the Id of company given in parameter
 	 *                                    don't exit in Companies table
 	 */
+	@Transactional
 	public OptionalLong add(Computer computer) throws SQLException, IDCompanyNotFoundException {
+		System.out.println("\n\n>>> inside add transaction\n");
+		OptionalLong optionalId = OptionalLong.empty();
+		if (computer == null) {
+			return null;
+		}
+
+		try (Session session = sessionFactory.getObject().openSession()) {
+			//session.beginTransaction();
+			session.save(computer);
+			//session.persist(computer);
+			//session.getTransaction().commit();
+			//session.flush();
+			optionalId=OptionalLong.of(computer.getId());
+			logger.debug("\n\n>>> after save transaction"+computer.getId());
+		}
+		catch (HibernateException e) {
+			System.out.println("\n\n>>> Hibern -- \n");
+			logger.debug("erreur sur add computer : " + e.getMessage());
+		}
+
+		return optionalId;
+	}
+
+	
+	
+	
+	/**
+	 * Add computer given in parameter in computers table
+	 * 
+	 * @param computer: computer to add in computers table
+	 * @throws SQLException               if connection with database failure
+	 * @throws IDCompanyNotFoundException if the Id of company given in parameter
+	 *                                    don't exit in Companies table
+	 */
+	public OptionalLong add1(Computer computer) throws SQLException, IDCompanyNotFoundException {
 		OptionalLong optionalId = OptionalLong.empty();
 		if (computer == null) {
 			return null;
@@ -142,28 +182,6 @@ public class ComputerDao {
 	}
 
 	/**
-	 * Verify if id given in argument is present in computers table
-	 * 
-	 * @param id
-	 * @return
-	 * @throws SQLException
-	 */
-	public boolean isIdPresent(Long id) {
-		boolean find = false;
-
-		try (Connection connection = datasource.getConnection()) {
-			String query = "SELECT * FROM " + TABLE + "WHERE " + FIELD_1 + "=" + id;
-			Statement statement = connection.createStatement();
-			ResultSet results = statement.executeQuery(query);
-			find = results.first();
-		} catch (SQLException e) {
-			logger.debug("Erreur isPresent");
-		}
-
-		return find;
-	}
-
-	/**
 	 * 
 	 * @param id
 	 * @return
@@ -174,11 +192,17 @@ public class ComputerDao {
 		if (id == null) {
 			return optional;
 		}
-		try {
-			optional = Optional.of(jdbcTemplate.queryForObject(FIND_BY_ID_QUERY, computerMaper, id));
-		} catch (DataAccessException e) {
-			logger.debug("erreur sur find computer by Id");
+		try (Session session = sessionFactory.getObject().openSession()) {
+
+			criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaQuery<Computer> findCriteria = criteriaBuilder.createQuery(Computer.class);
+			Root<Computer> root = findCriteria.from(Computer.class);
+			findCriteria.select(root).where(criteriaBuilder.equal(root.get(FIELD_1), id));
+			optional = session.createQuery(findCriteria).uniqueResultOptional();
+		} catch (HibernateException e) {
+			logger.debug("erreur sur find computer by Id: " + e.getMessage());
 		}
+
 		return optional;
 	}
 
@@ -188,20 +212,28 @@ public class ComputerDao {
 	 * @return
 	 * @throws SQLException
 	 */
-	public OptionalLong update(Computer computer) throws SQLException {
-		OptionalLong optionalId = OptionalLong.empty();
+	public void update(Computer computer) throws SQLException {
 		if (computer == null) {
-			return optionalId;
-		}
-		try {
-			jdbcTemplate.update(UPDATE_QUERY, computer.getName(), computer.getIntroduced(), computer.getDiscontinued(),
-					computer.getCompany() != null ? computer.getCompany().getId() : 0, computer.getId());
-			optionalId = OptionalLong.of(computer.getId());
-		} catch (DataAccessException e) {
-			logger.debug("erreur update computeur");
+			return ;
 		}
 
-		return optionalId;
+		try (Session session = sessionFactory.getObject().openSession()) {
+
+			criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaUpdate<Computer> updateCriteria = criteriaBuilder.createCriteriaUpdate(Computer.class);
+			Root<Computer> root = updateCriteria.from(Computer.class);
+			updateCriteria.set(FIELD_2, computer.getName());
+			updateCriteria.set(FIELD_3, computer.getIntroduced());
+			updateCriteria.set(FIELD_4, computer.getDiscontinued());
+			updateCriteria.set("company", computer.getCompany());
+			updateCriteria.where(criteriaBuilder.equal(root.get(FIELD_1), computer.getId()));
+			Transaction transaction = session.beginTransaction();
+			session.createQuery(updateCriteria).executeUpdate();
+			transaction.commit();
+			
+		} catch (HibernateException e) {
+			logger.debug("Erreur sur update computeur : "+e.getMessage());
+		}
 	}
 
 	/**
@@ -234,7 +266,7 @@ public class ComputerDao {
 
 			criteriaBuilder = session.getCriteriaBuilder();
 			CriteriaQuery<Computer> findAllCriteria = criteriaBuilder.createQuery(Computer.class);
-			 root = findAllCriteria.from(Computer.class);
+			root = findAllCriteria.from(Computer.class);
 			findAllCriteria.select(root);
 			computers = session.createQuery(findAllCriteria).getResultList();
 
@@ -264,7 +296,7 @@ public class ComputerDao {
 		try (Session session = sessionFactory.getObject().openSession()) {
 			criteriaBuilder = session.getCriteriaBuilder();
 			CriteriaQuery<Computer> findAllCriteria = criteriaBuilder.createQuery(Computer.class);
-			 root = findAllCriteria.from(Computer.class);
+			root = findAllCriteria.from(Computer.class);
 			findAllCriteria.select(root);
 
 			computers = session.createQuery(findAllCriteria).setFirstResult(offset).setMaxResults(sizePage)
@@ -295,7 +327,7 @@ public class ComputerDao {
 
 			criteriaBuilder = session.getCriteriaBuilder();
 			CriteriaQuery<Computer> searchCriteria = criteriaBuilder.createQuery(Computer.class);
-			 root = searchCriteria.from(Computer.class);
+			root = searchCriteria.from(Computer.class);
 			searchCriteria.select(root)
 					.where(criteriaBuilder.like(root.get(FIELD_2), "%".concat(computerName).concat("%")));
 			computers = session.createQuery(searchCriteria).setFirstResult(offset).setMaxResults(sizePage)
@@ -307,33 +339,19 @@ public class ComputerDao {
 		return computers;
 	}
 
-	
-	public int countTmp() throws SQLException {
+	public int count() throws SQLException {
 		Long counter = 0L;
 		try (Session session = sessionFactory.getObject().openSession()) {
 			criteriaBuilder = session.getCriteriaBuilder();
-			CriteriaQuery<Long> countCriteria=criteriaBuilder.createQuery(Long.class);
-			root=countCriteria.from(Computer.class);
+			CriteriaQuery<Long> countCriteria = criteriaBuilder.createQuery(Long.class);
+			root = countCriteria.from(Computer.class);
 			countCriteria.select(criteriaBuilder.count(root));
-			Query<Long> query=session.createQuery(countCriteria);
-		}
-		catch (HibernateException e) {
+			Query<Long> query = session.createQuery(countCriteria);
+			counter = query.uniqueResult();
+		} catch (HibernateException e) {
 			logger.debug("Erreur dans count computers : " + e.getMessage());
 		}
-		return 0;
-	}
-
-
-	public int count() throws SQLException {
-		Integer counter = 0;
-
-		try {
-			counter = jdbcTemplate.queryForObject(COUNT_QUERY, Integer.class);
-		} catch (DataAccessException e) {
-			logger.debug("Erreur dans count computers : " + e.getMessage());
-		}
-
-		return counter;
+		return Integer.valueOf(counter.toString());
 	}
 
 	public int seachcount(String computerName) throws SQLException {

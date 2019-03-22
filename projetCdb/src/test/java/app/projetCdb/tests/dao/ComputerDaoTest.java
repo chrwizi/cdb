@@ -111,6 +111,7 @@ public class ComputerDaoTest {
 		}
 	}
 
+	/*
 	@Test
 	public void testUpdateComputer() {
 		try {
@@ -141,7 +142,7 @@ public class ComputerDaoTest {
 			e.printStackTrace();
 		}
 	}
-
+*/
 	
 	
 	@Test
