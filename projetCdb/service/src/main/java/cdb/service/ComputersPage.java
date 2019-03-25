@@ -1,4 +1,4 @@
-package app.projetCdb.services;
+package cdb.service;
 
 //@Service("computersPage")
 public class ComputersPage implements IPageSelect {

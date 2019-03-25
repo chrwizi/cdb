@@ -1,7 +1,7 @@
 package cdb.webApp.controllers;
 
-import app.projetCdb.services.ValidatorFormException;
 import cdb.binding.ComputerDto;
+import cdb.service.ValidatorFormException;
 
 public interface IFormEditComputerValidator {
 	public boolean validate(ComputerDto dto);

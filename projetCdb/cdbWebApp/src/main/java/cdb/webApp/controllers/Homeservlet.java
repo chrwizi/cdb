@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import app.projetCdb.services.IComputerService;
 import cdb.binding.ComputerDto;
 import cdb.binding.IMapperComputerDto;
 import cdb.binding.MapperComputer;
 import cdb.core.models.Computer;
+import cdb.service.IComputerService;
 
 //@WebServlet(name = "cdb", urlPatterns = "/")
 @Controller

@@ -1,4 +1,4 @@
-package app.projetCdb.services;
+package cdb.service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -8,9 +8,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import cdb.core.models.Company;
 import cdb.persistence.dao.CompanyDao;
-import cdb.persistence.dao.DbAccess;
 
 @Service("companyService")
 public class CompanyService implements ICompanyServices {

@@ -1,4 +1,4 @@
-package app.projetCdb.services;
+package cdb.service;
 
 public enum ValidatorCause {
 	NAME_NOT_CONFORM,

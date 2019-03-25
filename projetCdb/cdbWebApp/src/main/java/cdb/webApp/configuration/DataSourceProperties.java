@@ -1,11 +1,10 @@
 package cdb.webApp.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource(value = { "classpath:application.properties" })
+//@PropertySource(value = { "classpath:application.properties" })
 public class DataSourceProperties {
 	//@Value("${datasource.url}")
 	private String url="jdbc:mysql://localhost:3306/computer-database-db?zeroDateTimeBehavior=convertToNull&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";

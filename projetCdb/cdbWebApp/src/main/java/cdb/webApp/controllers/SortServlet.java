@@ -14,11 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import app.projetCdb.services.IComputerService;
 import cdb.binding.ComputerDto;
 import cdb.binding.IMapperComputerDto;
 import cdb.binding.MapperComputer;
 import cdb.core.models.Computer;
+import cdb.service.IComputerService;
 
 @WebServlet(name = "sort", urlPatterns = "/sortComputers")
 public class SortServlet extends HttpServlet {

@@ -1,4 +1,4 @@
-package app.projetCdb.services;
+package cdb.service;
 
 public interface IPageSelect {
 	int getNbPages() ;

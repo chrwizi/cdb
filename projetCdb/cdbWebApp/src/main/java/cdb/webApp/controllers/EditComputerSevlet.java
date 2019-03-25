@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import app.projetCdb.services.ICompanyServices;
-import app.projetCdb.services.IComputerService;
-import app.projetCdb.services.ValidatorFormException;
 import cdb.binding.CompanyDto;
 import cdb.binding.ComputerDto;
 import cdb.binding.IMapperCompanyDto;
@@ -26,6 +23,9 @@ import cdb.binding.MapperCompanyDto;
 import cdb.binding.MapperComputer;
 import cdb.core.models.Company;
 import cdb.core.models.Computer;
+import cdb.service.ICompanyServices;
+import cdb.service.IComputerService;
+import cdb.service.ValidatorFormException;
 
 @Controller
 @RequestMapping("/editComputer")
@@ -37,27 +37,27 @@ public class EditComputerSevlet {
 	// services
 	private IComputerService computerService;
 	private ICompanyServices companyService;
-
-	@RequestMapping("delete")
-	public String delete() {
-
-		return null;
-	}
-
-	public EditComputerSevlet(IComputerService computerService, ICompanyServices companyService) {
-		this.computerService = computerService;
-		this.companyService = companyService;
-	}
-
 	// mappers
-	private IMapperComputerDto mapper = new MapperComputer();
-	private IMapperCompanyDto mapperCompany = new MapperCompanyDto();
-	// edit computer validator
-	private IFormEditComputerValidator validator = new FormEditComputerValidator();
-
+	private IMapperComputerDto mapper ;
+	private IMapperCompanyDto mapperCompany;
 	//
 	private long DEFAULT_ID = 0L;
 	Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	public EditComputerSevlet(IComputerService computerService, ICompanyServices companyService,
+			IMapperComputerDto mapper, IMapperCompanyDto mapperCompany) {
+		this.computerService = computerService;
+		this.companyService = companyService;
+		this.mapper = mapper;
+		this.mapperCompany = mapperCompany;
+	}
+
+
+
+	// edit computer validator
+	private IFormEditComputerValidator validator = new FormEditComputerValidator();
+
+
 
 	@GetMapping
 	public String getComputerEditForm(@RequestParam(name = "idComputer", required = true) String idComputer,

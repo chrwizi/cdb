@@ -7,15 +7,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 @Configuration
-@EnableWebMvc
-@ComponentScan(basePackages = { "app.projetCdb.tmpServices", "app.projetCdb.controllers", "app.projetCdb.persistance",
-		"app.projetCdb.services", "app.projetCdb.configurations" })
+@EnableWebMvc 
+@ComponentScan(basePackages = {"cdb.webApp.configuration, cdb.webApp.controllers"})
 @Import(value = { DataSourceConfiguration.class, InternationalizationConfiguration.class })
 public class SpringConfiguration implements WebMvcConfigurer {
 
@@ -23,7 +21,7 @@ public class SpringConfiguration implements WebMvcConfigurer {
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 		WebMvcConfigurer.super.configureDefaultServletHandling(configurer);
 		configurer.enable();
-	}
+	} 
 
 	@Bean
 	public ViewResolver viewResolver() {
@@ -36,3 +34,4 @@ public class SpringConfiguration implements WebMvcConfigurer {
 	
 
 }
+  

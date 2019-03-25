@@ -2,10 +2,12 @@ package cdb.binding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
+import org.springframework.stereotype.Service;
 
 import cdb.core.models.Company;
 
+@Service("mapperCompanyDto")
 public class MapperCompanyDto implements IMapperCompanyDto {
 
 	@Override

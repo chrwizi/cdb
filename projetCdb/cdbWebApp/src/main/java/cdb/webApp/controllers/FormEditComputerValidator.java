@@ -3,9 +3,9 @@ package cdb.webApp.controllers;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import app.projetCdb.services.ValidatorCause;
-import app.projetCdb.services.ValidatorFormException;
 import cdb.binding.ComputerDto;
+import cdb.service.ValidatorCause;
+import cdb.service.ValidatorFormException;
 
 public class FormEditComputerValidator implements IFormEditComputerValidator {
 	DateTimeFormatter dateFormat=DateTimeFormatter.ofPattern("yyyy-MM-dd");

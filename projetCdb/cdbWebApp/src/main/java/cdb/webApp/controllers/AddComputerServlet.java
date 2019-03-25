@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import app.projetCdb.services.ICompanyServices;
-import app.projetCdb.services.IComputerService;
-import app.projetCdb.services.ValidatorFormException;
 import cdb.binding.CompanyDto;
 import cdb.binding.ComputerDto;
 import cdb.binding.IMapperCompanyDto;
@@ -25,6 +22,9 @@ import cdb.binding.MapperCompanyDto;
 import cdb.binding.MapperComputer;
 import cdb.core.models.Company;
 import cdb.core.models.Computer;
+import cdb.service.ICompanyServices;
+import cdb.service.IComputerService;
+import cdb.service.ValidatorFormException;
 
 
 @Controller
@@ -33,21 +33,36 @@ public class AddComputerServlet {
 	// services
 	private IComputerService computerService; 
 	private ICompanyServices companyService;
+	
 
 	// mapping objects
-	private IMapperComputerDto mapper = new MapperComputer();
-	private IMapperCompanyDto mapperCompany = new MapperCompanyDto();
+	private IMapperComputerDto mapper;
+	private IMapperCompanyDto mapperCompany;
 	//
 	private final long DEFAULT_ID = 0L;
 	//
 	IFormEditComputerValidator validator = new FormEditComputerValidator();
 	Logger logger = LoggerFactory.getLogger(this.getClass());
-
-	public AddComputerServlet(IComputerService computerService, ICompanyServices companyService) {
+	
+	
+	
+	
+	
+	
+public AddComputerServlet(IComputerService computerService, ICompanyServices companyService,
+			IMapperComputerDto mapper, IMapperCompanyDto mapperCompany) {
 		this.computerService = computerService;
 		this.companyService = companyService;
+		this.mapper = mapper;
+		this.mapperCompany = mapperCompany;
 	}
- 
+
+//
+//	public AddComputerServlet(IComputerService computerService, ICompanyServices companyService) {
+//		this.computerService = computerService;
+//		this.companyService = companyService;
+//	}
+// 
 	@GetMapping
 	protected String doGet(Model model) {
 		// get computers from database

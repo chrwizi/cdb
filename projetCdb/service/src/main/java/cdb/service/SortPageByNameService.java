@@ -1,10 +1,10 @@
-package app.projetCdb.services;
+package cdb.service;
 
 import java.util.List;
 
 import cdb.core.models.Computer;
 
-public class SortPageByCompany implements IPageDecorator{
+public class SortPageByNameService implements IPageDecorator{
 
 	@Override
 	public List<Computer> getList() {

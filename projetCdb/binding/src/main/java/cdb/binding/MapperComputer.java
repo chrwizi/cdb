@@ -5,9 +5,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import cdb.core.models.Company;
 import cdb.core.models.Computer;
 
+@Service("mapperComputer")
 public class MapperComputer implements IMapperComputerDto {
 	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 

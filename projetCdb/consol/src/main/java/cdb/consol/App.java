@@ -16,10 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import app.projetCdb.services.ICompanyServices;
-import app.projetCdb.services.IComputerService;
 import cdb.core.models.Company;
 import cdb.core.models.Computer;
+import cdb.service.ICompanyServices;
+import cdb.service.IComputerService;
  
 public class App {
 	/* Menu selections */

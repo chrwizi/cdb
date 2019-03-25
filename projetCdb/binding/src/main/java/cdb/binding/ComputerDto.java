@@ -1,5 +1,8 @@
 package cdb.binding;
 
+import org.springframework.stereotype.Component;
+
+@Component("computerDto")
 public class ComputerDto {
 	private Long id;
 	private String name;

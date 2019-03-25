@@ -1,4 +1,4 @@
-package app.projetCdb.services;
+package cdb.service;
 
 import java.util.List;
 
