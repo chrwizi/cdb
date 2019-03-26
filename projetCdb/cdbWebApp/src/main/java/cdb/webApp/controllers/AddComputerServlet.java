@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +19,6 @@ import cdb.binding.CompanyDto;
 import cdb.binding.ComputerDto;
 import cdb.binding.IMapperCompanyDto;
 import cdb.binding.IMapperComputerDto;
-import cdb.binding.MapperCompanyDto;
-import cdb.binding.MapperComputer;
 import cdb.core.models.Company;
 import cdb.core.models.Computer;
 import cdb.service.ICompanyServices;
@@ -32,23 +31,15 @@ import cdb.service.ValidatorFormException;
 public class AddComputerServlet {
 	// services
 	private IComputerService computerService; 
-	private ICompanyServices companyService;
-	
-
-	// mapping objects
+	private ICompanyServices companyService;	
 	private IMapperComputerDto mapper;
 	private IMapperCompanyDto mapperCompany;
 	//
 	private final long DEFAULT_ID = 0L;
-	//
 	IFormEditComputerValidator validator = new FormEditComputerValidator();
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	
-	
-	
-	
-	
+	@Autowired
 public AddComputerServlet(IComputerService computerService, ICompanyServices companyService,
 			IMapperComputerDto mapper, IMapperCompanyDto mapperCompany) {
 		this.computerService = computerService;
@@ -57,15 +48,8 @@ public AddComputerServlet(IComputerService computerService, ICompanyServices com
 		this.mapperCompany = mapperCompany;
 	}
 
-//
-//	public AddComputerServlet(IComputerService computerService, ICompanyServices companyService) {
-//		this.computerService = computerService;
-//		this.companyService = companyService;
-//	}
-// 
 	@GetMapping
 	protected String doGet(Model model) {
-		// get computers from database
 		List<Company> companies = companyService.getAll();
 		List<CompanyDto> companiesDto = mapperCompany.mapListCompany(companies);
 		model.addAttribute("companies", companiesDto);
@@ -80,7 +64,6 @@ public AddComputerServlet(IComputerService computerService, ICompanyServices com
 
 		Long idCompany = strIdCompany != null ? Long.valueOf(strIdCompany) : DEFAULT_ID;
 		Optional<Company> company = companyService.findById(idCompany);
-
 		ComputerDto computerDto = new ComputerDto(DEFAULT_ID, computerName, introducedDate, discontinuedDate,
 				(company.isPresent() ? company.get().getName() : null),
 				company.isPresent() ? company.get().getId() : null);
@@ -102,7 +85,6 @@ public AddComputerServlet(IComputerService computerService, ICompanyServices com
 				logger.warn("Erreur lors de la validation du formulaire d'�dition du computeur " + computerName);
 			}
 		}
-
 		return new RedirectView("/projetCdb");
 	}
 

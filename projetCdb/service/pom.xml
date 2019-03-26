@@ -13,10 +13,9 @@
 	
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
-		<spring.version>5.1.5.RELEASE</spring.version>
 		<cdb.persistence.version>0.0.1</cdb.persistence.version>
 	</properties>
-
+ 
 	<artifactId>service</artifactId>
 	<groupId>projetCdb</groupId>
 	<version>0.0.1</version>

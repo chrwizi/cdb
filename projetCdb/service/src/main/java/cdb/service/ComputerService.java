@@ -23,13 +23,13 @@ import cdb.persistence.dao.IDCompanyNotFoundException;
 public class ComputerService implements IComputerService {
 
 	private ComputerDao computerDao;
-	//@Autowired
 	private IPageSelect pageComputers;
 	private int defaultNbComputersByPage = 30;
 	//
 	Logger logger=LoggerFactory.getLogger(getClass());
 
-	public ComputerService(@Autowired ComputerDao computerDao) throws SQLException {
+	@Autowired 	
+	public ComputerService(ComputerDao computerDao) throws SQLException {
 		this.computerDao = computerDao;
 		int nbComputersInDatabase = computerDao.count();
 		pageComputers = new ComputersPage(0,

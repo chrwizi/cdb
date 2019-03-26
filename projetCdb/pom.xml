@@ -3,25 +3,32 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+
+	<!-- PROPERTIES -->
+	<properties>
+		<!-- dependencies version -->
+<!-- 		<projetcdb.version>0.0.1</projetcdb.version> -->
+		<spring.version>5.1.4.RELEASE</spring.version>
+		<hikaricp.version>3.3.1</hikaricp.version>
+		<hibernate.core.version>5.2.12.Final</hibernate.core.version>
+		<javax.servlet.api.version>4.0.0</javax.servlet.api.version>
+		
+		<cdb.core.version>0.0.1</cdb.core.version>
+		<cdb.persistence.version>0.0.1</cdb.persistence.version>
+		<cdb.service.version>0.0.1</cdb.service.version>
+		<cdb.binding.version>0.0.1</cdb.binding.version>
+		<cdb.security.version>0.0.1</cdb.security.version>
+		<!-- plugin's version -->
+ 
+	</properties>
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>projetCdb</groupId>
 	<artifactId>projetCdb</artifactId>
 	<version>0.0.1</version>
 	<packaging>pom</packaging>
 
-	<!-- PROPERTIES -->
-	<properties>
-		<!-- dependencies version -->
-		<spring.version>5.1.5.RELEASE</spring.version>
-		<hikaricp.version>3.3.1</hikaricp.version>
-		<hibernate.core.version>5.2.12.Final</hibernate.core.version>
-		<cdb.core.version>0.0.1</cdb.core.version>
-		<cdb.persistence.version>0.0.1</cdb.persistence.version>
-		<cdb.service.version>0.0.1</cdb.service.version>
-		<!-- plugin's version -->
 
-	</properties>
-	
 	<!-- BUILD -->
 	<build>
 		<plugins>
@@ -106,6 +113,7 @@
 		<module>cdbWebApp</module>
 		<module>binding</module>
 		<module>consol</module>
+		<module>security</module>
 	</modules>
 
 </project>

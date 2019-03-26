@@ -1,6 +1,5 @@
 package cdb.webApp.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,7 +11,7 @@ public class DataSourceProperties {
 	private String username="admincdb";
 	//@Value("${datasource.password}")
 	private String password="qwerty1234";
-	@Value("${datasource.driver}")
+	//@Value("${datasource.driver}")
 	private String driver;
 
 

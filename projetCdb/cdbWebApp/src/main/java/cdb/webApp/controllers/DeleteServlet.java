@@ -16,8 +16,6 @@ import cdb.service.IComputerService;
 public class DeleteServlet{
 	private  IComputerService computerService ;
 	
-	
-
 	public DeleteServlet(IComputerService computerService) {
 		this.computerService = computerService;
 	}
