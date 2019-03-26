@@ -2,7 +2,7 @@ package cdb.binding;
 
 import org.springframework.stereotype.Component;
 
-@Component("computerDto")
+@Component
 public class ComputerDto {
 	private Long id;
 	private String name;
@@ -10,6 +10,10 @@ public class ComputerDto {
 	private String discontinued;
 	private String company;
 	private Long companyId;
+	
+	
+
+	public ComputerDto() {}
 
 	public ComputerDto(Long id, String name, String introduced, String discontinued, String company, Long companyId) {
 		this.id = id;

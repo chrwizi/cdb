@@ -5,11 +5,15 @@ import org.springframework.stereotype.Component;
 import cdb.core.models.Company;
 
 
-@Component("companyDto")
+@Component
 public class CompanyDto {
 	private Long id;
 	private String name;
 	
+	
+	
+	public CompanyDto() {}
+
 	public CompanyDto(Long id, String name) {
 		this.id = id;
 		this.name = name;

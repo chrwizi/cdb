@@ -43,20 +43,9 @@
 			</plugin>
 
 		</plugins>
-
-		<!-- RESOURCES -->
-		<resources>
-			<resource>
-				<directory>/database</directory>
-			</resource>
-			<resource>
-				<directory>src/main/ressources</directory>
-			</resource>
-		</resources>
 	</build>
 
 	<!-- DEPENDENCIES -->
-
 	<dependencies>
 
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
@@ -95,13 +84,6 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.26</version>
 		</dependency>
-
-
-
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
-
-
-
 
 	</dependencies>
 

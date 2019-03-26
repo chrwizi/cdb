@@ -11,11 +11,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-
 @Configuration
 @EnableWebMvc 
-@ComponentScan(basePackages = {"cdb.webApp.configuration, cdb.webApp.controllers"})
-@Import(value = { DataSourceConfiguration.class, InternationalizationConfiguration.class,cdb.service.configuration.SpringConfiguration.class })
+@ComponentScan(basePackages = {"cdb.webApp.configuration, cdb.webApp.controllers,"
+		+ "cdb.service,cdb.persistence, cdb.binding,cdb.core"})
+@Import(value = {InternationalizationConfiguration.class})
 public class SpringConfiguration implements WebMvcConfigurer {
 
 	@Override

@@ -22,6 +22,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -39,6 +40,7 @@ import cdb.core.models.Computer;
 public class ComputerDao {
 
 	// database access
+	@Qualifier("datasource")
 	private DataSource datasource;
 	private JdbcTemplate jdbcTemplate;
 	private LocalSessionFactoryBean sessionFactory;

@@ -1,4 +1,4 @@
-package cdb.webApp.configuration;
+package cdb.persistence.configuration;
 
 import org.springframework.stereotype.Component;
 

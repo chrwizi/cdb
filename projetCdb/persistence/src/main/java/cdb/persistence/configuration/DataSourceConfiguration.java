@@ -1,4 +1,4 @@
-package cdb.webApp.configuration;
+package cdb.persistence.configuration;
 
 import java.util.Properties;
 
@@ -12,18 +12,20 @@ import org.springframework.dao.annotation.PersistenceExceptionTranslationPostPro
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-//@EnableTransactionManagement
+@EnableTransactionManagement
 public class DataSourceConfiguration {
 	private DataSourceProperties properties;
-
+	private final String PACKAGES_TO_SCAN="cdb.core.models";
 
 	public DataSourceConfiguration(DataSourceProperties properties) {
+		System.out.println("\n\n >>>>>>>> config Datasource  <<<<<<\n\n\n");
 		this.properties = properties;
 	}
 
-	@Bean
+	@Bean("datasource")
 	public DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setUrl(properties.getUrl());
@@ -37,7 +39,7 @@ public class DataSourceConfiguration {
 	public LocalSessionFactoryBean sessionFactory() {
 		LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
 		sessionFactoryBean.setDataSource(dataSource());
-		sessionFactoryBean.setPackagesToScan("app.projetCdb.models");
+		sessionFactoryBean.setPackagesToScan(PACKAGES_TO_SCAN);
 		sessionFactoryBean.setHibernateProperties(hibernateProperties());
 		return sessionFactoryBean;
 	}
