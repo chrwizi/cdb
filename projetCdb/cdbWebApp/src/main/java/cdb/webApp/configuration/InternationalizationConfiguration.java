@@ -14,6 +14,13 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 @Configuration
 @EnableWebMvc
 public class InternationalizationConfiguration implements WebMvcConfigurer {
+	
+	
+	
+	public InternationalizationConfiguration() {
+		System.out.println("\n\n>>>> Config internation <<<<<<<\n\n");
+	}
+
 	@Bean
 	public ReloadableResourceBundleMessageSource messageSource() {
 		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();

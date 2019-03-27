@@ -1,11 +1,9 @@
 package cdb.binding;
 
-import org.springframework.stereotype.Component;
-
 import cdb.core.models.Company;
 
 
-@Component
+
 public class CompanyDto {
 	private Long id;
 	private String name;

@@ -29,7 +29,7 @@ import org.springframework.stereotype.Repository;
 
 import cdb.core.models.Company;
 
-@Repository("companyDao")
+@Repository
 public class CompanyDao {
 	// access to database
 	private DataSource datasource;

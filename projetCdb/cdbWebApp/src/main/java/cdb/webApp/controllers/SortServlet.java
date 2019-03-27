@@ -30,7 +30,7 @@ public class SortServlet extends HttpServlet {
 	private static final String DASHBOARD_VIEW = "/WEB-INF/dashboard.jsp";
 	@Autowired 
 	private IComputerService computerService;
-	private IMapperComputerDto mapper = new MapperComputer();
+	private IMapperComputerDto mapper;// = new MapperComputer();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -11,15 +11,14 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-@Service("dbAccess")
+//@Service("dbAccess")
 public class DbAccess implements IDbAccess {
 	// default database configuration file
-	private String DEFAULT_DATABASE_CONFIGURATION_FILE = "database/application.properties";
+	private String DEFAULT_DATABASE_CONFIGURATION_FILE = "application.properties";
 	private static Properties databaseProperties = new Properties();
 	// properties from configuration file
 	private static String URL_PROPERTIE_NAME = "datasource.url";
@@ -32,7 +31,7 @@ public class DbAccess implements IDbAccess {
 	// logger
 	private Logger logger = LoggerFactory.getLogger(DbAccess.class);
 	// singleton instance
-	private static DbAccess instance = new DbAccess();
+	private static DbAccess instance =null;// new DbAccess();
 	
 	/**
 	 * @throws DbAccessPropertyNotFoundException 
@@ -44,10 +43,9 @@ public class DbAccess implements IDbAccess {
 			if((databaseProperties.getProperty(URL_PROPERTIE_NAME))==null) logger.debug("Property "+URL_PROPERTIE_NAME+" not found");
 			if((databaseProperties.getProperty(USERNAME_PROPERTIE_NAME))==null) logger.debug("Property "+URL_PROPERTIE_NAME+" not found");
 			if((databaseProperties.getProperty(PASSWORD_PROPERTIE_NAME))==null)logger.debug("Property "+PASSWORD_PROPERTIE_NAME+" not found");
-			
-			logger.info("[database properties loaded ]");
+
 		} catch (FileNotFoundException e) {
-			logger.error("[file configuration of database  not found ]");  
+			logger.error("fichier de configuration non trouvé : "+e.getMessage());  
 			e.printStackTrace();
 		} catch (IOException e) {
 			logger.error("[IOException form file configuration]");

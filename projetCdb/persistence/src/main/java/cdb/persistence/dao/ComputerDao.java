@@ -40,7 +40,6 @@ import cdb.core.models.Computer;
 public class ComputerDao {
 
 	// database access
-	@Qualifier("datasource")
 	private DataSource datasource;
 	private JdbcTemplate jdbcTemplate;
 	private LocalSessionFactoryBean sessionFactory;
