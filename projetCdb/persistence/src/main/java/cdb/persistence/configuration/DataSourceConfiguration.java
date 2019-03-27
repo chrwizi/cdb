@@ -21,7 +21,6 @@ public class DataSourceConfiguration {
 	private final String PACKAGES_TO_SCAN="cdb.core.models";
 
 	public DataSourceConfiguration(DataSourceProperties properties) {
-		System.out.println("\n\n >>>>>>>> config Datasource  <<<<<<\n\n\n");
 		this.properties = properties;
 	}
 
@@ -44,7 +43,6 @@ public class DataSourceConfiguration {
 		return sessionFactoryBean;
 	}
 
-
 	@Bean
 	@Autowired
 	public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
@@ -59,13 +57,13 @@ public class DataSourceConfiguration {
 		return new PersistenceExceptionTranslationPostProcessor();
 	}
 
-
 	Properties hibernateProperties() {
 		return new Properties() {
+			private static final long serialVersionUID = 1L;
 			{
 				setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
 				setProperty("hibernate.globally_quoted_identifiers", "true");
-			//	setProperty("hibernate.globally_quoted_identifiers", "update");
+				setProperty("hibernate.hbm2ddl.auto", "update");
 			}
 		};
 	}

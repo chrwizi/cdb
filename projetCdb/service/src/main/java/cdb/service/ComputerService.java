@@ -18,7 +18,7 @@ import cdb.persistence.dao.ComputerDao;
  * @author chris_moyikoulou
  *
  */ 
-@Service("computerService")
+@Service
 public class ComputerService implements IComputerService {
 
 	private ComputerDao computerDao;

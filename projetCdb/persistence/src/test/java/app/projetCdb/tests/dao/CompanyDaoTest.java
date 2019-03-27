@@ -3,10 +3,10 @@ package app.projetCdb.tests.dao;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import cdb.persistence.configuration.DbAccess;
+import cdb.persistence.configuration.IDbAccess;
 import cdb.persistence.dao.CompanyDao;
 import cdb.persistence.dao.ComputerDao;
-import cdb.persistence.dao.DbAccess;
-import cdb.persistence.dao.IDbAccess;
 
 public class CompanyDaoTest {
 	private static ComputerDao computerDao;

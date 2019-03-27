@@ -22,11 +22,11 @@ import org.slf4j.LoggerFactory;
 
 import cdb.core.models.Company;
 import cdb.core.models.Computer;
+import cdb.persistence.configuration.DbAccess;
+import cdb.persistence.configuration.IDbAccess;
 import cdb.persistence.dao.CompanyDao;
 import cdb.persistence.dao.ComputerDao;
-import cdb.persistence.dao.DbAccess;
 import cdb.persistence.dao.IDCompanyNotFoundException;
-import cdb.persistence.dao.IDbAccess;
 
 public class ComputerDaoTest {
 	// access to database

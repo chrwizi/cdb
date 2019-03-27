@@ -1,4 +1,4 @@
-package cdb.persistence.dao;
+package cdb.persistence.configuration;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
+import cdb.persistence.dao.DbAccessPropertyNotFoundException;
 
 //@Service("dbAccess")
 public class DbAccess implements IDbAccess {

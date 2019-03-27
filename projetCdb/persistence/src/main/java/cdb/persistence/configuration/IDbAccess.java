@@ -1,4 +1,4 @@
-package cdb.persistence.dao;
+package cdb.persistence.configuration;
 
 import java.sql.Connection;
 import java.sql.SQLException;

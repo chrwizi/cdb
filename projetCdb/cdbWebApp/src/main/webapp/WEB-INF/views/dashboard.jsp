@@ -24,7 +24,7 @@
 		<div class="container">
 			<a class="navbar-brand" href="/projetCdb/"> Application -
 				Computer Database </a> <a class="navbar-brand"
-				href="/projetCdb/testSpring"> Test Spring </a>
+				href="/projetCdb/user/create"> Utilisateur </a>
 		</div>
 	</header>
 

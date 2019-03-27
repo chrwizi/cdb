@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<properties>
-	
+
 		<main.basedir>${basedir}/../..</main.basedir>
 		<m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>
 		<jstl.version>1.2</jstl.version>
@@ -15,8 +15,8 @@
 	<groupId>projetCdb</groupId>
 	<packaging>war</packaging>
 	<version>0.0.1</version>
-	
-	
+
+
 
 	<parent>
 		<groupId>projetCdb</groupId>
@@ -39,6 +39,12 @@
 			<version>${cdb.binding.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>projetCdb</groupId>
+			<artifactId>security</artifactId>
+			<version>${cdb.security.version}</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/jstl/jstl -->
 		<dependency>
 			<groupId>jstl</groupId>
@@ -58,6 +64,13 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
 

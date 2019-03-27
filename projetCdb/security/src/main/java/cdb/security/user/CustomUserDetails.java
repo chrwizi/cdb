@@ -10,9 +10,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import cdb.core.models.User;
 
-public class CustomUserDtails extends User implements UserDetails{
+public class CustomUserDetails extends User implements UserDetails{
 
 	private static final long serialVersionUID = 1L;
+	
+	public CustomUserDetails(User user) {
+		super(user);
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
