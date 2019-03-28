@@ -61,9 +61,6 @@
 				<table class="table table-striped table-bordered">
 					<thead>
 						<tr>
-							<!-- Variable declarations for passing labels as parameters -->
-							<!-- Table header for Computer Name -->
-
 							<th class="editMode" style="width: 60px; height: 22px;"><input
 								type="checkbox" id="selectall" /> <span
 								style="vertical-align: top;"> - <a href="#"
@@ -72,22 +69,17 @@
 								</a>
 							</span></th>
 							<th><spring:message code="label.fieldName"/>
-								<div class="pull-right">
+								<div class="pull-right">							
 									<a
-										href="/projetCdb?sortName=true&asc=true&selectedPage=${numPage}">
+										href="/projetCdb/sort?asc=true&selctedPage=${numPage}">
 										<i class="fas fa-sort-up align-top "></i>
-									</a> <a
-										href="/projetCdb?sortName=true&asc=false&selectedPage=${numPage}">
+									</a>
+									
+									 <a
+										href="/projetCdb/sort?asc=false&selctedPage=${numPage}">
 										<i class="fas fa-sort-down align-bottom "></i>
 									</a>
-								</div> <!-- 								<div class="pull-right">
-									<a href="/projetCdb/sortComputers?sortName=true&asc=true"> 
-										<i class="fas fa-sort-up align-top "></i>
-									</a>
-									 <a href="/projetCdb/sortComputers?sortName=true&asc=false">
-									 	<i class="fas fa-sort-down align-bottom "></i>
-									 </a>
-								</div> -->
+								</div>
 							</th>
 							<th><spring:message code="label.fieldIntroducedDate"/> </th>
 							<!-- Table header for Discontinued Date -->
@@ -132,10 +124,10 @@
 				<c:forEach var="numPage" begin="1" end="${nbPages}">
 					<c:choose>
 						<c:when test="${sortPage==true}">
-							<li><a href="/projetCdb/cdb?asc=${asc}&sortPage=true&selectedPage=${numPage}">${numPage}</a></li>
+							<li><a href="/projetCdb/asc=${asc}&sortPage=true&selectedPage=${numPage}">${numPage}</a></li>
 						</c:when>
 						<c:when test="${sortPage==false}">
-							<li><a href="/projetCdb/cdb?selectedPage=${numPage}">${numPage}</a></li>
+							<li><a href="/projetCdb/?selectedPage=${numPage}">${numPage}</a></li>
 						</c:when>
 					</c:choose>
 

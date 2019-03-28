@@ -20,33 +20,23 @@ public class Springconfiguration extends WebSecurityConfigurerAdapter{
 	private ICustomUserDetailsService userDetailsService;
 
 	public Springconfiguration(ICustomUserDetailsService userDetailsService) {
-		System.out.println(" \n\n>>>>>> Chargement de la Configuration de sécurité  <<<<<<<<< \n\n");
 		this.userDetailsService = userDetailsService;
+		logger.info("cdb security config loading");
 	}
-
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(BCryptManagerUtil.passwordencoder());
+		logger.info("cdb security passwordencoder setting done");
 	}
  
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		//http.csrf().disable();
+		http.sessionManagement().maximumSessions(1);
 		http.authorizeRequests()
 			.antMatchers("/").authenticated()
-			.anyRequest().denyAll().and().formLogin();
-		/*
-			//.and().formLogin().loginPage("/users/connexion").successForwardUrl("/users/connexion-succes").permitAll()
-			.and().formLogin().loginPage("/users/connexion").successHandler(successHandler).permitAll()
-			.and().logout().logoutUrl("/users/logout");
-			//.and().logout().logoutSuccessUrl("/users/logout");
-			 * */
-			 
+			.anyRequest().denyAll().and().formLogin();		
+		logger.info("cdd security Autorization configuration loaded");
 	}
-
-	
-
-
 }

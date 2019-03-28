@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +20,6 @@ import cdb.binding.CompanyDto;
 import cdb.binding.ComputerDto;
 import cdb.binding.IMapperCompanyDto;
 import cdb.binding.IMapperComputerDto;
-import cdb.binding.MapperCompanyDto;
-import cdb.binding.MapperComputer;
 import cdb.core.models.Company;
 import cdb.core.models.Computer;
 import cdb.service.ICompanyServices;
@@ -29,6 +28,7 @@ import cdb.service.ValidatorFormException;
 
 @Controller
 @RequestMapping("/editComputer")
+//@PreAuthorize("hasAnyRole('PREMIUM')")
 public class EditComputerSevlet {
 	// views
 	private static final String GET_VIEW = "editComputer";
@@ -51,10 +51,7 @@ public class EditComputerSevlet {
 		this.mapper = mapper;
 		this.mapperCompany = mapperCompany;
 	}
-
-
-
-	// edit computer validator
+	
 	private IFormEditComputerValidator validator = new FormEditComputerValidator();
 
 

@@ -1,6 +1,7 @@
 package cdb.webApp.controllers;
 
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import cdb.service.IComputerService;
 
 @Controller
 @RequestMapping("/delete")
+@PreAuthorize("hasAnyRole('ADMIN')")
 public class DeleteServlet{
 	private  IComputerService computerService ;
 	

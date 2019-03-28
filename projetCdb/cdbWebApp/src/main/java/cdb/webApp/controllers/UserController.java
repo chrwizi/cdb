@@ -25,7 +25,6 @@ public class UserController {
 	@GetMapping("/create")
 	public String create(Model model) {
 		List<Role> roles = userService.findRoles();
-		System.out.println("\n\n>>> size roles : " + roles.size());
 		model.addAttribute("roles", roles);
 		return "createUser";
 	}
