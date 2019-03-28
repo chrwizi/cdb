@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import cdb.core.models.Company;
 import cdb.core.models.Computer;
 
-@Service("mapperComputer")
+@Service
 public class MapperComputer implements IMapperComputerDto {
 	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
