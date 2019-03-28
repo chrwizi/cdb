@@ -1,6 +1,7 @@
 package cdb.persistence.dao;
 
 import java.util.Optional;
+import java.util.OptionalLong;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -22,46 +23,45 @@ public class UserDao {
 	private CriteriaBuilder criteriaBuilder;
 	private Root<User> root;
 	//
-	private final String FIELD_USER_NAME="username";
+	private final String FIELD_USER_NAME = "username";
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
-	
 	public UserDao(LocalSessionFactoryBean sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-
 
 	public Optional<User> findByUsername(String username) {
 		Optional<User> optionalUser = Optional.empty();
 		if (username == null) {
 			return optionalUser;
 		}
-		
+
 		try (Session session = sessionFactory.getObject().openSession()) {
-			criteriaBuilder=session.getCriteriaBuilder();
-			CriteriaQuery<User>findCriteria=criteriaBuilder.createQuery(User.class);
-			root=findCriteria.from(User.class);
+			criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaQuery<User> findCriteria = criteriaBuilder.createQuery(User.class);
+			root = findCriteria.from(User.class);
 			findCriteria.select(root).where(criteriaBuilder.equal(root.get(FIELD_USER_NAME), username));
-			optionalUser=session.createQuery(findCriteria).uniqueResultOptional();
-		} 		
-		catch (HibernateException e) {
+			optionalUser = session.createQuery(findCriteria).uniqueResultOptional();
+		} catch (HibernateException e) {
 			logger.debug("Erreur sur find user by username: " + e.getMessage());
 		}
-		
+
 		return optionalUser;
 	}
-	
-	public void createUser(User user) {
-		Long id=-1L;
-		try(Session session=sessionFactory.getObject().openSession()){
-			Transaction transaction=session.beginTransaction();
-			session.persist(user);
-			transaction.commit();
-			
+
+	public OptionalLong createUser(User user) {
+		OptionalLong optionalId = OptionalLong.empty();
+		if (user != null) {
+			try (Session session = sessionFactory.getObject().openSession()) {
+				Transaction transaction = session.beginTransaction();
+				session.persist(user);
+				transaction.commit();
+				optionalId = OptionalLong.of(user.getUserID());
+			} catch (HibernateException e) {
+				logger.debug("Erreur sur create User : " + e.getMessage());
+			}
 		}
-		catch (HibernateException e) {
-			logger.debug("Erreur sur create User : "+e.getMessage());
-		}
+		return optionalId;
 	}
-	
+
 }

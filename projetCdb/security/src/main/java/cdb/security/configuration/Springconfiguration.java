@@ -20,7 +20,7 @@ public class Springconfiguration extends WebSecurityConfigurerAdapter{
 	private ICustomUserDetailsService userDetailsService;
 
 	public Springconfiguration(ICustomUserDetailsService userDetailsService) {
-		System.out.println(" Chargement de la Configuration de sécurité ");
+		System.out.println(" \n\n>>>>>> Chargement de la Configuration de sécurité  <<<<<<<<< \n\n");
 		this.userDetailsService = userDetailsService;
 	}
 
@@ -28,15 +28,12 @@ public class Springconfiguration extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(BCryptManagerUtil.passwordencoder());
-		super.configure(auth);
 	}
  
-	/**
-	 * définie les pages à sécuriser 
-	 */
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable();
+		//http.csrf().disable();
 		http.authorizeRequests()
 			.antMatchers("/").authenticated()
 			.anyRequest().denyAll().and().formLogin();

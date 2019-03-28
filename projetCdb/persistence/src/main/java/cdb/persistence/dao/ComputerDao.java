@@ -3,7 +3,7 @@ package cdb.persistence.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement; 
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import cdb.core.models.Company;
 import cdb.core.models.Computer;
@@ -109,9 +108,6 @@ public class ComputerDao {
 		return FOREIGN_KEY_COMPANY_ID;
 	}
 
-	
-	
-	
 	/**
 	 * Add computer given in parameter in computers table
 	 * 
@@ -121,66 +117,23 @@ public class ComputerDao {
 	 *                                    don't exit in Companies table
 	 */
 	@Transactional
-	public OptionalLong add(Computer computer) throws SQLException{
-		System.out.println("\n\n>>> inside add transaction\n");
+	public OptionalLong add(Computer computer) throws SQLException {
 		OptionalLong optionalId = OptionalLong.empty();
-		if (computer == null) {
-			return null;
+		
+		if (computer != null) {
+			try (Session session = sessionFactory.getObject().openSession()) {
+				Transaction transaction = session.beginTransaction();
+				session.persist(computer);
+				transaction.commit();
+				optionalId = OptionalLong.of(computer.getId());
+			} catch (HibernateException e) {
+				logger.debug("Erreur sur add computer : " + e.getMessage());
+			}
 		}
-
-		try (Session session = sessionFactory.getObject().openSession()) {
-			//session.beginTransaction();
-			session.save(computer);
-			//session.persist(computer);
-			//session.getTransaction().commit();
-			//session.flush();
-			optionalId=OptionalLong.of(computer.getId());
-			logger.debug("\n\n>>> after save transaction"+computer.getId());
-		}
-		catch (HibernateException e) {
-			System.out.println("\n\n>>> Hibern -- \n");
-			logger.debug("erreur sur add computer : " + e.getMessage());
-		}
-
+		
 		return optionalId;
 	}
 
-	
-	
-	
-	/**
-	 * Add computer given in parameter in computers table
-	 * 
-	 * @param computer: computer to add in computers table
-	 * @throws SQLException               if connection with database failure
-	 * @throws IDCompanyNotFoundException if the Id of company given in parameter
-	 *                                    don't exit in Companies table
-	 */
-	public OptionalLong add1(Computer computer) throws SQLException, IDCompanyNotFoundException {
-		OptionalLong optionalId = OptionalLong.empty();
-		if (computer == null) {
-			return null;
-		}
-		KeyHolder keyholder = new GeneratedKeyHolder();
-
-		try {
-			jdbcTemplate.update(connection -> {
-				PreparedStatement preparedstatement = connection.prepareStatement(CREATE_QUERY,
-						Statement.RETURN_GENERATED_KEYS);
-				preparedstatement.setString(1, computer.getName());
-				preparedstatement.setObject(2, (computer.getIntroduced()));
-				preparedstatement.setObject(3, computer.getDiscontinued());
-				preparedstatement.setLong(4, computer.getCompany().getId());
-				return preparedstatement;
-
-			}, keyholder);
-			optionalId = OptionalLong.of((keyholder.getKey().longValue()));
-		} catch (DataAccessException e) {
-			logger.debug("erreur sur add computer : " + e.getMessage());
-		}
-
-		return optionalId;
-	}
 
 	/**
 	 * 
@@ -215,7 +168,7 @@ public class ComputerDao {
 	 */
 	public void update(Computer computer) throws SQLException {
 		if (computer == null) {
-			return ;
+			return;
 		}
 
 		try (Session session = sessionFactory.getObject().openSession()) {
@@ -231,9 +184,9 @@ public class ComputerDao {
 			Transaction transaction = session.beginTransaction();
 			session.createQuery(updateCriteria).executeUpdate();
 			transaction.commit();
-			
+
 		} catch (HibernateException e) {
-			logger.debug("Erreur sur update computeur : "+e.getMessage());
+			logger.debug("Erreur sur update computeur : " + e.getMessage());
 		}
 	}
 
@@ -307,6 +260,7 @@ public class ComputerDao {
 		}
 		return computers;
 	}
+	
 
 	public List<Computer> sortByName(boolean asc, int sizePage, int offset) throws SQLException {
 		String query = asc ? QUERY_SORT_BY_NAME_ASC : QUERY_SORT_BY_NAME_DESC;

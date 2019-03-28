@@ -22,7 +22,7 @@ import cdb.service.IComputerService;
 //@WebServlet(name = "cdb", urlPatterns = "/")
 @Controller
 @RequestMapping("/")
-@PreAuthorize("hasAnyRole('ADMIN')")
+
 public class Homeservlet {
 
 	@Autowired
@@ -33,7 +33,9 @@ public class Homeservlet {
 	private boolean sortTable = false;
 	private boolean ascSort = false;
 
+
 	@GetMapping("")
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public String doGet(Model model) {
 		List<Computer> computers = new ArrayList<Computer>();
 
