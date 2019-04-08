@@ -1,9 +1,7 @@
 package cdb.persistence.dao;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +9,7 @@ import java.util.Optional;
 import java.util.OptionalLong;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Root;
@@ -22,12 +21,9 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,22 +114,27 @@ public class ComputerDao {
 	 */
 	@Transactional
 	public OptionalLong add(Computer computer) throws SQLException {
+		logger.debug("\n\n>> in add Computer <<<\n\n");
 		OptionalLong optionalId = OptionalLong.empty();
-		
 		if (computer != null) {
+
 			try (Session session = sessionFactory.getObject().openSession()) {
+				logger.debug("\n\n>> session ouverte <<<\n\n");
 				Transaction transaction = session.beginTransaction();
+				logger.debug("\n\n >>>> before persist <<<\n\n");
 				session.persist(computer);
+				logger.debug("\n\n>> before commit <<<\n\n");
 				transaction.commit();
+				logger.debug("\n\n>> aftre commit  <<<\n\n");
+				
 				optionalId = OptionalLong.of(computer.getId());
 			} catch (HibernateException e) {
 				logger.debug("Erreur sur add computer : " + e.getMessage());
 			}
 		}
-		
+
 		return optionalId;
 	}
-
 
 	/**
 	 * 
@@ -167,26 +168,24 @@ public class ComputerDao {
 	 * @throws SQLException
 	 */
 	public void update(Computer computer) throws SQLException {
-		if (computer == null) {
-			return;
-		}
+		if (computer != null) {
+			try (Session session = sessionFactory.getObject().openSession()) {
 
-		try (Session session = sessionFactory.getObject().openSession()) {
+				criteriaBuilder = session.getCriteriaBuilder();
+				CriteriaUpdate<Computer> updateCriteria = criteriaBuilder.createCriteriaUpdate(Computer.class);
+				Root<Computer> root = updateCriteria.from(Computer.class);
+				updateCriteria.set(FIELD_2, computer.getName());
+				updateCriteria.set(FIELD_3, computer.getIntroduced());
+				updateCriteria.set(FIELD_4, computer.getDiscontinued());
+				updateCriteria.set("company", computer.getCompany());
+				updateCriteria.where(criteriaBuilder.equal(root.get(FIELD_1), computer.getId()));
+				Transaction transaction = session.beginTransaction();
+				session.createQuery(updateCriteria).executeUpdate();
+				transaction.commit();
 
-			criteriaBuilder = session.getCriteriaBuilder();
-			CriteriaUpdate<Computer> updateCriteria = criteriaBuilder.createCriteriaUpdate(Computer.class);
-			Root<Computer> root = updateCriteria.from(Computer.class);
-			updateCriteria.set(FIELD_2, computer.getName());
-			updateCriteria.set(FIELD_3, computer.getIntroduced());
-			updateCriteria.set(FIELD_4, computer.getDiscontinued());
-			updateCriteria.set("company", computer.getCompany());
-			updateCriteria.where(criteriaBuilder.equal(root.get(FIELD_1), computer.getId()));
-			Transaction transaction = session.beginTransaction();
-			session.createQuery(updateCriteria).executeUpdate();
-			transaction.commit();
-
-		} catch (HibernateException e) {
-			logger.debug("Erreur sur update computeur : " + e.getMessage());
+			} catch (HibernateException e) {
+				logger.debug("Erreur sur update computeur : " + e.getMessage());
+			}
 		}
 	}
 
@@ -198,11 +197,16 @@ public class ComputerDao {
 	 */
 	public void delete(Long id) throws SQLException {
 		if (id != null) {
+			try (Session session = sessionFactory.getObject().openSession()) {
+				CriteriaDelete<Computer> criteriaDelete = criteriaBuilder.createCriteriaDelete(Computer.class);
+				root = criteriaDelete.from(Computer.class);
+				criteriaDelete.where(criteriaBuilder.equal(root.get(FIELD_1), id));
 
-			try {
-				jdbcTemplate.update(DELETE_QUERY, id);
-			} catch (DataAccessException e) {
-				logger.debug("erreur sur delete computeur : " + e.getMessage());
+				Transaction transaction = session.beginTransaction();
+				session.createQuery(criteriaDelete).executeUpdate();
+				transaction.commit();
+			} catch (HibernateException e) {
+				logger.debug("Erreur sur delete computeur : " + e.getMessage());
 			}
 
 		}
@@ -217,16 +221,15 @@ public class ComputerDao {
 		List<Computer> computers = new ArrayList<Computer>();
 
 		try (Session session = sessionFactory.getObject().openSession()) {
-
 			criteriaBuilder = session.getCriteriaBuilder();
 			CriteriaQuery<Computer> findAllCriteria = criteriaBuilder.createQuery(Computer.class);
 			root = findAllCriteria.from(Computer.class);
 			findAllCriteria.select(root);
 			computers = session.createQuery(findAllCriteria).getResultList();
-
 		} catch (HibernateException e) {
 			logger.debug("erreur sur find all computers : " + e.getMessage());
 		}
+
 		return computers;
 	}
 
@@ -236,7 +239,6 @@ public class ComputerDao {
 
 		try {
 			computers = (ArrayList<Computer>) jdbcTemplate.query(query, this.computerMaper);
-
 		} catch (DataAccessException e) {
 			logger.debug("erreur sur sort company : " + e.getMessage());
 		}
@@ -252,7 +254,6 @@ public class ComputerDao {
 			CriteriaQuery<Computer> findAllCriteria = criteriaBuilder.createQuery(Computer.class);
 			root = findAllCriteria.from(Computer.class);
 			findAllCriteria.select(root);
-
 			computers = session.createQuery(findAllCriteria).setFirstResult(offset).setMaxResults(sizePage)
 					.getResultList();
 		} catch (HibernateException e) {
@@ -260,7 +261,6 @@ public class ComputerDao {
 		}
 		return computers;
 	}
-	
 
 	public List<Computer> sortByName(boolean asc, int sizePage, int offset) throws SQLException {
 		String query = asc ? QUERY_SORT_BY_NAME_ASC : QUERY_SORT_BY_NAME_DESC;

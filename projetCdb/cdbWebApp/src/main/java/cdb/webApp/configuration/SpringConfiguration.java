@@ -13,7 +13,7 @@ import org.springframework.web.servlet.view.JstlView;
 
 @Configuration
 @EnableWebMvc 
-@ComponentScan(basePackages = {"cdb.webApp.configuration, cdb.webApp.controllers,"
+@ComponentScan(basePackages = {"cdb.webApp.configuration, cdb.webApp.controllers,cdb.webApp.restcontrollers,"
 		+ "cdb.service,cdb.persistence, cdb.binding,cdb.core,cdb.security"})
 @Import(value = {InternationalizationConfiguration.class})
 public class SpringConfiguration implements WebMvcConfigurer {

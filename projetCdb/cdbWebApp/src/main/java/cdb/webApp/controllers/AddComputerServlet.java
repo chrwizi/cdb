@@ -41,7 +41,7 @@ public class AddComputerServlet {
 	IFormEditComputerValidator validator = new FormEditComputerValidator();
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	@Autowired
+	
 public AddComputerServlet(IComputerService computerService, ICompanyServices companyService,
 			IMapperComputerDto mapper, IMapperCompanyDto mapperCompany) {
 		this.computerService = computerService;

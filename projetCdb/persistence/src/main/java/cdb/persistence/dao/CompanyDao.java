@@ -3,7 +3,6 @@ package cdb.persistence.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,23 +10,24 @@ import java.util.OptionalLong;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Root;
 import javax.sql.DataSource;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 
 import cdb.core.models.Company;
+import cdb.core.models.Computer;
 
 @Repository
 public class CompanyDao {
@@ -50,7 +50,8 @@ public class CompanyDao {
 	private final static String DELETE_COMPANY_QUERY = "DELETE FROM " + TABLE + " WHERE " + FIELD_1 + "=?";
 	private final static String DELETE_ASSOCIATED_COMPUTERS = "DELETE  FROM " + COMPUTER_TABLE + " WHERE "
 			+ COMPANY_ID_IN_COMPUTER_TABLE + " =?";
-	//private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + " WHERE " + FIELD_1 + "=?";
+	// private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + "
+	// WHERE " + FIELD_1 + "=?";
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -72,21 +73,18 @@ public class CompanyDao {
 	 */
 	public OptionalLong Add(Company company) {
 		OptionalLong optionalId = OptionalLong.empty();
+		if (company != null) {
 
-		try {
-			KeyHolder keyholder = new GeneratedKeyHolder();
-			jdbcTemplate.update(connection -> {
-				PreparedStatement addPStatement = connection.prepareStatement(CREATE_QUERY,
-						Statement.RETURN_GENERATED_KEYS);
-				addPStatement.setString(1, company.getName());
-				return addPStatement;
-			}, keyholder);
+			try (Session session = sessionFactory.getObject().openSession()) {
+				Transaction transaction = session.beginTransaction();
+				session.persist(company);
+				transaction.commit();
+				optionalId = OptionalLong.of(company.getId());
+			} catch (HibernateException e) {
+				logger.debug("Erreur sur add computer : " + e.getMessage());
+			}
 
-			optionalId = OptionalLong.of((long) keyholder.getKey());
-		} catch (DataAccessException e) {
-			logger.debug("erreur jdbc template");
 		}
-
 		return optionalId;
 	}
 
@@ -96,30 +94,35 @@ public class CompanyDao {
 	 * @throws SQLException if connection to database failure
 	 */
 	public void update(Company company) throws SQLException {
-		try {
-			jdbcTemplate.update(UPDATE_QUERY, company.getName(), company.getId());
-		} catch (DataAccessException e) {
-			logger.debug("erreur update company ");
+		try (Session session = sessionFactory.getObject().openSession()) {
+			criteriaBuilder = session.getCriteriaBuilder();
+			CriteriaUpdate<Company> updateCriteria = criteriaBuilder.createCriteriaUpdate(Company.class);
+			Root<Company> root = updateCriteria.from(Company.class);
+			updateCriteria.set(FIELD_2, company.getName());
+			updateCriteria.where(criteriaBuilder.equal(root.get(FIELD_1), company.getId()));
+			Transaction transaction = session.beginTransaction();
+			session.createQuery(updateCriteria).executeUpdate();
+			transaction.commit();
+
+		} catch (HibernateException e) {
+			logger.debug("Erreur sur update company : " + e.getMessage());
 		}
 	}
 
 	public Optional<Company> findById(Long id) {
 		Optional<Company> optional = Optional.empty();
-		if (id == null) {
-			return optional;
-		}
+		if (id != null) {
 
-		try (Session session = sessionFactory.getObject().openSession()) {
-
-			criteriaBuilder = session.getCriteriaBuilder();
-			CriteriaQuery<Company> findCriteria = criteriaBuilder.createQuery(Company.class);
-			Root<Company> root = findCriteria.from(Company.class);
-			findCriteria.select(root).where(criteriaBuilder.equal(root.get(FIELD_1), id));
-			Query<Company> query = session.createQuery(findCriteria);
-			optional = query.uniqueResultOptional();
-
-		} catch (HibernateException e) {
-			logger.debug("erreur find company by Id : " + e.getMessage());
+			try (Session session = sessionFactory.getObject().openSession()) {
+				criteriaBuilder = session.getCriteriaBuilder();
+				CriteriaQuery<Company> findCriteria = criteriaBuilder.createQuery(Company.class);
+				Root<Company> root = findCriteria.from(Company.class);
+				findCriteria.select(root).where(criteriaBuilder.equal(root.get(FIELD_1), id));
+				Query<Company> query = session.createQuery(findCriteria);
+				optional = query.uniqueResultOptional();
+			} catch (HibernateException e) {
+				logger.debug("erreur find company by Id : " + e.getMessage());
+			}
 		}
 		return optional;
 	}
@@ -133,14 +136,12 @@ public class CompanyDao {
 		List<Company> companies = new ArrayList<Company>();
 
 		try (Session session = sessionFactory.getObject().openSession()) {
-
 			criteriaBuilder = session.getCriteriaBuilder();
 			CriteriaQuery<Company> findAllCriteria = criteriaBuilder.createQuery(Company.class);
 			Root<Company> rootCompany = findAllCriteria.from(Company.class);
 			findAllCriteria.select(rootCompany);
 			Query<Company> query = session.createQuery(findAllCriteria);
 			companies = query.getResultList();
-
 		} catch (HibernateException e) {
 			logger.debug("Erreur sur find All companies : " + e.getMessage());
 		}

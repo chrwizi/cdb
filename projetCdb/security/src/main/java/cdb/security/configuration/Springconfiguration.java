@@ -34,9 +34,8 @@ public class Springconfiguration extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.sessionManagement().maximumSessions(1);
-		http.authorizeRequests()
-			.antMatchers("/").authenticated()
-			.anyRequest().denyAll().and().formLogin();		
-		logger.info("cdd security Autorization configuration loaded");
+		http.csrf().disable();
+		//http.authorizeRequests().anyRequest().permitAll().and().formLogin();		
+		logger.info("cdb security Autorization configuration loaded");
 	}
 }

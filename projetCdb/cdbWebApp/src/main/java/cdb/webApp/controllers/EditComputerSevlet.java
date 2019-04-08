@@ -104,7 +104,6 @@ public class EditComputerSevlet {
 		try {
 			// functional data validation
 			validator.isValidEditForm(computerName, introducedDate, discontinuedDate, idCompany);
-			// data mapping
 			Computer editingComputer = mapper.mapDto(computerDto);
 			computerService.updateComputer(editingComputer);
 
