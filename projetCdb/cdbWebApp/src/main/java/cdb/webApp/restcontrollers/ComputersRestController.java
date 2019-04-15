@@ -1,13 +1,12 @@
 package cdb.webApp.restcontrollers;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,13 +15,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
 import cdb.binding.ComputerDto;
 import cdb.binding.IMapperCompanyDto;
 import cdb.binding.IMapperComputerDto;
-import cdb.binding.MapperComputer;
 import cdb.core.models.Company;
 import cdb.core.models.Computer;
 import cdb.service.ICompanyServices;
@@ -36,7 +32,7 @@ import cdb.webApp.controllers.IFormEditComputerValidator;
 public class ComputersRestController {
 	// services
 	private IComputerService computerService;
-	private ICompanyServices companyService;
+	private ICompanyServices companyService; 
 	private IMapperComputerDto mapper;
 	private IMapperCompanyDto mapperCompany;
 	//
@@ -54,8 +50,8 @@ public class ComputersRestController {
 	}
 
 	@GetMapping
-	public List<ComputerDto> all() {
-		List<ComputerDto> computersDto = mapper.mapListComputer(computerService.getAll());
+	public List<ComputerDto> all(@Nullable @RequestParam("rowsPage")Integer rowsPage,@Nullable @RequestParam("pageNumber")Integer pageNumber) {
+		List<ComputerDto> computersDto = mapper.mapListComputer(computerService.getAll(rowsPage,pageNumber));
 		return computersDto;
 	}
 
@@ -71,6 +67,13 @@ public class ComputersRestController {
 		}
 		return computerDto;
 	}
+	
+	
+	
+	public String getPage(@PathVariable(name="rowsPage", required=true)Long rowsPage,@RequestParam(name="pageNumber",required=true)Long pageNumber) {
+
+		return "too";
+	}
 
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable Long id) {
@@ -82,33 +85,17 @@ public class ComputersRestController {
 			@RequestParam(name = "introducedDate") String introducedDate,
 			@RequestParam(name = "discontinuedDate") String discontinuedDate,
 			@RequestParam(name = "idCompany", required = true) String strIdCompany) {
-
+		
 		Long idCompany = strIdCompany != null ? Long.valueOf(strIdCompany) : DEFAULT_ID;
 		Optional<Company> company = companyService.findById(idCompany);
+		
 		ComputerDto computerDto = new ComputerDto(DEFAULT_ID, computerName, introducedDate, discontinuedDate,
 				(company.isPresent() ? company.get().getName() : null),
 				company.isPresent() ? company.get().getId() : null);
-		
 		Computer newComputer = mapper.mapDto(computerDto);
 		computerService.createComputer(newComputer);
-		/*
-		try {
-			validator.isValidEditForm(computerName, introducedDate, discontinuedDate, idCompany);
-			computerService.createComputer(newComputer);
-		} catch (ValidatorFormException e) {
-			switch (e.getInvalidityCause()) {
-			case INCONSITENT_DATES:
-				logger.debug("Les dates non conformes ");
-				break;
-			case EMPTY_NAME:
-				logger.debug("Le champs d'�dition du nom du computer est vide");
-				break;
-			default:
-				logger.warn("Erreur lors de la validation du formulaire d'�dition du computeur " + computerName);
-			}
-		}
-		*/
 	}
+	
 
 	@PutMapping("/{id}")
 	public void update(@RequestParam(name = "computerName", required = true) String computerName,
@@ -144,12 +131,10 @@ public class ComputersRestController {
 
 	}
 
+	
+
+	
 	/*
-	public List<ComputerDto> getPage() {
-
-		return null;
-	}
-
 	public List<ComputerDto> search(@RequestParam(name = "research", required = true) String research) {
 		List<ComputerDto> computersDto = new ArrayList<ComputerDto>();
 		List<Computer> computers = new ArrayList<Computer>();

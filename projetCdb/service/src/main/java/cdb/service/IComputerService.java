@@ -33,4 +33,6 @@ public interface IComputerService {
 
 	void delete(long[] idTab);
 
+	List<Computer> getAll(Integer rowsPage, Integer pageNumber);
+
 }

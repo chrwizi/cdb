@@ -52,23 +52,23 @@ public class ComputerDao {
 	private final static String FIELD_4 = "discontinued";
 	private final static String FOREIGN_KEY_COMPANY_ID = "company_id";
 	/* Queries */
-	private final static String CREATE_QUERY = "INSERT INTO " + TABLE + "(" + FIELD_2 + "," + FIELD_3 + "," + FIELD_4
-			+ "," + FOREIGN_KEY_COMPANY_ID + ") " + "VALUES (?,?,?,?)";
-	private final static String DELETE_QUERY = "DELETE FROM " + TABLE + " WHERE " + FIELD_1 + " =?";
-
+/*
 	private final static String UPDATE_QUERY = "UPDATE " + TABLE + " SET " + FIELD_2 + "=?, " + FIELD_3 + "=?, "
 			+ FIELD_4 + "=?, " + FOREIGN_KEY_COMPANY_ID + "=? " + " WHERE " + FIELD_1 + "=?";
 	private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + " WHERE " + FIELD_1 + " = ? ";
 	private final static String GET_PAGE_QUERY = "SELECT * FROM " + TABLE + " LIMIT ?,? ";
 	private final static String SEARCH_COMPUTER_QUERY = "SELECT * FROM " + TABLE + "  WHERE " + FIELD_2
 			+ " LIKE ?  LIMIT ?,?";
+	private final String COUNT_QUERY = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE;
+	
+	*/
 	private final static String SEARCH_COUNT_QUERY = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE + " WHERE "
 			+ FIELD_2 + " LIKE ?";
 	private final static String QUERY_SORT_BY_NAME_ASC = "SELECT * FROM " + TABLE + " ORDER BY " + FIELD_2
 			+ " ASC LIMIT ?,? ";
 	private final static String QUERY_SORT_BY_NAME_DESC = "SELECT * FROM " + TABLE + " ORDER BY " + FIELD_2
 			+ " DESC LIMIT ?,? ";
-	private final String COUNT_QUERY = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE;
+
 	//
 
 	private Logger logger = LoggerFactory.getLogger(ComputerDao.class);
@@ -112,21 +112,12 @@ public class ComputerDao {
 	 * @throws IDCompanyNotFoundException if the Id of company given in parameter
 	 *                                    don't exit in Companies table
 	 */
-	@Transactional
 	public OptionalLong add(Computer computer) throws SQLException {
-		logger.debug("\n\n>> in add Computer <<<\n\n");
 		OptionalLong optionalId = OptionalLong.empty();
 		if (computer != null) {
 
 			try (Session session = sessionFactory.getObject().openSession()) {
-				logger.debug("\n\n>> session ouverte <<<\n\n");
-				Transaction transaction = session.beginTransaction();
-				logger.debug("\n\n >>>> before persist <<<\n\n");
-				session.persist(computer);
-				logger.debug("\n\n>> before commit <<<\n\n");
-				transaction.commit();
-				logger.debug("\n\n>> aftre commit  <<<\n\n");
-				
+				session.save(computer);
 				optionalId = OptionalLong.of(computer.getId());
 			} catch (HibernateException e) {
 				logger.debug("Erreur sur add computer : " + e.getMessage());
@@ -246,7 +237,7 @@ public class ComputerDao {
 		return computers;
 	}
 
-	public List<Computer> findAll(int sizePage, int offset) throws SQLException {
+	public List<Computer> findAll(int head, int offset) throws SQLException {
 		List<Computer> computers = new ArrayList<Computer>();
 
 		try (Session session = sessionFactory.getObject().openSession()) {
@@ -254,7 +245,7 @@ public class ComputerDao {
 			CriteriaQuery<Computer> findAllCriteria = criteriaBuilder.createQuery(Computer.class);
 			root = findAllCriteria.from(Computer.class);
 			findAllCriteria.select(root);
-			computers = session.createQuery(findAllCriteria).setFirstResult(offset).setMaxResults(sizePage)
+			computers = session.createQuery(findAllCriteria).setFirstResult(head).setMaxResults(offset)
 					.getResultList();
 		} catch (HibernateException e) {
 			logger.debug("Erreur sur find All computers : " + e.getMessage());

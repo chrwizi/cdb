@@ -17,7 +17,7 @@ import cdb.persistence.dao.ComputerDao;
  * 
  * @author chris_moyikoulou
  *
- */ 
+ */
 @Service
 public class ComputerService implements IComputerService {
 
@@ -25,9 +25,9 @@ public class ComputerService implements IComputerService {
 	private IPageSelect pageComputers;
 	private int defaultNbComputersByPage = 30;
 	//
-	Logger logger=LoggerFactory.getLogger(getClass());
+	Logger logger = LoggerFactory.getLogger(getClass());
 
-	@Autowired 	
+	@Autowired
 	public ComputerService(ComputerDao computerDao) throws SQLException {
 		this.computerDao = computerDao;
 		int nbComputersInDatabase = computerDao.count();
@@ -36,8 +36,6 @@ public class ComputerService implements IComputerService {
 						: defaultNbComputersByPage));
 		pageComputers.setMaxResult(nbComputersInDatabase);
 	}
-	
-	
 
 	@Override
 	/**
@@ -63,16 +61,40 @@ public class ComputerService implements IComputerService {
 		}
 		return computers;
 	}
-	
-	 
 
-	
 	@Override
-	public List<Computer>getPageSortedByName(int num,boolean asc) throws SQLException {
+	public List<Computer> getAll(Integer rowsPage, Integer pageNumber) {
+		if (rowsPage == null || pageNumber == null)
+			return this.getAll();
+		List<Computer> computers = new ArrayList<Computer>();
+		try {
+			int cursor=0;
+			switch (rowsPage) {
+			case 0:
+				//page number start to 1: get empty page
+				pageNumber=0;
+				break;
+			case 1:
+				//get the first element of database: cursor=0
+				cursor=0;
+				break;
+			default:
+				cursor=rowsPage*pageNumber-1;
+				break;
+			}
+			computers = computerDao.findAll(cursor,pageNumber);
+		} catch (SQLException e) {
+			logger.debug("Erreur sur get all : " + e.getMessage());
+		}
+		return computers;
+	}
+
+	@Override
+	public List<Computer> getPageSortedByName(int num, boolean asc) throws SQLException {
 		pageComputers.setCurrentPage(num);
 		List<Computer> computers = new ArrayList<Computer>();
 		try {
-			computers = computerDao.sortByName(asc,pageComputers.getCursor(), pageComputers.getOffset());
+			computers = computerDao.sortByName(asc, pageComputers.getCursor(), pageComputers.getOffset());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -80,30 +102,33 @@ public class ComputerService implements IComputerService {
 		return computers;
 	}
 
-
 	@Override
-	public List<Computer> sortByCompanyName(boolean asc){
-		List<Computer> sortedComputers=new ArrayList<Computer>();
+	public List<Computer> sortByCompanyName(boolean asc) {
+		List<Computer> sortedComputers = new ArrayList<Computer>();
 		try {
-			sortedComputers=computerDao.sortByName(asc,0,0);
+			sortedComputers = computerDao.sortByName(asc, 0, 0);
 		} catch (SQLException e) {
 			logger.debug("erreur lors du sort by company");
 		}
 		return sortedComputers;
 	}
-	
-	
 
 	@Override
 	public Optional<Computer> finById(Long id) throws SQLException {
 		return this.computerDao.findById(id);
-	} 
+	}
 
 	@Override
 	public void createComputer(Computer computer) {
 		try {
+			logger.debug("Service création");
+			System.out.println("\n>>>>Service création\n\n");
+			System.out.println("computer name service " + computer.getName());
 			computerDao.add(computer);
-		} catch ( SQLException e) {
+			System.out.println("\n\n after add service\n\n ");
+		} catch (SQLException e) {
+			System.out.println("\n\nlooog ==>Erreur dur create computer : " + e.getMessage());
+			logger.debug("Erreur dur create computer : " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -113,6 +138,7 @@ public class ComputerService implements IComputerService {
 		try {
 			computerDao.delete(id);
 		} catch (SQLException e) {
+
 			e.printStackTrace();
 		}
 	}
@@ -136,19 +162,19 @@ public class ComputerService implements IComputerService {
 			e.printStackTrace();
 		}
 	}
- 
+
 	@Override
 	public int count() throws SQLException {
 		return computerDao.count();
 	}
 
 	@Override
-	public List<Computer>getPage(int num) throws SQLException {
+	public List<Computer> getPage(int num) throws SQLException {
 		pageComputers.setCurrentPage(num);
 		List<Computer> computers = new ArrayList<Computer>();
-		
+
 		try {
-			computers = computerDao.findAll( pageComputers.getOffset(),pageComputers.getCursor());
+			computers = computerDao.findAll(pageComputers.getOffset(), pageComputers.getCursor());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -156,13 +182,12 @@ public class ComputerService implements IComputerService {
 		return computers;
 	}
 
-	
 	@Override
 	public List<Computer> getPage(int num, String computerName) throws SQLException {
 		pageComputers.setCurrentPage(num);
-		List<Computer> computers =new ArrayList<Computer>();
+		List<Computer> computers = new ArrayList<Computer>();
 		try {
-			computers = computerDao.search(pageComputers.getOffset(),pageComputers.getCursor(), computerName);
+			computers = computerDao.search(pageComputers.getOffset(), pageComputers.getCursor(), computerName);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -170,8 +195,6 @@ public class ComputerService implements IComputerService {
 		return computers;
 	}
 
-	
-	
 	@Override
 	public int getNbPages() {
 		return pageComputers.getNbPages();
@@ -192,9 +215,5 @@ public class ComputerService implements IComputerService {
 	public void setComputerDao(ComputerDao computerDao) {
 		this.computerDao = computerDao;
 	}
-
-
-
-
 
 }
