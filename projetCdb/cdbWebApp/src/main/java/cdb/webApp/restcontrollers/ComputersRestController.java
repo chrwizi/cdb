@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ import cdb.webApp.controllers.IFormEditComputerValidator;
 
 @RestController
 @RequestMapping("/computers")
+@CrossOrigin("*")
 public class ComputersRestController {
 	// services
 	private IComputerService computerService;
@@ -59,20 +61,12 @@ public class ComputersRestController {
 	public ComputerDto one(@PathVariable Long id) {
 		ComputerDto computerDto = null;
 		try {
-			Optional<Computer> optionalComputer;
-			optionalComputer = computerService.finById(id);
+			Optional<Computer> optionalComputer=computerService.finById(id);
 			computerDto = optionalComputer.isPresent() ? mapper.mapComputer(optionalComputer.get()) : null;
 		} catch (SQLException e) {
 			logger.debug("Erreur sur find one computer : " + e.getMessage());
 		}
 		return computerDto;
-	}
-	
-	
-	
-	public String getPage(@PathVariable(name="rowsPage", required=true)Long rowsPage,@RequestParam(name="pageNumber",required=true)Long pageNumber) {
-
-		return "too";
 	}
 
 	@DeleteMapping("/{id}")
@@ -96,7 +90,6 @@ public class ComputersRestController {
 		computerService.createComputer(newComputer);
 	}
 	
-
 	@PutMapping("/{id}")
 	public void update(@RequestParam(name = "computerName", required = true) String computerName,
 			@RequestParam(name = "idComputer") String strIdComputer,
