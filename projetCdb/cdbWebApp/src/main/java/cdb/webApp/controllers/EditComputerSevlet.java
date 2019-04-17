@@ -28,7 +28,7 @@ import cdb.service.ValidatorFormException;
 
 @Controller
 @RequestMapping("/editComputer")
-//@PreAuthorize("hasAnyRole('PREMIUM')")
+@PreAuthorize("hasAnyRole('PREMIUM')")
 public class EditComputerSevlet {
 	// views
 	private static final String GET_VIEW = "editComputer";

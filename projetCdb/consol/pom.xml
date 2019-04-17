@@ -19,7 +19,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>5.1.5.RELEASE</spring.version>
-	</properties>
+	</properties> 
 
 	<dependencies>
 		<dependency>

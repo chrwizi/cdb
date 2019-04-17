@@ -6,15 +6,16 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<spring.security.jwt.version>1.0.10.RELEASE</spring.security.jwt.version>
 	</properties>
 
 
-	<name>security</name> 
+	<name>security</name>
 	<groupId>projetCdb</groupId>
 	<artifactId>security</artifactId>
 	<version>0.0.1</version>
 
-	<parent> 
+	<parent>
 		<artifactId>projetCdb</artifactId>
 		<groupId>projetCdb</groupId>
 		<version>0.0.1</version>
@@ -54,6 +55,14 @@
 			<artifactId>spring-security-core</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-jwt -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-jwt</artifactId>
+			<version>${spring.security.jwt.version}</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
 		<dependency>
 			<groupId>javax.servlet</groupId>

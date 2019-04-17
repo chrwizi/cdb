@@ -121,13 +121,8 @@ public class ComputerService implements IComputerService {
 	@Override
 	public void createComputer(Computer computer) {
 		try {
-			logger.debug("Service création");
-			System.out.println("\n>>>>Service création\n\n");
-			System.out.println("computer name service " + computer.getName());
 			computerDao.add(computer);
-			System.out.println("\n\n after add service\n\n ");
 		} catch (SQLException e) {
-			System.out.println("\n\nlooog ==>Erreur dur create computer : " + e.getMessage());
 			logger.debug("Erreur dur create computer : " + e.getMessage());
 			e.printStackTrace();
 		}
@@ -138,8 +133,7 @@ public class ComputerService implements IComputerService {
 		try {
 			computerDao.delete(id);
 		} catch (SQLException e) {
-
-			e.printStackTrace();
+			logger.debug("Erreur sur le delete Computer : "+e.getMessage());
 		}
 	}
 
@@ -159,7 +153,7 @@ public class ComputerService implements IComputerService {
 		try {
 			computerDao.update(computer);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.debug("Erreur sur le update Computer : "+e.getMessage());
 		}
 	}
 

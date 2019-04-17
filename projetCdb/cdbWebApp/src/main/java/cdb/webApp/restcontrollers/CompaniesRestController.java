@@ -1,15 +1,11 @@
 package cdb.webApp.restcontrollers;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import cdb.binding.CompanyDto;
@@ -17,14 +13,11 @@ import cdb.binding.IMapperCompanyDto;
 import cdb.core.models.Company;
 import cdb.service.ICompanyServices;
 
-@RestController
-@RequestMapping("/companies")
-@CrossOrigin("*")
+@RestController("/api/companies")
+@CrossOrigin
 public class CompaniesRestController {
 	private ICompanyServices companyService; 
 	private IMapperCompanyDto mapperCompany;
-	
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public CompaniesRestController(ICompanyServices companyService, IMapperCompanyDto mapperCompany) {
 		this.companyService = companyService;

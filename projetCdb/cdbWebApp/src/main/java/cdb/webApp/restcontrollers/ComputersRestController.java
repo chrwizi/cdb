@@ -29,8 +29,8 @@ import cdb.webApp.controllers.FormEditComputerValidator;
 import cdb.webApp.controllers.IFormEditComputerValidator;
 
 @RestController
-@RequestMapping("/computers")
-@CrossOrigin("*")
+@RequestMapping("api/computers")
+@CrossOrigin
 public class ComputersRestController {
 	// services
 	private IComputerService computerService;
@@ -50,8 +50,10 @@ public class ComputersRestController {
 		this.mapperCompany = mapperCompany;
 		this.validator = new FormEditComputerValidator();
 	}
+	
+	
 
-	@GetMapping
+	@GetMapping  
 	public List<ComputerDto> all(@Nullable @RequestParam("rowsPage")Integer rowsPage,@Nullable @RequestParam("pageNumber")Integer pageNumber) {
 		List<ComputerDto> computersDto = mapper.mapListComputer(computerService.getAll(rowsPage,pageNumber));
 		return computersDto;

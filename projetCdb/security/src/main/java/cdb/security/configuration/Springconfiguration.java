@@ -8,15 +8,16 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 import cdb.security.service.BCryptManagerUtil;
 import cdb.security.service.ICustomUserDetailsService;
 
 @Configuration
-@ComponentScan(basePackages="{cdb.persistence,cdb.security}")
+@ComponentScan(basePackages = "{cdb.persistence,cdb.security}")
 @EnableWebSecurity
-public class Springconfiguration extends WebSecurityConfigurerAdapter{
-	Logger logger=LoggerFactory.getLogger(getClass());
+public class Springconfiguration extends WebSecurityConfigurerAdapter {
+	Logger logger = LoggerFactory.getLogger(getClass());
 	private ICustomUserDetailsService userDetailsService;
 
 	public Springconfiguration(ICustomUserDetailsService userDetailsService) {
@@ -29,13 +30,13 @@ public class Springconfiguration extends WebSecurityConfigurerAdapter{
 		auth.userDetailsService(userDetailsService).passwordEncoder(BCryptManagerUtil.passwordencoder());
 		logger.info("cdb security passwordencoder setting done");
 	}
- 
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.sessionManagement().maximumSessions(1);
-		http.csrf().disable();
-		//http.authorizeRequests().anyRequest().permitAll().and().formLogin();		
+		http.sessionManagement().maximumSessions(5);
+		http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.authorizeRequests().antMatchers("/editComputer/**").authenticated().and().formLogin();
 		logger.info("cdb security Autorization configuration loaded");
 	}
+
 }

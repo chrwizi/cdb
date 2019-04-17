@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,8 @@ import cdb.binding.MapperComputer;
 import cdb.core.models.Computer;
 import cdb.service.IComputerService;
 
-@RestController
+
+@Controller
 @RequestMapping("/")
 public class Homeservlet {
 
@@ -28,12 +30,16 @@ public class Homeservlet {
 
 	private IMapperComputerDto mapper = new MapperComputer();
 	private boolean sortTable = false;
-	//private boolean ascSort = false;
+	
+	public Homeservlet(IComputerService computerService) {
+		this.computerService = computerService;
+	}
+
+	
 
 	@GetMapping("")
-	@ResponseBody
 	//@PreAuthorize("hasAnyRole('ADMIN')")
-	public List<ComputerDto> home(Model model) {
+	public String home(Model model) {
 		List<ComputerDto> computersDto=new ArrayList<ComputerDto>();
 		boolean sortPage=false;
 		try {
@@ -55,9 +61,9 @@ public class Homeservlet {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return computersDto;
-		//return "dashboard";
+		return "dashboard";
 	}
+
 
 	@RequestMapping("/sort")
 	public String sort(@RequestParam(name = "asc", required = true) String asc,
@@ -80,8 +86,7 @@ public class Homeservlet {
 	}
 
 	@PostMapping("search")
-	//public List<ComputerDto>searchComputer(@RequestParam(name = "research", required = true) String research, Model model) {
-	public String searchComputer(@RequestParam(name = "research", required = true) String research, Model model) {
+	public void searchComputer(@RequestParam(name = "research", required = true) String research, Model model) {
 		
 		List<ComputerDto> computersDto = new ArrayList<ComputerDto>();
 		List<Computer> computers = new ArrayList<Computer>();
@@ -100,8 +105,6 @@ public class Homeservlet {
 		model.addAttribute("computers", computersDto);
 		model.addAttribute("nbComputers", computersDto.size());
 		
-		//return view;
-		return "research";
 	}
 
 }

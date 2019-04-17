@@ -9,6 +9,7 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -16,6 +17,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 public class CdbWebConfig implements WebApplicationInitializer, WebMvcConfigurer {
+ 
+	public final String[] CROS_ORIGIN_ALLOWED_METHODS = { "GET", "POST" };
 
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
@@ -31,12 +34,9 @@ public class CdbWebConfig implements WebApplicationInitializer, WebMvcConfigurer
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		WebMvcConfigurer.super.addResourceHandlers(registry);
-		registry
-        .addResourceHandler("/resources/**")
-        .addResourceLocations("classpath:resources/"); 
+		registry.addResourceHandler("/resources/**").addResourceLocations("classpath:resources/");
 	}
-	
-	
-	
 
+
+	
 }

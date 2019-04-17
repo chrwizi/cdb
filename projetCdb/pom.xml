@@ -7,19 +7,19 @@
 	<!-- PROPERTIES -->
 	<properties>
 		<!-- dependencies version -->
-<!-- 		<projetcdb.version>0.0.1</projetcdb.version> -->
+		<!-- <projetcdb.version>0.0.1</projetcdb.version> -->
 		<spring.version>5.1.4.RELEASE</spring.version>
 		<hikaricp.version>3.3.1</hikaricp.version>
 		<hibernate.core.version>5.2.12.Final</hibernate.core.version>
 		<javax.servlet.api.version>4.0.0</javax.servlet.api.version>
-		
+
 		<cdb.core.version>0.0.1</cdb.core.version>
 		<cdb.persistence.version>0.0.1</cdb.persistence.version>
 		<cdb.service.version>0.0.1</cdb.service.version>
 		<cdb.binding.version>0.0.1</cdb.binding.version>
 		<cdb.security.version>0.0.1</cdb.security.version>
 		<!-- plugin's version -->
- 
+
 	</properties>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -47,7 +47,6 @@
 
 	<!-- DEPENDENCIES -->
 	<dependencies>
-
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
 			<groupId>junit</groupId>
