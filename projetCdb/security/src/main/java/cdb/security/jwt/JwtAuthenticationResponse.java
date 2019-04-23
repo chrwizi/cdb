@@ -1,4 +1,4 @@
-package jwt;
+package cdb.security.jwt;
 
 public class JwtAuthenticationResponse {
 	private String accessToken;

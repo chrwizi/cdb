@@ -1,19 +1,22 @@
-package jwt;
+package cdb.security.jwt;
 
 import java.util.Date;
+
+import javax.servlet.ServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import cdb.core.models.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
-
 
 @Service
 public class TokenProvider {
@@ -23,14 +26,20 @@ public class TokenProvider {
 	private int expirationTime = 604800000;
 
 	public String generateToken(Authentication authentication) {
+		User user=(User)authentication.getPrincipal();
 		Date authenticatedDate = new Date();
 		Date expiryDate = new Date(authenticatedDate.getTime() + expirationTime);
 		System.out.println("\n\n>>>  generateToken     <<<<");
-		String token= Jwts.builder().setSubject(Long.toString(1)).setIssuedAt(authenticatedDate).setExpiration(expiryDate)
-				.signWith(SignatureAlgorithm.HS512, secret).compact();
-		
-		System.out.println("\n\n >> generated token: "+token);
+		String token = Jwts.builder().setSubject(Long.toString(user.getUserID())).setIssuedAt(authenticatedDate)
+				.setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, secret).compact();
+
+		System.out.println("\n\n >> generated token: " + token);
 		return token;
+	}
+
+	public Long getUserIdFromJWT(String token) {
+		Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+		return Long.parseLong(claims.getSubject());
 	}
 
 	public boolean validateToken(String authToken) {
@@ -52,8 +61,14 @@ public class TokenProvider {
 		return false;
 	}
 
-	
-	
+	public String resolveToken(ServletRequest request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Authentication getAuthentication(String token) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
-
-

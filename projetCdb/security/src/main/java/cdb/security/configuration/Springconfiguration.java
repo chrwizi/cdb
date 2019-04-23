@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,9 +14,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import cdb.security.jwt.JwtAuthenticationEntryPoint;
+import cdb.security.jwt.JwtAuthenticationFilter;
 import cdb.security.service.BCryptManagerUtil;
 import cdb.security.service.ICustomUserDetailsService;
-import jwt.JwtAuthenticationFilter;
 
 @Configuration
 @ComponentScan(basePackages = "{cdb.persistence,cdb.security}")
@@ -23,17 +26,15 @@ public class Springconfiguration extends WebSecurityConfigurerAdapter {
 
 	private ICustomUserDetailsService userDetailsService;
 	private JwtAuthenticationFilter authenticationFilter;
+	private JwtAuthenticationEntryPoint unautAuthenticationEntryPoint;
 
 	Logger logger = LoggerFactory.getLogger(getClass());
 
 	public Springconfiguration(ICustomUserDetailsService userDetailsService,
-			JwtAuthenticationFilter authenticationFilter) {
+			JwtAuthenticationFilter authenticationFilter, JwtAuthenticationEntryPoint unautAuthenticationEntryPoint) {
 		this.userDetailsService = userDetailsService;
 		this.authenticationFilter = authenticationFilter;
-	}
-
-	public Springconfiguration(ICustomUserDetailsService userDetailsService) {
-		this.userDetailsService = userDetailsService;
+		this.unautAuthenticationEntryPoint = unautAuthenticationEntryPoint;
 		logger.info("cdb security config loading");
 	}
 
@@ -43,11 +44,21 @@ public class Springconfiguration extends WebSecurityConfigurerAdapter {
 		logger.info("cdb security passwordencoder setting done");
 	}
 
+	@Bean(BeanIds.AUTHENTICATION_MANAGER)
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
+	}
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.sessionManagement().maximumSessions(5);
-		http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.authorizeRequests().antMatchers("/editComputer/**").authenticated();
+		http.csrf().disable().exceptionHandling().authenticationEntryPoint(this.unautAuthenticationEntryPoint).and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+		http.authorizeRequests().antMatchers("/api/users/**").permitAll().antMatchers("/editComputer/**")
+				.authenticated();
+
 		http.addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		logger.info("cdb security Autorization configuration loaded");
 	}

@@ -15,21 +15,24 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
 	private UserDao userDao;
 
 	public CustomUserDetailsService(UserDao userDao) {
-		this.userDao = userDao; 
+		this.userDao = userDao;
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
 		Optional<User> optionalUser = userDao.findByUsername(username);
-		if (optionalUser.isPresent()) {
-			return new CustomUserDetails(optionalUser.get());
-		} 
-		return null;
+		if (!optionalUser.isPresent()) {
+			throw new UsernameNotFoundException("Utilisateur non trouvé ");
+		}
+		return new CustomUserDetails(optionalUser.get());
 	}
 
 	public UserDetails loadUserById(Long id) {
 		Optional<User> optionalUser = userDao.findById(id);
-		return (optionalUser.isPresent() ? new CustomUserDetails(optionalUser.get()) : null);
+		if (!optionalUser.isPresent()) {
+			throw new UsernameNotFoundException("Utilisateur non trouvé ");
+		}
+		return new CustomUserDetails(optionalUser.get());
 	}
 }
