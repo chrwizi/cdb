@@ -26,26 +26,30 @@ public class DataSourceConfiguration {
 
 	@Bean("datasource")
 	public DataSource dataSource() {
+		
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setUrl(properties.getUrl());
 		dataSource.setUsername(properties.getUsername());
 		dataSource.setPassword(properties.getPassword());
-		//dataSource.setDriverClassName(properties.getDriver());
+			
 		return dataSource;
 	}
 
 	@Bean
-	public LocalSessionFactoryBean sessionFactory() {
+	public LocalSessionFactoryBean sessionFactory() {  
+		
 		LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
 		sessionFactoryBean.setDataSource(dataSource());
 		sessionFactoryBean.setPackagesToScan(PACKAGES_TO_SCAN);
 		sessionFactoryBean.setHibernateProperties(hibernateProperties());
+		
 		return sessionFactoryBean;
 	}
 
 	@Bean
 	@Autowired
 	public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
+		
 		HibernateTransactionManager txManager = new HibernateTransactionManager();
 		txManager.setSessionFactory(sessionFactory);
 
@@ -58,6 +62,7 @@ public class DataSourceConfiguration {
 	}
 
 	Properties hibernateProperties() {
+		
 		return new Properties() {
 			private static final long serialVersionUID = 1L;
 			{
@@ -66,6 +71,7 @@ public class DataSourceConfiguration {
 				setProperty("hibernate.hbm2ddl.auto", "update");
 			}
 		};
+		
 	}
 
 

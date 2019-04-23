@@ -24,6 +24,7 @@ public class UserDao {
 	private Root<User> root;
 	//
 	private final String FIELD_USER_NAME = "username";
+	private final String FIELD_ID="userID";
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	public UserDao(LocalSessionFactoryBean sessionFactory) {
@@ -32,31 +33,53 @@ public class UserDao {
 
 	public Optional<User> findByUsername(String username) {
 		Optional<User> optionalUser = Optional.empty();
-		if (username == null) {
-			return optionalUser;
-		}
+		if (username != null) {
 
-		try (Session session = sessionFactory.getObject().openSession()) {
-			criteriaBuilder = session.getCriteriaBuilder();
-			CriteriaQuery<User> findCriteria = criteriaBuilder.createQuery(User.class);
-			root = findCriteria.from(User.class);
-			findCriteria.select(root).where(criteriaBuilder.equal(root.get(FIELD_USER_NAME), username));
-			optionalUser = session.createQuery(findCriteria).uniqueResultOptional();
-		} catch (HibernateException e) {
-			logger.debug("Erreur sur find user by username: " + e.getMessage());
-		}
+			try (Session session = sessionFactory.getObject().openSession()) {
 
+				criteriaBuilder = session.getCriteriaBuilder();
+				CriteriaQuery<User> findCriteria = criteriaBuilder.createQuery(User.class);
+				root = findCriteria.from(User.class);
+				findCriteria.select(root).where(criteriaBuilder.equal(root.get(FIELD_USER_NAME), username));
+				
+				optionalUser = session.createQuery(findCriteria).uniqueResultOptional();
+				
+			} catch (HibernateException e) {
+				logger.debug("Erreur sur find user by username: " + e.getMessage());
+			}
+		}
+		return optionalUser;
+	}
+
+	public Optional<User> findById(Long id) {
+		Optional<User> optionalUser = Optional.empty();
+		
+		if (id != null) {
+			
+			try (Session session = sessionFactory.getObject().openSession()) {
+				
+				criteriaBuilder = session.getCriteriaBuilder();
+				CriteriaQuery<User> findCriteria = criteriaBuilder.createQuery(User.class);
+				root = findCriteria.from(User.class);
+				findCriteria.select(root).where(criteriaBuilder.equal(root.get(FIELD_ID), id));
+				
+				optionalUser = session.createQuery(findCriteria).uniqueResultOptional();
+			}
+		}
 		return optionalUser;
 	}
 
 	public OptionalLong createUser(User user) {
 		OptionalLong optionalId = OptionalLong.empty();
+		
 		if (user != null) {
 			try (Session session = sessionFactory.getObject().openSession()) {
+				
 				Transaction transaction = session.beginTransaction();
 				session.persist(user);
 				transaction.commit();
 				optionalId = OptionalLong.of(user.getUserID());
+				
 			} catch (HibernateException e) {
 				logger.debug("Erreur sur create User : " + e.getMessage());
 			}

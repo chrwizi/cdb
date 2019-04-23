@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>projetCdb</groupId>
 		<artifactId>projetCdb</artifactId>
-		<version>0.0.1</version>
+		<version>0.0.1</version> 
 	</parent>
 
 
@@ -21,7 +21,7 @@
 	<organization>
 		<name>Pivotal Software, Inc.</name>
 		<url>http://www.spring.io</url>
-	</organization>
+	</organization> 
 
 
 	<properties>

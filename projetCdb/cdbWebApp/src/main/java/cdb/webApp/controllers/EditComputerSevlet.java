@@ -28,7 +28,7 @@ import cdb.service.ValidatorFormException;
 
 @Controller
 @RequestMapping("/editComputer")
-@PreAuthorize("hasAnyRole('PREMIUM')")
+
 public class EditComputerSevlet {
 	// views
 	private static final String GET_VIEW = "editComputer";
@@ -57,6 +57,7 @@ public class EditComputerSevlet {
 
 
 	@GetMapping
+	@PreAuthorize("hasAnyRole('PREMIUM')")
 	public String getComputerEditForm(@RequestParam(name = "idComputer", required = true) String idComputer,
 			Model model) {
 		Long id = Long.parseLong(idComputer);

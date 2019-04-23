@@ -83,7 +83,6 @@ public class CompanyDao {
 			} catch (HibernateException e) {
 				logger.debug("Erreur sur add computer : " + e.getMessage());
 			}
-
 		}
 		return optionalId;
 	}

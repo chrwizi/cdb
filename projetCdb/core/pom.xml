@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>projetCdb</groupId> 
 		<artifactId>projetCdb</artifactId>
-		<version>0.0.1</version>
+		<version>0.0.1</version> 
 	</parent>
 
 

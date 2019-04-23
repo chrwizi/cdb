@@ -20,8 +20,6 @@
 	<groupId>projetCdb</groupId>
 	<version>0.0.1</version>
 
-
-
 	<dependencies>
 
 		<dependency>

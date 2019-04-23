@@ -1,6 +1,7 @@
 package cdb.webApp.restcontrollers;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -75,22 +77,38 @@ public class ComputersRestController {
 	public void delete(@PathVariable Long id) {
 		computerService.delete(id);
 	}
-
+	
+	
 	@PostMapping
-	public void create(@RequestParam(name = "computerName", required = true) String computerName,
-			@RequestParam(name = "introducedDate") String introducedDate,
-			@RequestParam(name = "discontinuedDate") String discontinuedDate,
-			@RequestParam(name = "idCompany", required = true) String strIdCompany) {
-		
-		Long idCompany = strIdCompany != null ? Long.valueOf(strIdCompany) : DEFAULT_ID;
-		Optional<Company> company = companyService.findById(idCompany);
-		
-		ComputerDto computerDto = new ComputerDto(DEFAULT_ID, computerName, introducedDate, discontinuedDate,
-				(company.isPresent() ? company.get().getName() : null),
-				company.isPresent() ? company.get().getId() : null);
+	public void create(@RequestBody ComputerDto computerDto) {
 		Computer newComputer = mapper.mapDto(computerDto);
+		//TODO vérification technique et fonctionnelle du Dto
 		computerService.createComputer(newComputer);
 	}
+	
+
+	/*
+	 * @PostMapping public void create(
+	 * 
+	 * @RequestParam(name = "computerName", required = true) String computerName,
+	 * 
+	 * @RequestParam(name = "introducedDate") String introducedDate,
+	 * 
+	 * @RequestParam(name = "discontinuedDate") String discontinuedDate,
+	 * 
+	 * @RequestParam(name = "idCompany", required = true) String strIdCompany
+	 * 
+	 * ) {
+	 * 
+	 * Long idCompany = strIdCompany != null ? Long.valueOf(strIdCompany) :
+	 * DEFAULT_ID; Optional<Company> company = companyService.findById(idCompany);
+	 * 
+	 * ComputerDto computerDto = new ComputerDto(DEFAULT_ID, computerName,
+	 * introducedDate, discontinuedDate, (company.isPresent() ?
+	 * company.get().getName() : null), company.isPresent() ? company.get().getId()
+	 * : null); Computer newComputer = mapper.mapDto(computerDto);
+	 * computerService.createComputer(newComputer); }
+	 */
 	
 	@PutMapping("/{id}")
 	public void update(@RequestParam(name = "computerName", required = true) String computerName,
@@ -123,25 +141,22 @@ public class ComputersRestController {
 				break;
 			}
 		}
-
 	}
-
+		
 	
-
-	
-	/*
 	public List<ComputerDto> search(@RequestParam(name = "research", required = true) String research) {
 		List<ComputerDto> computersDto = new ArrayList<ComputerDto>();
 		List<Computer> computers = new ArrayList<Computer>();
-
+		
 		try {
 			computers = computerService.getPage(1, research);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
 		computersDto = (ArrayList<ComputerDto>) mapper.mapListComputer(computers);
 		return computersDto;
 	}
-	*/
+	
 
 }
