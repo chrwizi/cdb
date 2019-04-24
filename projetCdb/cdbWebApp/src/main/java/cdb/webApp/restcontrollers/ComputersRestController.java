@@ -32,9 +32,7 @@ import cdb.webApp.controllers.IFormEditComputerValidator;
 
 @RestController
 @RequestMapping("api/computers")
-@CrossOrigin
 public class ComputersRestController {
-	// services
 	private IComputerService computerService;
 	private ICompanyServices companyService;
 	private IMapperComputerDto mapper;
@@ -54,6 +52,7 @@ public class ComputersRestController {
 	}
 
 	@GetMapping
+	@CrossOrigin
 	public List<ComputerDto> all(@Nullable @RequestParam("rowsPage") Integer rowsPage,
 			@Nullable @RequestParam("pageNumber") Integer pageNumber) {
 		List<ComputerDto> computersDto = mapper.mapListComputer(computerService.getAll(rowsPage, pageNumber));
@@ -61,6 +60,7 @@ public class ComputersRestController {
 	}
 
 	@GetMapping("/{id}")
+	@CrossOrigin
 	public ComputerDto one(@PathVariable Long id) {
 		ComputerDto computerDto = null;
 		try {
@@ -73,11 +73,13 @@ public class ComputersRestController {
 	}
 
 	@DeleteMapping("/{id}")
+	@CrossOrigin
 	public void delete(@PathVariable Long id) {
 		computerService.delete(id);
 	}
 
 	@PostMapping
+	@CrossOrigin
 	public void create(@RequestBody ComputerDto computerDto) {
 		Computer newComputer = mapper.mapDto(computerDto);
 		// TODO vérification technique et fonctionnelle du Dto
@@ -85,6 +87,7 @@ public class ComputersRestController {
 	}
 
 	@PutMapping("/{id}")
+	@CrossOrigin
 	public void update(@RequestBody ComputerDto computerDto) {
 		try {
 			validator.isValidEditForm(computerDto.getName(), computerDto.getIntroduced(), computerDto.getDiscontinued(),
@@ -108,37 +111,6 @@ public class ComputersRestController {
 		}
 	}
 
-	/*
-	 * @PutMapping("/{id}") public void update(@RequestParam(name = "computerName",
-	 * required = true) String computerName,
-	 * 
-	 * @RequestParam(name = "idComputer") String strIdComputer,
-	 * 
-	 * @RequestParam(name = "introducedDate") String introducedDate,
-	 * 
-	 * @RequestParam(name = "discontinuedDate") String discontinuedDate,
-	 * 
-	 * @RequestParam(name = "idCompany", required = true) String strIdCompany) {
-	 * Long idCompany = Long.parseLong(strIdCompany); Long idComputer =
-	 * Long.parseLong(strIdComputer); Optional<Company> company =
-	 * companyService.findById(idCompany); ComputerDto computerDto = new
-	 * ComputerDto(idComputer, computerName, introducedDate, discontinuedDate,
-	 * (company.isPresent() ? company.get().getName() : null), company.isPresent() ?
-	 * company.get().getId() : null);
-	 * 
-	 * try { validator.isValidEditForm(computerName, introducedDate,
-	 * discontinuedDate, idCompany); Computer editingComputer =
-	 * mapper.mapDto(computerDto); computerService.updateComputer(editingComputer);
-	 * 
-	 * } catch (ValidatorFormException e) { switch (e.getInvalidityCause()) { case
-	 * INCONSITENT_DATES: logger.debug("Les dates non conformes : " +
-	 * e.getMessage()); break; case EMPTY_NAME:
-	 * logger.debug("Le champs d'Ã©dition du nom du computer est vide : " +
-	 * e.getMessage()); break; default: logger.
-	 * warn("Erreur lors de la validation du formulaire d'ï¿½dition du computeur : "
-	 * + e.getMessage()); break; } } }
-	 * 
-	 */
 	public List<ComputerDto> search(@RequestParam(name = "research", required = true) String research) {
 		List<ComputerDto> computersDto = new ArrayList<ComputerDto>();
 		List<Computer> computers = new ArrayList<Computer>();

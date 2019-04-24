@@ -16,7 +16,6 @@ import cdb.service.ICompanyServices;
 
 @RestController
 @RequestMapping("api/companies")
-@CrossOrigin
 public class CompaniesRestController {
 	private ICompanyServices companyService; 
 	private IMapperCompanyDto mapperCompany;
@@ -28,6 +27,7 @@ public class CompaniesRestController {
 	
 	
 	@GetMapping
+	@CrossOrigin
 	public List<CompanyDto> all(){
 		System.out.println("In all ");
 		List<CompanyDto> companiesDto=mapperCompany.mapListCompany(companyService.getAll());
@@ -36,6 +36,7 @@ public class CompaniesRestController {
 	
 	
 	@GetMapping("/{id}")
+	@CrossOrigin
 	public CompanyDto one(@PathVariable Long id) {
 		System.out.println("In one ");
 		CompanyDto dto=null;
@@ -45,7 +46,7 @@ public class CompaniesRestController {
 	}
 	
 	
-	
+	@CrossOrigin
 	@GetMapping("cred")
 	public String testToken(){
 		return "Good Credentials";

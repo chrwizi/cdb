@@ -20,7 +20,7 @@ import cdb.webApp.validator.LoginForm;
 
 @RestController
 @RequestMapping("api/users")
-@CrossOrigin
+
 public class User {
 	
 	private UserService userService;
@@ -35,26 +35,14 @@ public class User {
 	
 	
 	@GetMapping
+	@CrossOrigin
 	public String trest() {
 		return "hello ";
 	}
-
-/*
-	@PostMapping("signup")
-	public RedirectView postrForm(@RequestParam(name = "username", required = false) String username,
-			@RequestParam(name = "password", required = true) String password, String idRole) {
-		Long id = Long.parseLong(idRole);
-		
-		
-		Role role = userService.findRoleById(id);
-		userService.createUser(username, password, role);
-		
-
-		return new RedirectView("/projetCdb");
-	}
-	*/
 	
+
 	@PostMapping("/auth")
+	@CrossOrigin
 	public String signIn(@RequestBody LoginForm loginForm) {	
 		System.out.println("\n\n >> In SignIn EndPoint <<<\n\n");
 		System.out.println("username : "+loginForm.getUsername());
