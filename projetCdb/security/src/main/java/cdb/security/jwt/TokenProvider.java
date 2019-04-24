@@ -42,8 +42,9 @@ public class TokenProvider {
 	public boolean validateToken(String authToken) {
 		System.out.println("\n\n>>> validateToken  <<<<\\n\\n");
 		try {
-			System.out.println("\n\n>>> validateToken Try <<<<\n\n");
+			System.out.println("\n>>> validateToken Try <<<<\n\n");
 			Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken);
+			System.out.println("\n>> validation token return True");
 			return true;
 		} catch (SignatureException ex) {
 			logger.error("Invalid JWT signature");
@@ -56,17 +57,9 @@ public class TokenProvider {
 		} catch (IllegalArgumentException ex) {
 			logger.error("JWT claims string is empty.");
 		}
+		System.out.println("\n>> validation token return False ");
 		return false;
 	}
-
-	public String resolveToken(ServletRequest request) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Authentication getAuthentication(String token) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
+
+

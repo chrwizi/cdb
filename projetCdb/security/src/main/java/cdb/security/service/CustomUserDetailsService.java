@@ -28,11 +28,14 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
 		return new CustomUserDetails(optionalUser.get());
 	}
 
-	public UserDetails loadUserById(Long id) {
+	public CustomUserDetails loadUserById(Long id) {
 		Optional<User> optionalUser = userDao.findById(id);
 		if (!optionalUser.isPresent()) {
 			throw new UsernameNotFoundException("Utilisateur non trouvé ");
 		}
+		System.out.println("In Load user : "+optionalUser.get().getUsername());
 		return new CustomUserDetails(optionalUser.get());
 	}
+	
+	
 }

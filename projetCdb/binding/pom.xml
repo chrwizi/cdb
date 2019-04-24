@@ -9,7 +9,7 @@
 		<artifactId>projetCdb</artifactId> 
 		<version>0.0.1</version>
 	</parent>
-
+ 
 
 	<artifactId>binding</artifactId>
 	<groupId>projetCdb</groupId>

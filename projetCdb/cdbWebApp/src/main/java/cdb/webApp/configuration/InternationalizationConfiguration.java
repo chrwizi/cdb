@@ -14,11 +14,8 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 @Configuration
 @EnableWebMvc
 public class InternationalizationConfiguration implements WebMvcConfigurer {
-	
-	
-	
+
 	public InternationalizationConfiguration() {
-		System.out.println("\n\n>>>> Config internation <<<<<<<\n\n");
 	}
 
 	@Bean
@@ -48,7 +45,6 @@ public class InternationalizationConfiguration implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(localInterceptor());
-
 	}
 
 }

@@ -14,7 +14,7 @@
 	<artifactId>core</artifactId>
 	<groupId>projetCdb</groupId>
 	<version>0.0.1</version>
-
+ 
 
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>

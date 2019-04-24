@@ -30,9 +30,9 @@ public class MapperComputer implements IMapperComputerDto {
 		if (computer == null)
 			return null;
 		return new ComputerDto(computer.getId(), computer.getName(),
-				(computer.getIntroduced() != null) ? computer.getIntroduced().toString() : "unknow",
-				(computer.getDiscontinued() != null) ? computer.getDiscontinued().toString() : "unknow",
-				(computer.getCompany() != null) ? computer.getCompany().getName() : "unknown",
+				(computer.getIntroduced() != null) ? computer.getIntroduced().toString() : null,
+				(computer.getDiscontinued() != null) ? computer.getDiscontinued().toString() : null,
+				(computer.getCompany() != null) ? computer.getCompany().getName() : null,
 				(computer.getCompany() != null) ? computer.getCompany().getId() : 0L);
 	}
 
