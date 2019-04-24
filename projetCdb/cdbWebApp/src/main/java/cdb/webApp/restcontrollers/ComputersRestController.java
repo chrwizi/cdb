@@ -36,7 +36,7 @@ import cdb.webApp.controllers.IFormEditComputerValidator;
 public class ComputersRestController {
 	// services
 	private IComputerService computerService;
-	private ICompanyServices companyService; 
+	private ICompanyServices companyService;
 	private IMapperComputerDto mapper;
 	private IMapperCompanyDto mapperCompany;
 	//
@@ -52,12 +52,11 @@ public class ComputersRestController {
 		this.mapperCompany = mapperCompany;
 		this.validator = new FormEditComputerValidator();
 	}
-	
-	
 
-	@GetMapping  
-	public List<ComputerDto> all(@Nullable @RequestParam("rowsPage")Integer rowsPage,@Nullable @RequestParam("pageNumber")Integer pageNumber) {
-		List<ComputerDto> computersDto = mapper.mapListComputer(computerService.getAll(rowsPage,pageNumber));
+	@GetMapping
+	public List<ComputerDto> all(@Nullable @RequestParam("rowsPage") Integer rowsPage,
+			@Nullable @RequestParam("pageNumber") Integer pageNumber) {
+		List<ComputerDto> computersDto = mapper.mapListComputer(computerService.getAll(rowsPage, pageNumber));
 		return computersDto;
 	}
 
@@ -65,7 +64,7 @@ public class ComputersRestController {
 	public ComputerDto one(@PathVariable Long id) {
 		ComputerDto computerDto = null;
 		try {
-			Optional<Computer> optionalComputer=computerService.finById(id);
+			Optional<Computer> optionalComputer = computerService.finById(id);
 			computerDto = optionalComputer.isPresent() ? mapper.mapComputer(optionalComputer.get()) : null;
 		} catch (SQLException e) {
 			logger.debug("Erreur sur find one computer : " + e.getMessage());
@@ -77,55 +76,21 @@ public class ComputersRestController {
 	public void delete(@PathVariable Long id) {
 		computerService.delete(id);
 	}
-	
-	
+
 	@PostMapping
 	public void create(@RequestBody ComputerDto computerDto) {
 		Computer newComputer = mapper.mapDto(computerDto);
-		//TODO vérification technique et fonctionnelle du Dto
+		// TODO vérification technique et fonctionnelle du Dto
 		computerService.createComputer(newComputer);
 	}
-	
 
-	/*
-	 * @PostMapping public void create(
-	 * 
-	 * @RequestParam(name = "computerName", required = true) String computerName,
-	 * 
-	 * @RequestParam(name = "introducedDate") String introducedDate,
-	 * 
-	 * @RequestParam(name = "discontinuedDate") String discontinuedDate,
-	 * 
-	 * @RequestParam(name = "idCompany", required = true) String strIdCompany
-	 * 
-	 * ) {
-	 * 
-	 * Long idCompany = strIdCompany != null ? Long.valueOf(strIdCompany) :
-	 * DEFAULT_ID; Optional<Company> company = companyService.findById(idCompany);
-	 * 
-	 * ComputerDto computerDto = new ComputerDto(DEFAULT_ID, computerName,
-	 * introducedDate, discontinuedDate, (company.isPresent() ?
-	 * company.get().getName() : null), company.isPresent() ? company.get().getId()
-	 * : null); Computer newComputer = mapper.mapDto(computerDto);
-	 * computerService.createComputer(newComputer); }
-	 */
-	
 	@PutMapping("/{id}")
-	public void update(@RequestParam(name = "computerName", required = true) String computerName,
-			@RequestParam(name = "idComputer") String strIdComputer,
-			@RequestParam(name = "introducedDate") String introducedDate,
-			@RequestParam(name = "discontinuedDate") String discontinuedDate,
-			@RequestParam(name = "idCompany", required = true) String strIdCompany) {
-		Long idCompany = Long.parseLong(strIdCompany);
-		Long idComputer = Long.parseLong(strIdComputer);
-		Optional<Company> company = companyService.findById(idCompany);
-		ComputerDto computerDto = new ComputerDto(idComputer, computerName, introducedDate, discontinuedDate,
-				(company.isPresent() ? company.get().getName() : null),
-				company.isPresent() ? company.get().getId() : null);
-
+	public void update(@RequestBody ComputerDto computerDto) {
 		try {
-			validator.isValidEditForm(computerName, introducedDate, discontinuedDate, idCompany);
+			validator.isValidEditForm(computerDto.getName(), computerDto.getIntroduced(), computerDto.getDiscontinued(),
+					computerDto.getCompanyId());
 			Computer editingComputer = mapper.mapDto(computerDto);
+			
 			computerService.updateComputer(editingComputer);
 
 		} catch (ValidatorFormException e) {
@@ -142,21 +107,50 @@ public class ComputersRestController {
 			}
 		}
 	}
-		
-	
+
+	/*
+	 * @PutMapping("/{id}") public void update(@RequestParam(name = "computerName",
+	 * required = true) String computerName,
+	 * 
+	 * @RequestParam(name = "idComputer") String strIdComputer,
+	 * 
+	 * @RequestParam(name = "introducedDate") String introducedDate,
+	 * 
+	 * @RequestParam(name = "discontinuedDate") String discontinuedDate,
+	 * 
+	 * @RequestParam(name = "idCompany", required = true) String strIdCompany) {
+	 * Long idCompany = Long.parseLong(strIdCompany); Long idComputer =
+	 * Long.parseLong(strIdComputer); Optional<Company> company =
+	 * companyService.findById(idCompany); ComputerDto computerDto = new
+	 * ComputerDto(idComputer, computerName, introducedDate, discontinuedDate,
+	 * (company.isPresent() ? company.get().getName() : null), company.isPresent() ?
+	 * company.get().getId() : null);
+	 * 
+	 * try { validator.isValidEditForm(computerName, introducedDate,
+	 * discontinuedDate, idCompany); Computer editingComputer =
+	 * mapper.mapDto(computerDto); computerService.updateComputer(editingComputer);
+	 * 
+	 * } catch (ValidatorFormException e) { switch (e.getInvalidityCause()) { case
+	 * INCONSITENT_DATES: logger.debug("Les dates non conformes : " +
+	 * e.getMessage()); break; case EMPTY_NAME:
+	 * logger.debug("Le champs d'Ã©dition du nom du computer est vide : " +
+	 * e.getMessage()); break; default: logger.
+	 * warn("Erreur lors de la validation du formulaire d'ï¿½dition du computeur : "
+	 * + e.getMessage()); break; } } }
+	 * 
+	 */
 	public List<ComputerDto> search(@RequestParam(name = "research", required = true) String research) {
 		List<ComputerDto> computersDto = new ArrayList<ComputerDto>();
 		List<Computer> computers = new ArrayList<Computer>();
-		
+
 		try {
 			computers = computerService.getPage(1, research);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		computersDto = (ArrayList<ComputerDto>) mapper.mapListComputer(computers);
 		return computersDto;
 	}
-	
 
 }

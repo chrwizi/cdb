@@ -31,6 +31,7 @@ public class CompaniesRestController {
 		return companiesDto;
 	}
 	
+	
 	@GetMapping("/{id}")
 	public CompanyDto one(@PathVariable Long id) {
 		CompanyDto dto=null;
@@ -39,6 +40,12 @@ public class CompaniesRestController {
 		return dto;
 	}
 	
+	
+	
+	@GetMapping("cred")
+	public String testToken(){
+		return "Good Credentials";
+	}
 	
 	
 	

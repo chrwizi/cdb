@@ -29,11 +29,8 @@ public class TokenProvider {
 		User user=(User)authentication.getPrincipal();
 		Date authenticatedDate = new Date();
 		Date expiryDate = new Date(authenticatedDate.getTime() + expirationTime);
-		System.out.println("\n\n>>>  generateToken     <<<<");
 		String token = Jwts.builder().setSubject(Long.toString(user.getUserID())).setIssuedAt(authenticatedDate)
 				.setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, secret).compact();
-
-		System.out.println("\n\n >> generated token: " + token);
 		return token;
 	}
 
@@ -45,6 +42,7 @@ public class TokenProvider {
 	public boolean validateToken(String authToken) {
 		System.out.println("\n\n>>> validateToken  <<<<\\n\\n");
 		try {
+			System.out.println("\n\n>>> validateToken Try <<<<\n\n");
 			Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken);
 			return true;
 		} catch (SignatureException ex) {

@@ -28,6 +28,9 @@ public class Springconfiguration extends WebSecurityConfigurerAdapter {
 	private JwtAuthenticationFilter authenticationFilter;
 	private JwtAuthenticationEntryPoint unautAuthenticationEntryPoint;
 
+	private final String[] REQUIRED_AUTHENTICATIION_URLS = { "/editComputer/**", "/api/companies/cred" };
+	private final String[] PERMIT_URL = { "/api/users/**" };
+
 	Logger logger = LoggerFactory.getLogger(getClass());
 
 	public Springconfiguration(ICustomUserDetailsService userDetailsService,
@@ -56,7 +59,7 @@ public class Springconfiguration extends WebSecurityConfigurerAdapter {
 		http.csrf().disable().exceptionHandling().authenticationEntryPoint(this.unautAuthenticationEntryPoint).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-		http.authorizeRequests().antMatchers("/api/users/**").permitAll().antMatchers("/editComputer/**")
+		http.authorizeRequests().antMatchers(PERMIT_URL).permitAll().antMatchers(REQUIRED_AUTHENTICATIION_URLS)
 				.authenticated();
 
 		http.addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
