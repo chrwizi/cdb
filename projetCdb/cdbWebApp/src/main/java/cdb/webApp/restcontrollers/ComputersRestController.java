@@ -80,10 +80,14 @@ public class ComputersRestController {
 
 	@PostMapping
 	@CrossOrigin
-	public void create(@RequestBody ComputerDto computerDto) {
+	public ComputerDto create(@RequestBody ComputerDto computerDto) {
+		System.out.println("Request Post cmputer done ");
 		Computer newComputer = mapper.mapDto(computerDto);
 		// TODO vérification technique et fonctionnelle du Dto
 		computerService.createComputer(newComputer);
+		System.out.println("New Computer created ");
+		computerDto.setId(newComputer.getId());
+		return computerDto;
 	}
 
 	@PutMapping("/{id}")
@@ -111,6 +115,7 @@ public class ComputersRestController {
 		}
 	}
 
+	@CrossOrigin
 	public List<ComputerDto> search(@RequestParam(name = "research", required = true) String research) {
 		List<ComputerDto> computersDto = new ArrayList<ComputerDto>();
 		List<Computer> computers = new ArrayList<Computer>();
