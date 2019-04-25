@@ -46,7 +46,7 @@ public class AuthRestController {
 
 	@PostMapping("/logout")
 	@CrossOrigin(origins = "*")
-	public void LogOut(@RequestBody TokenWraper tokenWraper) {
+	public void logOut(@RequestBody TokenWraper tokenWraper) {
 		
 	}
 

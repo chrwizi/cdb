@@ -52,16 +52,7 @@ public class ComputerDao {
 	private final static String FIELD_4 = "discontinued";
 	private final static String FOREIGN_KEY_COMPANY_ID = "company_id";
 	/* Queries */
-/*
-	private final static String UPDATE_QUERY = "UPDATE " + TABLE + " SET " + FIELD_2 + "=?, " + FIELD_3 + "=?, "
-			+ FIELD_4 + "=?, " + FOREIGN_KEY_COMPANY_ID + "=? " + " WHERE " + FIELD_1 + "=?";
-	private final static String FIND_BY_ID_QUERY = "SELECT * FROM " + TABLE + " WHERE " + FIELD_1 + " = ? ";
-	private final static String GET_PAGE_QUERY = "SELECT * FROM " + TABLE + " LIMIT ?,? ";
-	private final static String SEARCH_COMPUTER_QUERY = "SELECT * FROM " + TABLE + "  WHERE " + FIELD_2
-			+ " LIKE ?  LIMIT ?,?";
-	private final String COUNT_QUERY = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE;
-	
-	*/
+
 	private final static String SEARCH_COUNT_QUERY = "SELECT COUNT(" + FIELD_1 + ") as count FROM " + TABLE + " WHERE "
 			+ FIELD_2 + " LIKE ?";
 	private final static String QUERY_SORT_BY_NAME_ASC = "SELECT * FROM " + TABLE + " ORDER BY " + FIELD_2
@@ -112,7 +103,7 @@ public class ComputerDao {
 	 * @throws IDCompanyNotFoundException if the Id of company given in parameter
 	 *                                    don't exit in Companies table
 	 */
-	public OptionalLong add(Computer computer) throws SQLException {
+	public OptionalLong add(Computer computer){
 		OptionalLong optionalId = OptionalLong.empty();
 		if (computer != null) {
 

@@ -68,23 +68,39 @@ public class UserDao {
 		}
 		return optionalUser;
 	}
-
+	
 	public OptionalLong createUser(User user) {
 		OptionalLong optionalId = OptionalLong.empty();
-		
+	
 		if (user != null) {
 			try (Session session = sessionFactory.getObject().openSession()) {
-				
-				Transaction transaction = session.beginTransaction();
-				session.persist(user);
-				transaction.commit();
+				System.out.println("try crate user ");
+				session.save(user);
 				optionalId = OptionalLong.of(user.getUserID());
-				
+				System.out.println("user created ");
 			} catch (HibernateException e) {
+				System.out.println("Erreur sur create User : " + e.getMessage());
 				logger.debug("Erreur sur create User : " + e.getMessage());
 			}
 		}
 		return optionalId;
 	}
 
+
+	/*
+	 * public OptionalLong createUser(User user) { OptionalLong optionalId =
+	 * OptionalLong.empty();
+	 * 
+	 * if (user != null) { try (Session session =
+	 * sessionFactory.getObject().openSession()) {
+	 * 
+	 * Transaction transaction = session.beginTransaction(); session.persist(user);
+	 * transaction.commit(); optionalId = OptionalLong.of(user.getUserID());
+	 * 
+	 * } catch (HibernateException e) { logger.debug("Erreur sur create User : " +
+	 * e.getMessage()); } } return optionalId; }
+	 */
+	
 }
+
+
