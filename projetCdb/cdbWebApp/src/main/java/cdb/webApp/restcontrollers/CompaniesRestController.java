@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -86,7 +87,8 @@ public class CompaniesRestController {
 	}
 	
 	@CrossOrigin
-	@GetMapping("cred")
+	@GetMapping("/cred")
+	@Secured("ROLE_ADMIN")
 	public String testToken(){
 		return "Good Credentials";
 	}

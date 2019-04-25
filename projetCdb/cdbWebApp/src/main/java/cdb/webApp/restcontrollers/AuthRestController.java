@@ -18,7 +18,7 @@ import cdb.service.UserService;
 import cdb.webApp.validator.LoginForm;
 
 @RestController
-@RequestMapping("api/Auth")
+@RequestMapping("api/auth")
 @CrossOrigin
 public class AuthRestController {
 
@@ -36,7 +36,7 @@ public class AuthRestController {
 	@PostMapping("/login")
 	@CrossOrigin(origins = "*")
 	public TokenWraper logIn(@Valid @RequestBody LoginForm loginForm) {
-
+		
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginForm.getUsername(), loginForm.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
