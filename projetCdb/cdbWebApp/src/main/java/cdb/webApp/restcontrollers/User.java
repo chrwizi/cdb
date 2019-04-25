@@ -39,7 +39,7 @@ public class User {
 	}
 	
 
-	@PostMapping("/auth")
+	@PostMapping
 	@CrossOrigin(origins = "*")
 	public void signIn(@Valid @RequestBody SignUpForm signUpForm) {	
 		userService.createUser(signUpForm.getUsername(), signUpForm.getPassword(), new Role(EnumRole.Premium));
