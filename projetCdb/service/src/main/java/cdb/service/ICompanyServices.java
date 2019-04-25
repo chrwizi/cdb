@@ -10,5 +10,7 @@ public interface ICompanyServices {
 	public List<Company> getAll();
 	public void delete(Long id) throws SQLException;
 	public Optional<Company> findById(Long id);
+	public void create(Company company);
+	public void update(Company company);
 }
  

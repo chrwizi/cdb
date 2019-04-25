@@ -92,7 +92,7 @@ public class CompanyDao {
 	 * @param company update compagny int table
 	 * @throws SQLException if connection to database failure
 	 */
-	public void update(Company company) throws SQLException {
+	public void update(Company company) {
 		try (Session session = sessionFactory.getObject().openSession()) {
 			criteriaBuilder = session.getCriteriaBuilder();
 			CriteriaUpdate<Company> updateCriteria = criteriaBuilder.createCriteriaUpdate(Company.class);
@@ -178,5 +178,7 @@ public class CompanyDao {
 			logger.debug("échec de connexion à la base de données ");
 		}
 	}
+
+
 
 }

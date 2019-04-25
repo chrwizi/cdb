@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import cdb.core.models.Company;
 import cdb.persistence.dao.CompanyDao;
 
@@ -19,7 +18,7 @@ public class CompanyService implements ICompanyServices {
 	public CompanyService(@Autowired CompanyDao companyDao) {
 		CompanyDao = companyDao;
 	}
- 
+
 	public CompanyDao getCompanyDao() {
 		return CompanyDao;
 	}
@@ -49,6 +48,19 @@ public class CompanyService implements ICompanyServices {
 		return CompanyDao.findById(id);
 	}
 
-	
+	@Override
+	public void create(Company company) {
+		if (company != null & company.getName() != null) {
+			CompanyDao.Add(company);
+		}
+	}
+
+	@Override
+	public void update(Company company) {
+		if (company != null) {
+			CompanyDao.update(company);
+		}
+
+	}
 
 }
