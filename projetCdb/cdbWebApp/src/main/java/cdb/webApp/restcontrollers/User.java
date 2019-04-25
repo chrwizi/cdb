@@ -1,5 +1,7 @@
 package cdb.webApp.restcontrollers;
 
+import javax.validation.Valid;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,8 +44,8 @@ public class User {
 	
 
 	@PostMapping("/auth")
-	@CrossOrigin
-	public String signIn(@RequestBody LoginForm loginForm) {	
+	@CrossOrigin(origins = "*")
+	public String signIn(@Valid @RequestBody LoginForm loginForm) {	
 		System.out.println("\n\n >> In SignIn EndPoint <<<\n\n");
 		System.out.println("username : "+loginForm.getUsername());
 		System.out.println("password : "+loginForm.getPassword());
