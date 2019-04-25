@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import cdb.core.models.Role;
+import cdb.core.types.TokenWraper;
 import cdb.security.jwt.TokenProvider;
 import cdb.service.UserService;
 import cdb.webApp.validator.LoginForm;
@@ -45,7 +46,7 @@ public class User {
 
 	@PostMapping("/auth")
 	@CrossOrigin(origins = "*")
-	public String signIn(@Valid @RequestBody LoginForm loginForm) {	
+	public TokenWraper signIn(@Valid @RequestBody LoginForm loginForm) {	
 		System.out.println("\n\n >> In SignIn EndPoint <<<\n\n");
 		System.out.println("username : "+loginForm.getUsername());
 		System.out.println("password : "+loginForm.getPassword());
@@ -54,7 +55,7 @@ public class User {
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwToken=tokenProvider.generateToken(authentication);
-		return jwToken;
+		return new TokenWraper(jwToken);
 	}
 	
 	

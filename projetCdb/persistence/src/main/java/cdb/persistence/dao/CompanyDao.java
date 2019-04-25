@@ -20,14 +20,12 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 
 import cdb.core.models.Company;
-import cdb.core.models.Computer;
 
 @Repository
 public class CompanyDao {
@@ -45,8 +43,6 @@ public class CompanyDao {
 	private final static String FIELD_1 = "id";
 	private final static String FIELD_2 = "name";
 	/* queries */
-	private final static String CREATE_QUERY = " INSERT INTO " + TABLE + "(" + FIELD_2 + ") VALUES(?)";
-	private final static String UPDATE_QUERY = "UPDATE " + TABLE + " SET " + FIELD_2 + "=? WHERE " + FIELD_1 + "=?";
 	private final static String DELETE_COMPANY_QUERY = "DELETE FROM " + TABLE + " WHERE " + FIELD_1 + "=?";
 	private final static String DELETE_ASSOCIATED_COMPUTERS = "DELETE  FROM " + COMPUTER_TABLE + " WHERE "
 			+ COMPANY_ID_IN_COMPUTER_TABLE + " =?";
