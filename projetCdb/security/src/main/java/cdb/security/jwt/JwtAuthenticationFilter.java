@@ -36,17 +36,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		try {
 			String jwt = this.getJwtFromRequest(request);
-			System.out.println("\nhasText : " + StringUtils.hasText(jwt));
-			System.out.println("\nvalidate : " + tokenProvider.validateToken(jwt));
 			if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
 				Long id = tokenProvider.getUserIdFromJWT(jwt);
 				CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserById(id);
 				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
 						userDetails, null, userDetails.getAuthorities());
-
 				SecurityContextHolder.getContext().setAuthentication(authentication);
-			} else {
-				System.out.println("Erreur token non valide ");
 			}
 		} catch (Exception e) {
 			logger.error("Erreur jwtAuthenticationFilter: " + e.getMessage());
@@ -57,7 +52,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private String getJwtFromRequest(HttpServletRequest request) {
 		String token = request.getHeader("Authorization");
 		if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
-			System.out.println("substring: " + token.substring(3, token.length()));
 			return token.substring(7, token.length());
 		}
 		return null;
