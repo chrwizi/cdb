@@ -3,6 +3,8 @@ package cdb.persistence.dao;
 import java.util.Optional;
 import java.util.OptionalLong;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -24,8 +26,11 @@ public class UserDao {
 	private Root<User> root;
 	//
 	private final String FIELD_USER_NAME = "username";
-	private final String FIELD_ID="userID";
+	private final String FIELD_ID = "userID";
 	private Logger logger = LoggerFactory.getLogger(getClass());
+
+	@PersistenceContext
+	EntityManager entityManager;
 
 	public UserDao(LocalSessionFactoryBean sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -41,9 +46,9 @@ public class UserDao {
 				CriteriaQuery<User> findCriteria = criteriaBuilder.createQuery(User.class);
 				root = findCriteria.from(User.class);
 				findCriteria.select(root).where(criteriaBuilder.equal(root.get(FIELD_USER_NAME), username));
-				
+
 				optionalUser = session.createQuery(findCriteria).uniqueResultOptional();
-				
+
 			} catch (HibernateException e) {
 				logger.debug("Erreur sur find user by username: " + e.getMessage());
 			}
@@ -53,39 +58,40 @@ public class UserDao {
 
 	public Optional<User> findById(Long id) {
 		Optional<User> optionalUser = Optional.empty();
-		
+
 		if (id != null) {
-			
+
 			try (Session session = sessionFactory.getObject().openSession()) {
-				
+
 				criteriaBuilder = session.getCriteriaBuilder();
 				CriteriaQuery<User> findCriteria = criteriaBuilder.createQuery(User.class);
 				root = findCriteria.from(User.class);
 				findCriteria.select(root).where(criteriaBuilder.equal(root.get(FIELD_ID), id));
-				
+
 				optionalUser = session.createQuery(findCriteria).uniqueResultOptional();
 			}
 		}
 		return optionalUser;
 	}
-	
+
 	public OptionalLong createUser(User user) {
 		OptionalLong optionalId = OptionalLong.empty();
-	
+		System.out.println("user ---> "+user.getUsername());
+		System.out.println("user ---> "+user.getPassword());
+		System.out.println("user ---> "+user.getUserID());
 		if (user != null) {
 			try (Session session = sessionFactory.getObject().openSession()) {
-				System.out.println("try crate user ");
-				session.save(user);
+				System.out.println("Erreur sur create User : ");
+				Long id=(Long) session.save(user);
+				System.out.println("Erreur sur create User : "+id);
 				optionalId = OptionalLong.of(user.getUserID());
-				System.out.println("user created ");
 			} catch (HibernateException e) {
-				System.out.println("Erreur sur create User : " + e.getMessage());
+				System.out.println("Erreur sur create User : ");e.printStackTrace();
 				logger.debug("Erreur sur create User : " + e.getMessage());
 			}
 		}
 		return optionalId;
 	}
-
 
 	/*
 	 * public OptionalLong createUser(User user) { OptionalLong optionalId =
@@ -93,14 +99,18 @@ public class UserDao {
 	 * 
 	 * if (user != null) { try (Session session =
 	 * sessionFactory.getObject().openSession()) {
+	 * System.out.println("try crate user ");
 	 * 
-	 * Transaction transaction = session.beginTransaction(); session.persist(user);
+	 * 
+	 * Transaction transaction = session.beginTransaction();
+	 * 
+	 * session.persist(user);
+	 * 
+	 * 
 	 * transaction.commit(); optionalId = OptionalLong.of(user.getUserID());
 	 * 
-	 * } catch (HibernateException e) { logger.debug("Erreur sur create User : " +
-	 * e.getMessage()); } } return optionalId; }
+	 * System.out.println("user created "); } catch (HibernateException e) {
+	 * logger.debug("Erreur sur create User : " + e.getMessage()); } } return
+	 * optionalId; }
 	 */
-	
 }
-
-

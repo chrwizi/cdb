@@ -120,12 +120,9 @@ public class ComputerService implements IComputerService {
 
 	@Override
 	public void createComputer(Computer computer) {
-		try {
+	
 			computerDao.add(computer);
-		} catch (SQLException e) {
-			logger.debug("Erreur dur create computer : " + e.getMessage());
-			e.printStackTrace();
-		}
+		
 	}
 
 	@Override

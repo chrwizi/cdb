@@ -70,12 +70,16 @@ public class CompanyDao {
 	public OptionalLong Add(Company company) {
 		OptionalLong optionalId = OptionalLong.empty();
 		if (company != null) {
-
+			System.out.println("in add Company");
 			try (Session session = sessionFactory.getObject().openSession()) {
-				Transaction transaction = session.beginTransaction();
-				session.persist(company);
-				transaction.commit();
+				/*
+				 * Transaction transaction = session.beginTransaction();
+				 * session.persist(company); transaction.commit();
+				 */
+				System.out.println("in add Company try");
+				Long id=(Long) session.save(company);
 				optionalId = OptionalLong.of(company.getId());
+				System.out.println("in add Company Saved");
 			} catch (HibernateException e) {
 				logger.debug("Erreur sur add computer : " + e.getMessage());
 			}

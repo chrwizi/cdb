@@ -61,7 +61,7 @@ public class CompaniesRestController {
 	@PostMapping
 	@CrossOrigin
 	public void create(@Valid @RequestBody CompanyForm companyForm) {
-		if(companyForm.getName()!=null) {
+		if((companyForm.getName()!=null) & !(companyForm.getName().equals(" "))) {
 			companyService.create(new Company(companyForm.getId(),companyForm.getName()));
 		}
 	}	
@@ -69,7 +69,7 @@ public class CompaniesRestController {
 	@PutMapping
 	@CrossOrigin
 	public void update(@Valid @RequestBody CompanyForm companyForm) {
-		if(companyForm.getName()!=null) {
+		if((companyForm.getName()!=null) & !(companyForm.getName().equals(" "))) {
 			Company company=new Company(companyForm.getId(),companyForm.getName());
 			companyService.update(company);
 		}

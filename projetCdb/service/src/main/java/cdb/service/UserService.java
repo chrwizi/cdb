@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cdb.core.models.Role;
 import cdb.core.models.User;
@@ -21,6 +22,7 @@ public class UserService {
 		this.roleDao = roleDao;
 	}
 
+	@Transactional
 	public void createUser(String username, String password, Role role) {
 		User user = new User(username,BCryptManagerUtil.passwordencoder().encode(password), role);
 		userDao.createUser(user);
