@@ -59,6 +59,22 @@ public class ComputersRestController {
 		return computersDto;
 	}
 
+	@GetMapping("search")
+	@CrossOrigin
+	public List<ComputerDto> search(@RequestParam(name = "research", required = true) String research) {
+		List<ComputerDto> computersDto = new ArrayList<ComputerDto>();
+		List<Computer> computers = new ArrayList<Computer>();
+
+		try {
+			computers = computerService.getPage(1, research);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		computersDto = (ArrayList<ComputerDto>) mapper.mapListComputer(computers);
+		return computersDto;
+	}
+	
 	@GetMapping("/{id}")
 	@CrossOrigin
 	public ComputerDto one(@PathVariable Long id) {
@@ -116,19 +132,6 @@ public class ComputersRestController {
 		}
 	}
 
-	@CrossOrigin
-	public List<ComputerDto> search(@RequestParam(name = "research", required = true) String research) {
-		List<ComputerDto> computersDto = new ArrayList<ComputerDto>();
-		List<Computer> computers = new ArrayList<Computer>();
 
-		try {
-			computers = computerService.getPage(1, research);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		computersDto = (ArrayList<ComputerDto>) mapper.mapListComputer(computers);
-		return computersDto;
-	}
 
 }

@@ -77,7 +77,7 @@ public class CompanyDao {
 				 * session.persist(company); transaction.commit();
 				 */
 				System.out.println("in add Company try");
-				Long id=(Long) session.save(company);
+				Long id = (Long) session.save(company);
 				optionalId = OptionalLong.of(company.getId());
 				System.out.println("in add Company Saved");
 			} catch (HibernateException e) {
@@ -94,16 +94,26 @@ public class CompanyDao {
 	 */
 	public void update(Company company) {
 		try (Session session = sessionFactory.getObject().openSession()) {
-			criteriaBuilder = session.getCriteriaBuilder();
-			CriteriaUpdate<Company> updateCriteria = criteriaBuilder.createCriteriaUpdate(Company.class);
-			Root<Company> root = updateCriteria.from(Company.class);
-			updateCriteria.set(FIELD_2, company.getName());
-			updateCriteria.where(criteriaBuilder.equal(root.get(FIELD_1), company.getId()));
-			Transaction transaction = session.beginTransaction();
-			session.createQuery(updateCriteria).executeUpdate();
-			transaction.commit();
+			if (company != null) {
 
+				System.out.println("Try to update company ");
+				criteriaBuilder = session.getCriteriaBuilder();
+				CriteriaUpdate<Company> updateCriteria = criteriaBuilder.createCriteriaUpdate(Company.class);
+				Root<Company> root = updateCriteria.from(Company.class);
+
+				updateCriteria.set(FIELD_2, company.getName());
+				updateCriteria.where(criteriaBuilder.equal(root.get(FIELD_1), company.getId()));
+				Transaction transaction = session.beginTransaction();
+
+				System.out.println("Begin transaction update ");
+				session.createQuery(updateCriteria).executeUpdate();
+				transaction.commit();
+
+				System.out.println("Company updated  ");
+
+			}
 		} catch (HibernateException e) {
+			System.out.println(("Erreur sur update company : " + e.getMessage()));
 			logger.debug("Erreur sur update company : " + e.getMessage());
 		}
 	}
@@ -178,7 +188,5 @@ public class CompanyDao {
 			logger.debug("échec de connexion à la base de données ");
 		}
 	}
-
-
 
 }

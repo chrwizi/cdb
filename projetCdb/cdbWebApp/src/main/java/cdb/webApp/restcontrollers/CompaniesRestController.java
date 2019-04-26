@@ -69,6 +69,7 @@ public class CompaniesRestController {
 	@PutMapping
 	@CrossOrigin
 	public void update(@Valid @RequestBody CompanyForm companyForm) {
+		System.out.println("Update company endPoint ");
 		if((companyForm.getName()!=null) & !(companyForm.getName().equals(" "))) {
 			Company company=new Company(companyForm.getId(),companyForm.getName());
 			companyService.update(company);
