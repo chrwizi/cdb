@@ -93,27 +93,22 @@ public class CompanyDao {
 	 * @throws SQLException if connection to database failure
 	 */
 	public void update(Company company) {
+		
 		try (Session session = sessionFactory.getObject().openSession()) {
+			
 			if (company != null) {
-
-				System.out.println("Try to update company ");
+				
 				criteriaBuilder = session.getCriteriaBuilder();
 				CriteriaUpdate<Company> updateCriteria = criteriaBuilder.createCriteriaUpdate(Company.class);
 				Root<Company> root = updateCriteria.from(Company.class);
-
 				updateCriteria.set(FIELD_2, company.getName());
 				updateCriteria.where(criteriaBuilder.equal(root.get(FIELD_1), company.getId()));
 				Transaction transaction = session.beginTransaction();
-
-				System.out.println("Begin transaction update ");
 				session.createQuery(updateCriteria).executeUpdate();
 				transaction.commit();
-
-				System.out.println("Company updated  ");
-
+				
 			}
 		} catch (HibernateException e) {
-			System.out.println(("Erreur sur update company : " + e.getMessage()));
 			logger.debug("Erreur sur update company : " + e.getMessage());
 		}
 	}
@@ -123,12 +118,14 @@ public class CompanyDao {
 		if (id != null) {
 
 			try (Session session = sessionFactory.getObject().openSession()) {
+				
 				criteriaBuilder = session.getCriteriaBuilder();
 				CriteriaQuery<Company> findCriteria = criteriaBuilder.createQuery(Company.class);
 				Root<Company> root = findCriteria.from(Company.class);
 				findCriteria.select(root).where(criteriaBuilder.equal(root.get(FIELD_1), id));
 				Query<Company> query = session.createQuery(findCriteria);
 				optional = query.uniqueResultOptional();
+				
 			} catch (HibernateException e) {
 				logger.debug("erreur find company by Id : " + e.getMessage());
 			}
@@ -142,15 +139,17 @@ public class CompanyDao {
 	 * @throws SQLException
 	 */
 	public List<Company> findAll() throws SQLException {
+		
 		List<Company> companies = new ArrayList<Company>();
-
 		try (Session session = sessionFactory.getObject().openSession()) {
+			
 			criteriaBuilder = session.getCriteriaBuilder();
 			CriteriaQuery<Company> findAllCriteria = criteriaBuilder.createQuery(Company.class);
 			Root<Company> rootCompany = findAllCriteria.from(Company.class);
 			findAllCriteria.select(rootCompany);
 			Query<Company> query = session.createQuery(findAllCriteria);
 			companies = query.getResultList();
+			
 		} catch (HibernateException e) {
 			logger.debug("Erreur sur find All companies : " + e.getMessage());
 		}
@@ -165,12 +164,11 @@ public class CompanyDao {
 	 */
 	public void delete(Long id) {
 		try (Connection connection = datasource.getConnection()) {
-			// prepare statements
+			
 			PreparedStatement deleteCompanyPStatement = connection.prepareStatement(DELETE_COMPANY_QUERY);
 			PreparedStatement deleteComputersPStatement = connection.prepareStatement(DELETE_ASSOCIATED_COMPUTERS);
 			deleteCompanyPStatement.setLong(1, id);
 			deleteComputersPStatement.setLong(1, id);
-			// begin transaction
 			connection.setAutoCommit(false);
 			try {
 				logger.debug("début de la transaction de suppression");

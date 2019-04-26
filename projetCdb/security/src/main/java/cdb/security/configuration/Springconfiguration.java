@@ -28,8 +28,8 @@ public class Springconfiguration extends WebSecurityConfigurerAdapter {
 	private JwtAuthenticationFilter authenticationFilter;
 	private JwtAuthenticationEntryPoint unautAuthenticationEntryPoint;
 
-	private final String[] REQUIRED_AUTHENTICATIION_URLS = { "/editComputer/**", "/api/companies/cred" };
-	private final String[] PERMIT_URL = { "/api/users/auth","/api/users/**" };
+	private final String[] REQUIRED_AUTHENTICATIION_URLS = { "/api/computers**", "/api/companies/cred" };
+	private final String[] PERMIT_URL = { "/api/users/auth" };
 
 	Logger logger = LoggerFactory.getLogger(getClass());
 

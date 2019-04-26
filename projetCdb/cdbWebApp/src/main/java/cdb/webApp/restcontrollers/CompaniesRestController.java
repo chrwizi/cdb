@@ -42,6 +42,7 @@ public class CompaniesRestController {
 	
 	@GetMapping
 	@CrossOrigin
+	@Secured(value = {"ROLE_ADMIN","ROLE_PREMIUM"})
 	public List<CompanyDto> all(){
 		List<CompanyDto> companiesDto=mapperCompany.mapListCompany(companyService.getAll());
 		return companiesDto;
@@ -50,6 +51,7 @@ public class CompaniesRestController {
 	
 	@GetMapping("/{id}")
 	@CrossOrigin
+	@Secured(value = {"ROLE_ADMIN","ROLE_PREMIUM"})
 	public CompanyDto one(@PathVariable Long id) {
 		CompanyDto dto=null;
 		Optional<Company> optionalCompany=companyService.findById(id);
@@ -60,6 +62,7 @@ public class CompaniesRestController {
 	
 	@PostMapping
 	@CrossOrigin
+	@Secured("ROLE_ADMIN")
 	public void create(@Valid @RequestBody CompanyForm companyForm) {
 		if((companyForm.getName()!=null) & !(companyForm.getName().equals(" "))) {
 			companyService.create(new Company(companyForm.getId(),companyForm.getName()));
@@ -68,6 +71,7 @@ public class CompaniesRestController {
 	
 	@PutMapping
 	@CrossOrigin
+	@Secured("ROLE_ADMIN")
 	public void update(@Valid @RequestBody CompanyForm companyForm) {
 		System.out.println("Update company endPoint ");
 		if((companyForm.getName()!=null) & !(companyForm.getName().equals(" "))) {
@@ -79,6 +83,7 @@ public class CompaniesRestController {
 	
 	@DeleteMapping("/{id}")
 	@CrossOrigin
+	@Secured("ROLE_ADMIN")
 	public void delete(@PathVariable Long id) {
 		try {
 			companyService.delete(id);

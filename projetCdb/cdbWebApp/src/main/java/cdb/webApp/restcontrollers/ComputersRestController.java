@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +39,7 @@ public class ComputersRestController {
 	private IMapperComputerDto mapper;
 	private IMapperCompanyDto mapperCompany;
 	//
-	private IFormEditComputerValidator validator;
+	private IFormEditComputerValidator validator = new FormEditComputerValidator();
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	private final long DEFAULT_ID = 0L;
 
@@ -53,6 +54,7 @@ public class ComputersRestController {
 
 	@GetMapping
 	@CrossOrigin
+	@Secured(value = { "ROLE_ADMIN", "ROLE_PREMIUM" })
 	public List<ComputerDto> all(@Nullable @RequestParam("rowsPage") Integer rowsPage,
 			@Nullable @RequestParam("pageNumber") Integer pageNumber) {
 		List<ComputerDto> computersDto = mapper.mapListComputer(computerService.getAll(rowsPage, pageNumber));
@@ -61,6 +63,7 @@ public class ComputersRestController {
 
 	@GetMapping("search")
 	@CrossOrigin
+	@Secured(value = { "ROLE_ADMIN", "ROLE_PREMIUM" })
 	public List<ComputerDto> search(@RequestParam(name = "research", required = true) String research) {
 		List<ComputerDto> computersDto = new ArrayList<ComputerDto>();
 		List<Computer> computers = new ArrayList<Computer>();
@@ -74,9 +77,10 @@ public class ComputersRestController {
 		computersDto = (ArrayList<ComputerDto>) mapper.mapListComputer(computers);
 		return computersDto;
 	}
-	
+
 	@GetMapping("/{id}")
 	@CrossOrigin
+	@Secured(value = { "ROLE_ADMIN", "ROLE_PREMIUM" })
 	public ComputerDto one(@PathVariable Long id) {
 		ComputerDto computerDto = null;
 		try {
@@ -90,31 +94,36 @@ public class ComputersRestController {
 
 	@DeleteMapping("/{id}")
 	@CrossOrigin
+	@Secured("ROLE_ADMIN")
 	public void delete(@PathVariable Long id) {
 		computerService.delete(id);
 	}
 
 	@PostMapping
 	@CrossOrigin
+	@Secured("ROLE_ADMIN")
 	public ComputerDto create(@RequestBody ComputerDto computerDto) {
-		System.out.println("Request Post cmputer done ");
 		Computer newComputer = mapper.mapDto(computerDto);
-		// TODO vérification technique et fonctionnelle du Dto
-		computerService.createComputer(newComputer);
-		System.out.println("New Computer created ");
-		computerDto.setId(newComputer.getId());
-	
+		try {
+			validator.isValidEditForm(computerDto.getName(), computerDto.getIntroduced(), computerDto.getDiscontinued(),
+					computerDto.getCompanyId());
+			computerService.createComputer(newComputer);
+			computerDto.setId(newComputer.getId());
+		} catch (ValidatorFormException e) {
+			logger.debug("Erreur sur Create computer : " + e.getMessage());
+		}
 		return computerDto;
 	}
 
 	@PutMapping("/{id}")
 	@CrossOrigin
+	@Secured("ROLE_ADMIN")
 	public void update(@RequestBody ComputerDto computerDto) {
 		try {
 			validator.isValidEditForm(computerDto.getName(), computerDto.getIntroduced(), computerDto.getDiscontinued(),
 					computerDto.getCompanyId());
 			Computer editingComputer = mapper.mapDto(computerDto);
-			
+
 			computerService.updateComputer(editingComputer);
 
 		} catch (ValidatorFormException e) {
@@ -131,7 +140,5 @@ public class ComputersRestController {
 			}
 		}
 	}
-
-
 
 }
